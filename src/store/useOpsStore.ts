@@ -1,6 +1,7 @@
 import { create } from 'zustand';
-import { Promotion, Brand, Department, PromotionStatus, EmailDraft, BannerInfo } from '@/types/promotion';
+import { Promotion, Brand, Department, PromotionStatus, EmailDraft, BannerInfo, ProductItem, QcIssue } from '@/types/promotion';
 import { INITIAL_PROMOTIONS } from '@/data/mockPromotions';
+import { runDeterministicQc } from '@/utils/qcEngine';
 
 interface OpsStore {
   promotions: Promotion[];
@@ -33,6 +34,13 @@ interface OpsStore {
   // 4.3 메일 회신 시뮬레이션 및 배너 자동 생성/컨펌
   simulateReceiveLookbook: (promoId: string) => void;
   confirmBanner: (promoId: string, updatedBanner?: Partial<BannerInfo>) => void;
+
+  // 4.5 & 4.4 상품 인라인 수정 및 재검증 트리거
+  updateProductAndRevalidate: (promoId: string, productId: string, updatedFields: Partial<ProductItem>) => void;
+  runQcValidation: (promoId: string) => void;
+
+  // 최종 게시 준비 완료 승인
+  approveForPublish: (promoId: string) => void;
 
   // 이메일 초안 생성 (리마인더 / 재확인 / 요청)
   createReminderDraft: (promoId: string) => void;
@@ -130,14 +138,12 @@ export const useOpsStore = create<OpsStore>((set, get) => ({
       }),
     })),
 
-  // 4.3 디자인팀 회신 수신 시뮬레이션
   simulateReceiveLookbook: (promoId) => {
     const promo = get().promotions.find((p) => p.id === promoId);
     if (!promo) return;
 
     const nowStr = new Date().toISOString().replace('T', ' ').substring(0, 16);
 
-    // 브랜드별 고화질 모의 룩북 이미지 URL 매핑
     const LOOKBOOK_MAP: Record<Brand, { url: string; filename: string }> = {
       LIST: {
         url: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=1200&auto=format&fit=crop&q=80',
@@ -182,7 +188,6 @@ export const useOpsStore = create<OpsStore>((set, get) => ({
     }));
   },
 
-  // 4.3 배너 원클릭 컨펌
   confirmBanner: (promoId, updatedBanner) => {
     const nowStr = new Date().toISOString().replace('T', ' ').substring(0, 16);
 
@@ -195,11 +200,99 @@ export const useOpsStore = create<OpsStore>((set, get) => ({
           isConfirmed: true,
           confirmedAt: nowStr,
         };
+
+        const tempPromo = { ...p, banner: nextBanner };
+        const issues = runDeterministicQc(tempPromo);
+
+        return {
+          ...tempPromo,
+          qcIssues: issues,
+          status: issues.length > 0 ? 'NEEDS_CHECK' : 'QC_PASSED',
+        };
+      }),
+    }));
+  },
+
+  // 4.5 & 4.4 상품 인라인 수정 및 실시간 재검증
+  updateProductAndRevalidate: (promoId, productId, updatedFields) => {
+    const nowStr = new Date().toISOString().replace('T', ' ').substring(0, 16);
+
+    set((state) => ({
+      promotions: state.promotions.map((p) => {
+        if (p.id !== promoId) return p;
+
+        const nextProducts = p.products.map((prod) =>
+          prod.id === productId ? { ...prod, ...updatedFields } : prod
+        );
+
+        const tempPromo: Promotion = {
+          ...p,
+          products: nextProducts,
+        };
+
+        // 6대 룰 엔진 즉시 재검증
+        const newIssues = runDeterministicQc(tempPromo);
+        const hasBlocker = newIssues.some((issue) => issue.severity === 'BLOCKER');
+
+        return {
+          ...tempPromo,
+          qcIssues: newIssues,
+          status: hasBlocker ? 'NEEDS_CHECK' : 'QC_PASSED',
+          timestamps: {
+            ...p.timestamps,
+            qcPassedAt: !hasBlocker ? nowStr : p.timestamps.qcPassedAt,
+          },
+        };
+      }),
+    }));
+  },
+
+  // 강제 재검증 트리거
+  runQcValidation: (promoId) => {
+    const promo = get().promotions.find((p) => p.id === promoId);
+    if (!promo) return;
+
+    const newIssues = runDeterministicQc(promo);
+    const hasBlocker = newIssues.some((i) => i.severity === 'BLOCKER');
+    const nowStr = new Date().toISOString().replace('T', ' ').substring(0, 16);
+
+    set((state) => ({
+      promotions: state.promotions.map((p) => {
+        if (p.id !== promoId) return p;
         return {
           ...p,
-          banner: nextBanner,
-          // 배너 컨펌 후 상품 검증이 남아있으면 NEEDS_CHECK/DATA_RECEIVED, 상품도 정상이면 QC_PASSED
-          status: p.qcIssues.length > 0 ? 'NEEDS_CHECK' : 'QC_PASSED',
+          qcIssues: newIssues,
+          status: hasBlocker ? 'NEEDS_CHECK' : 'QC_PASSED',
+          timestamps: {
+            ...p.timestamps,
+            issueDetectedAt: hasBlocker ? nowStr : p.timestamps.issueDetectedAt,
+            qcPassedAt: !hasBlocker ? nowStr : p.timestamps.qcPassedAt,
+          },
+        };
+      }),
+    }));
+  },
+
+  // 최종 게시 준비 완료 승인
+  approveForPublish: (promoId) => {
+    const nowStr = new Date().toISOString().replace('T', ' ').substring(0, 16);
+
+    set((state) => ({
+      promotions: state.promotions.map((p) => {
+        if (p.id !== promoId) return p;
+        return {
+          ...p,
+          status: 'READY_TO_PUBLISH',
+          currentBottleneckDept: 'EBIZ_OPS',
+          timestamps: {
+            ...p.timestamps,
+            publishedAt: nowStr,
+          },
+          milestones: p.milestones.map((m) =>
+            m.code === 'D_MINUS_1' || m.code === 'D_DAY'
+              ? { ...m, isCompleted: true, completedAt: nowStr }
+              : m
+          ),
         };
       }),
     }));

@@ -6,6 +6,7 @@ import CalendarUploader from '@/components/CalendarUploader';
 import MatrixFilterBar from '@/components/MatrixFilterBar';
 import PromotionCalendarView from '@/components/PromotionCalendarView';
 import BannerStudio from '@/components/BannerStudio';
+import QcWorkspace from '@/components/QcWorkspace';
 import EmailDraftModal from '@/components/EmailDraftModal';
 import { useOpsStore } from '@/store/useOpsStore';
 
@@ -42,13 +43,18 @@ export default function Home() {
             {activeDraftCount > 0 && (
               <button
                 onClick={() => setIsDraftModalOpen(true)}
-                className="inline-flex items-center gap-2 px-4 py-2.5 bg-amber-400 hover:bg-amber-300 text-slate-950 text-xs font-bold rounded-xl shadow-md transition-all shrink-0"
+                className="inline-flex items-center gap-2 px-4 py-2.5 bg-amber-400 hover:bg-amber-300 text-slate-950 text-xs font-bold rounded-xl shadow-md transition-all shrink-0 cursor-pointer"
               >
                 <span>🔔 검토 대기 메일 {activeDraftCount}건 확인하기</span>
               </button>
             )}
           </div>
         </div>
+
+        {/* 4.5 & 4.4 게시 전 사전 QC 워크스페이스 & 상품 인라인 수정 */}
+        {selectedPromotionId && (
+          <QcWorkspace promotionId={selectedPromotionId} />
+        )}
 
         {/* 4.3 메일 회신 수신 후 배너 자동 합성 & 원클릭 컨펌 스튜디오 */}
         {selectedPromotionId && (
