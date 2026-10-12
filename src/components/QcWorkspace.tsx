@@ -36,6 +36,7 @@ export default function QcWorkspace({ promotionId }: QcWorkspaceProps) {
   const [editingProductId, setEditingProductId] = useState<string | null>(null);
   const [editPriceStr, setEditPriceStr] = useState<string>('');
   const [editDiscountRateStr, setEditDiscountRateStr] = useState<string>('');
+  const [editCouponApplicable, setEditCouponApplicable] = useState<boolean>(true);
   const [editUrl, setEditUrl] = useState<string>('');
 
   if (!promo) return null;
@@ -44,10 +45,17 @@ export default function QcWorkspace({ promotionId }: QcWorkspaceProps) {
   const warningCount = promo.qcIssues.filter((i) => i.severity === 'WARNING').length;
   const isAllPassed = blockerCount === 0;
 
-  const handleStartEdit = (prodId: string, salePrice: number, discountRate: number, url: string) => {
+  const handleStartEdit = (
+    prodId: string,
+    salePrice: number,
+    discountRate: number,
+    couponApplicable: boolean,
+    url: string
+  ) => {
     setEditingProductId(prodId);
     setEditPriceStr(String(salePrice));
     setEditDiscountRateStr(String(discountRate));
+    setEditCouponApplicable(couponApplicable);
     setEditUrl(url);
   };
 
@@ -58,6 +66,7 @@ export default function QcWorkspace({ promotionId }: QcWorkspaceProps) {
     updateProductAndRevalidate(promo.id, prodId, {
       salePrice: finalPrice,
       displayDiscountRate: finalRate,
+      couponApplicable: editCouponApplicable,
       detailUrl: editUrl,
     });
     setEditingProductId(null);
@@ -235,6 +244,7 @@ export default function QcWorkspace({ promotionId }: QcWorkspaceProps) {
                 <th className="py-3 px-4 text-right">실제 판매가</th>
                 <th className="py-3 px-4 text-center">수학적 계산치</th>
                 <th className="py-3 px-4 text-center">표기 할인율</th>
+                <th className="py-3 px-4 text-center">쿠폰 적용 여부</th>
                 <th className="py-3 px-4">연결 상세 URL</th>
                 <th className="py-3 px-4 text-center">액션</th>
               </tr>
@@ -325,6 +335,33 @@ export default function QcWorkspace({ promotionId }: QcWorkspaceProps) {
                       )}
                     </td>
 
+                    {/* 쿠폰 적용 여부 (토글 수정 가능) */}
+                    <td className="py-3 px-4 text-center">
+                      {isEditing ? (
+                        <button
+                          type="button"
+                          onClick={() => setEditCouponApplicable(!editCouponApplicable)}
+                          className={`px-2.5 py-1 rounded-md text-[11px] font-bold transition-colors ${
+                            editCouponApplicable
+                              ? 'bg-blue-100 text-blue-800 border border-blue-300'
+                              : 'bg-slate-100 text-slate-600 border border-slate-300'
+                          }`}
+                        >
+                          {editCouponApplicable ? '쿠폰 가능 (O)' : '쿠폰 제외 (X)'}
+                        </button>
+                      ) : (
+                        <span
+                          className={`px-2 py-0.5 rounded text-[11px] font-semibold ${
+                            prod.couponApplicable
+                              ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                              : 'bg-slate-100 text-slate-500'
+                          }`}
+                        >
+                          {prod.couponApplicable ? '쿠폰 가능' : '적용 불가'}
+                        </span>
+                      )}
+                    </td>
+
                     {/* URL (클릭 시 가라 IDF몰 상세 페이지로 이동) */}
                     <td className="py-3 px-4 text-slate-500 max-w-[200px] truncate">
                       {isEditing ? (
@@ -364,6 +401,7 @@ export default function QcWorkspace({ promotionId }: QcWorkspaceProps) {
                               prod.id,
                               prod.salePrice,
                               prod.displayDiscountRate,
+                              prod.couponApplicable,
                               prod.detailUrl
                             )
                           }

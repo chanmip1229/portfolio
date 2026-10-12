@@ -7,6 +7,7 @@ import MatrixFilterBar from '@/components/MatrixFilterBar';
 import PromotionCalendarView from '@/components/PromotionCalendarView';
 import BannerStudio from '@/components/BannerStudio';
 import QcWorkspace from '@/components/QcWorkspace';
+import MobileLivePreview from '@/components/MobileLivePreview';
 import EmailDraftModal from '@/components/EmailDraftModal';
 import { useOpsStore } from '@/store/useOpsStore';
 
@@ -51,7 +52,7 @@ export default function Home() {
           </div>
         </div>
 
-        {/* 4.5 & 4.4 게시 전 사전 QC 워크스페이스 & 상품 인라인 수정 */}
+        {/* 4.5 & 4.4 게시 전 사전 QC 워크스페이스 (쿠폰 정책 + 가격 계산 정합성) */}
         {selectedPromotionId && (
           <QcWorkspace promotionId={selectedPromotionId} />
         )}
@@ -59,6 +60,11 @@ export default function Home() {
         {/* 4.3 메일 회신 수신 후 배너 자동 합성 & 원클릭 컨펌 스튜디오 */}
         {selectedPromotionId && (
           <BannerStudio promotionId={selectedPromotionId} />
+        )}
+
+        {/* 4.6 IDF몰 모바일 라이브 프리뷰 (아이폰 15 프레임) */}
+        {selectedPromotionId && (
+          <MobileLivePreview promotionId={selectedPromotionId} />
         )}
 
         {/* 4.1 연간 캘린더 엑셀 업로더 */}

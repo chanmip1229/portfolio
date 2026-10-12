@@ -103,6 +103,7 @@ export function parseExcelCalendar(fileBuffer: ArrayBuffer): Promotion[] {
       startDate,
       endDate,
       targetDiscountRate,
+      allowCoupon: true, // 기본값: 쿠폰 허용
       status: 'PLANNING',
       currentBottleneckDept: 'MD',
       category,

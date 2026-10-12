@@ -40,7 +40,9 @@ export interface ProductItem {
   displayDiscountRate: number; // 표기 할인율 (%)
   detailUrl: string;
   isApproved: boolean;
+  couponApplicable: boolean; // 쿠폰 적용 가능 여부
   category?: string;
+  thumbnailUrl?: string;
 }
 
 export interface QcIssue {
@@ -51,14 +53,15 @@ export interface QcIssue {
     | 'PLAN_DISCOUNT_MISMATCH'
     | 'UNAPPROVED_SKU'
     | 'INVALID_URL'
-    | 'BANNER_SPEC_MISMATCH';
+    | 'BANNER_SPEC_MISMATCH'
+    | 'COUPON_POLICY_MISMATCH';
   severity: 'BLOCKER' | 'WARNING';
   targetField: string;
   message: string;
   details?: {
     productCode?: string;
-    expected?: string | number;
-    actual?: string | number;
+    expected?: string | number | boolean;
+    actual?: string | number | boolean;
   };
 }
 
@@ -83,6 +86,7 @@ export interface Promotion {
   startDate: string; // YYYY-MM-DD or ISO
   endDate: string;
   targetDiscountRate: number; // 기획 기준 할인율 (예: 40)
+  allowCoupon: boolean; // 기획서 쿠폰 적용 허용 정책 (true: 가능, false: 특가전 제외)
   status: PromotionStatus;
   currentBottleneckDept: Department;
   category: string; // 예: 아우터, 원피스, 전품목

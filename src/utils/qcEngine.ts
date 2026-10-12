@@ -90,6 +90,22 @@ export function runDeterministicQc(promotion: Promotion): QcIssue[] {
         },
       });
     }
+
+    // 6. 쿠폰 적용 여부 정합성 검증 (쿠폰 제외 특가전인데 쿠폰 가능으로 잘못 세팅된 경우 적발)
+    if (promotion.allowCoupon === false && product.couponApplicable === true) {
+      issues.push({
+        id: `qc-coupon-${product.id}-${idx}`,
+        ruleCode: 'COUPON_POLICY_MISMATCH',
+        severity: 'BLOCKER',
+        targetField: `${product.productCode}.couponApplicable`,
+        message: `[${product.productCode}] 쿠폰 정책 불일치: 본 프로모션은 [쿠폰 적용 제외/불가] 기획전이나, 해당 상품에 [쿠폰 사용 가능]으로 잘못 설정되어 중복 할인 역마진 위험이 있습니다.`,
+        details: {
+          productCode: product.productCode,
+          expected: '쿠폰 미적용 (false)',
+          actual: '쿠폰 적용 중 (true)',
+        },
+      });
+    }
   });
 
   // 6. 배너 컨펌 및 버전 검증

@@ -9,6 +9,7 @@ export const INITIAL_PROMOTIONS: Promotion[] = [
     startDate: '2026-03-10',
     endDate: '2026-03-17',
     targetDiscountRate: 40,
+    allowCoupon: true, // 리스트 얼리버드 위크는 쿠폰 적용 가능 기획
     status: 'NEEDS_CHECK',
     currentBottleneckDept: 'MD',
     category: '아우터',
@@ -42,7 +43,9 @@ export const INITIAL_PROMOTIONS: Promotion[] = [
         displayDiscountRate: 40,
         detailUrl: 'https://www.idfmall.co.kr/product/SWBLPB21010',
         isApproved: true,
+        couponApplicable: true,
         category: '트렌치코트',
+        thumbnailUrl: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=400&auto=format&fit=crop&q=80',
       },
       {
         id: 'p-2',
@@ -53,7 +56,9 @@ export const INITIAL_PROMOTIONS: Promotion[] = [
         displayDiscountRate: 40, // 40% 정상
         detailUrl: 'https://www.idfmall.co.kr/product/SWJCKB21020',
         isApproved: true,
+        couponApplicable: true,
         category: '트렌치코트',
+        thumbnailUrl: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=400&auto=format&fit=crop&q=80',
       },
       {
         id: 'p-3',
@@ -64,7 +69,9 @@ export const INITIAL_PROMOTIONS: Promotion[] = [
         displayDiscountRate: 40,
         detailUrl: 'https://www.idfmall.co.kr/product/SWCTKB21030',
         isApproved: true,
+        couponApplicable: true,
         category: '자켓',
+        thumbnailUrl: 'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=400&auto=format&fit=crop&q=80',
       },
     ],
     qcIssues: [
@@ -90,6 +97,7 @@ export const INITIAL_PROMOTIONS: Promotion[] = [
     startDate: '2026-03-18',
     endDate: '2026-03-25',
     targetDiscountRate: 35,
+    allowCoupon: false, // 쉬즈미스 수트전은 노세일/특가로 쿠폰 제외 기획
     status: 'ASSET_REQUESTED',
     currentBottleneckDept: 'DESIGN',
     category: '셋업/자켓',
@@ -120,6 +128,7 @@ export const INITIAL_PROMOTIONS: Promotion[] = [
     startDate: '2026-03-24',
     endDate: '2026-03-31',
     targetDiscountRate: 50,
+    allowCoupon: true,
     status: 'PLANNING',
     currentBottleneckDept: 'MD',
     category: '니트',
