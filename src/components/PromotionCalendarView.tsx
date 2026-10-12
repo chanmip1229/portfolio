@@ -118,9 +118,9 @@ export default function PromotionCalendarView() {
                       </button>
                     )}
 
-                    {/* 회신 지연 경고 & 리마인더 발송 버튼 */}
+                    {/* 회신 지연 경고 & 리마인더 발송 & 회신 도착 시뮬레이션 버튼 */}
                     {isDelayPending && (
-                      <div className="flex items-center gap-1.5">
+                      <div className="flex items-center gap-1.5 flex-wrap">
                         <span className="text-[11px] font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200 flex items-center gap-1">
                           <Clock className="w-3 h-3" />
                           회신 대기 중 (D-3)
@@ -133,7 +133,17 @@ export default function PromotionCalendarView() {
                           className="inline-flex items-center gap-1 text-[11px] font-bold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 px-2.5 py-0.5 rounded-full border border-indigo-200 transition-colors"
                         >
                           <BellRing className="w-3 h-3" />
-                          <span>리마인더 메일 초안 작성</span>
+                          <span>리마인더 메일 작성</span>
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            useOpsStore.getState().simulateReceiveLookbook(promo.id);
+                          }}
+                          className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-800 bg-emerald-100 hover:bg-emerald-200 px-2.5 py-0.5 rounded-full border border-emerald-300 transition-colors"
+                        >
+                          <Sparkles className="w-3 h-3 text-emerald-600" />
+                          <span>⚡ [시뮬레이션] 디자인팀 화보 회신 도착</span>
                         </button>
                       </div>
                     )}

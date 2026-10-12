@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Promotion, Brand, Department, PromotionStatus, EmailDraft } from '@/types/promotion';
+import { Promotion, Brand, Department, PromotionStatus, EmailDraft, BannerInfo } from '@/types/promotion';
 import { INITIAL_PROMOTIONS } from '@/data/mockPromotions';
 
 interface OpsStore {
@@ -29,6 +29,10 @@ interface OpsStore {
 
   // 프로모션 갱신
   updatePromotion: (id: string, updater: Partial<Promotion> | ((prev: Promotion) => Promotion)) => void;
+
+  // 4.3 메일 회신 시뮬레이션 및 배너 자동 생성/컨펌
+  simulateReceiveLookbook: (promoId: string) => void;
+  confirmBanner: (promoId: string, updatedBanner?: Partial<BannerInfo>) => void;
 
   // 이메일 초안 생성 (리마인더 / 재확인 / 요청)
   createReminderDraft: (promoId: string) => void;
@@ -125,6 +129,81 @@ export const useOpsStore = create<OpsStore>((set, get) => ({
         return { ...p, ...updater };
       }),
     })),
+
+  // 4.3 디자인팀 회신 수신 시뮬레이션
+  simulateReceiveLookbook: (promoId) => {
+    const promo = get().promotions.find((p) => p.id === promoId);
+    if (!promo) return;
+
+    const nowStr = new Date().toISOString().replace('T', ' ').substring(0, 16);
+
+    // 브랜드별 고화질 모의 룩북 이미지 URL 매핑
+    const LOOKBOOK_MAP: Record<Brand, { url: string; filename: string }> = {
+      LIST: {
+        url: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=1200&auto=format&fit=crop&q=80',
+        filename: 'LIST_26SS_TRENCH_LOOKBOOK_FINAL.jpg',
+      },
+      SHESMISS: {
+        url: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1200&auto=format&fit=crop&q=80',
+        filename: 'SHESMISS_SUIT_EDITORIAL_V1.jpg',
+      },
+      SISTINA: {
+        url: 'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=1200&auto=format&fit=crop&q=80',
+        filename: 'SISTINA_KNIT_COLLECTION_MAIN.jpg',
+      },
+    };
+
+    const asset = LOOKBOOK_MAP[promo.brand];
+
+    set((state) => ({
+      promotions: state.promotions.map((p) => {
+        if (p.id !== promoId) return p;
+        return {
+          ...p,
+          status: 'DATA_RECEIVED',
+          currentBottleneckDept: 'EBIZ_OPS',
+          timestamps: {
+            ...p.timestamps,
+            dataReceivedAt: nowStr,
+          },
+          milestones: p.milestones.map((m) =>
+            m.code === 'D_MINUS_2'
+              ? { ...m, isCompleted: true, completedAt: nowStr }
+              : m
+          ),
+          banner: {
+            ...p.banner,
+            sourceImageUrl: asset.url,
+            sourceImageName: asset.filename,
+            isConfirmed: false,
+          },
+        };
+      }),
+    }));
+  },
+
+  // 4.3 배너 원클릭 컨펌
+  confirmBanner: (promoId, updatedBanner) => {
+    const nowStr = new Date().toISOString().replace('T', ' ').substring(0, 16);
+
+    set((state) => ({
+      promotions: state.promotions.map((p) => {
+        if (p.id !== promoId) return p;
+        const nextBanner = {
+          ...p.banner,
+          ...updatedBanner,
+          isConfirmed: true,
+          confirmedAt: nowStr,
+        };
+        return {
+          ...p,
+          banner: nextBanner,
+          // 배너 컨펌 후 상품 검증이 남아있으면 NEEDS_CHECK/DATA_RECEIVED, 상품도 정상이면 QC_PASSED
+          status: p.qcIssues.length > 0 ? 'NEEDS_CHECK' : 'QC_PASSED',
+        };
+      }),
+    }));
+  },
 
   createReminderDraft: (promoId) => {
     const promo = get().promotions.find((p) => p.id === promoId);

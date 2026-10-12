@@ -5,11 +5,12 @@ import Header from '@/components/Header';
 import CalendarUploader from '@/components/CalendarUploader';
 import MatrixFilterBar from '@/components/MatrixFilterBar';
 import PromotionCalendarView from '@/components/PromotionCalendarView';
+import BannerStudio from '@/components/BannerStudio';
 import EmailDraftModal from '@/components/EmailDraftModal';
 import { useOpsStore } from '@/store/useOpsStore';
 
 export default function Home() {
-  const { emailDrafts, resetToDefault, setIsDraftModalOpen } = useOpsStore();
+  const { emailDrafts, selectedPromotionId, resetToDefault, setIsDraftModalOpen } = useOpsStore();
 
   const activeDraftCount = emailDrafts.filter((d) => d.status === 'DRAFT').length;
 
@@ -21,9 +22,9 @@ export default function Home() {
         draftCount={activeDraftCount}
       />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full space-y-8">
         {/* 상단 브리핑 배너 */}
-        <div className="bg-linear-to-r from-slate-900 to-indigo-950 text-white rounded-2xl p-6 mb-8 shadow-sm">
+        <div className="bg-linear-to-r from-slate-900 to-indigo-950 text-white rounded-2xl p-6 shadow-sm">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
             <div>
               <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-white/10 text-white text-[11px] font-semibold mb-2">
@@ -48,6 +49,11 @@ export default function Home() {
             )}
           </div>
         </div>
+
+        {/* 4.3 메일 회신 수신 후 배너 자동 합성 & 원클릭 컨펌 스튜디오 */}
+        {selectedPromotionId && (
+          <BannerStudio promotionId={selectedPromotionId} />
+        )}
 
         {/* 4.1 연간 캘린더 엑셀 업로더 */}
         <CalendarUploader />
