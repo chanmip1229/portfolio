@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Header from '@/components/Header';
 import CalendarUploader from '@/components/CalendarUploader';
 import MatrixFilterBar from '@/components/MatrixFilterBar';
@@ -9,10 +9,13 @@ import BannerStudio from '@/components/BannerStudio';
 import QcWorkspace from '@/components/QcWorkspace';
 import MobileLivePreview from '@/components/MobileLivePreview';
 import EmailDraftModal from '@/components/EmailDraftModal';
+import AnnualScheduleView from '@/components/AnnualScheduleView';
 import { useOpsStore } from '@/store/useOpsStore';
+import { Sparkles, Calendar, LayoutDashboard } from 'lucide-react';
 
 export default function Home() {
   const { emailDrafts, selectedPromotionId, resetToDefault, setIsDraftModalOpen } = useOpsStore();
+  const [activeTab, setActiveTab] = useState<'WORKSPACE' | 'ANNUAL_CALENDAR'>('WORKSPACE');
 
   const activeDraftCount = emailDrafts.filter((d) => d.status === 'DRAFT').length;
 
@@ -24,57 +27,100 @@ export default function Home() {
         draftCount={activeDraftCount}
       />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full space-y-8">
-        {/* 상단 브리핑 배너 */}
-        <div className="bg-linear-to-r from-slate-900 to-indigo-950 text-white rounded-2xl p-6 shadow-sm">
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-            <div>
-              <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-white/10 text-white text-[11px] font-semibold mb-2">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                E-BIZ 프로모션 자율 운영 엔진 가동 중
-              </div>
-              <h1 className="text-xl md:text-2xl font-black tracking-tight">
-                인동FN 자사몰 프로모션 캘린더 & 마일스톤 관리
-              </h1>
-              <p className="text-xs text-slate-300 mt-1 max-w-2xl">
-                연간 행사 계획 엑셀을 업로드하면 시작일 기준 D-7(MD 상품 요청), D-5(디자인 배너 요청), D-2(회신 확인), D-1(사전 QC) 일정과 진행 현황을 자동으로 생성 및 관리합니다.
-              </p>
-            </div>
+      {/* 상단 메인 네비게이션 탭 (운영 QC 워크스페이스 vs 2026 연간 마스터 캘린더) */}
+      <div className="bg-white border-b border-slate-200 sticky top-14 z-20 shadow-2xs">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+          <div className="flex items-center gap-2 py-2">
+            <button
+              onClick={() => setActiveTab('WORKSPACE')}
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                activeTab === 'WORKSPACE'
+                  ? 'bg-indigo-600 text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+              }`}
+            >
+              <LayoutDashboard className="w-4 h-4" />
+              <span>실시간 운영 QC & 타임라인 워크스페이스</span>
+            </button>
 
-            {activeDraftCount > 0 && (
-              <button
-                onClick={() => setIsDraftModalOpen(true)}
-                className="inline-flex items-center gap-2 px-4 py-2.5 bg-amber-400 hover:bg-amber-300 text-slate-950 text-xs font-bold rounded-xl shadow-md transition-all shrink-0 cursor-pointer"
-              >
-                <span>🔔 검토 대기 메일 {activeDraftCount}건 확인하기</span>
-              </button>
-            )}
+            <button
+              onClick={() => setActiveTab('ANNUAL_CALENDAR')}
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                activeTab === 'ANNUAL_CALENDAR'
+                  ? 'bg-indigo-600 text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+              }`}
+            >
+              <Calendar className="w-4 h-4" />
+              <span>2026 연간 프로모션 마스터 캘린더 (연간 일정 & 진척도)</span>
+            </button>
+          </div>
+
+          <div className="hidden md:flex items-center gap-2 text-xs text-slate-400">
+            <span>인동FN (SHESMISS · LIST · SISTINA) E-BIZ 자율 운영 시스템</span>
           </div>
         </div>
+      </div>
 
-        {/* 4.5 & 4.4 게시 전 사전 QC 워크스페이스 (쿠폰 정책 + 가격 계산 정합성) */}
-        {selectedPromotionId && (
-          <QcWorkspace promotionId={selectedPromotionId} />
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full space-y-8">
+        {activeTab === 'ANNUAL_CALENDAR' ? (
+          /* 연간 일정 한 번에 확인하는 탭 (Annual Promo Roadmap & Progress) */
+          <AnnualScheduleView />
+        ) : (
+          /* 실시간 운영 워크스페이스 뷰 */
+          <>
+            {/* 상단 브리핑 배너 */}
+            <div className="bg-linear-to-r from-slate-900 to-indigo-950 text-white rounded-2xl p-6 shadow-sm">
+              <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div>
+                  <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-white/10 text-white text-[11px] font-semibold mb-2">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    E-BIZ 프로모션 자율 운영 엔진 가동 중
+                  </div>
+                  <h1 className="text-xl md:text-2xl font-black tracking-tight">
+                    인동FN 자사몰 프로모션 캘린더 & 마일스톤 관리
+                  </h1>
+                  <p className="text-xs text-slate-300 mt-1 max-w-2xl">
+                    연간 행사 계획 엑셀을 업로드하면 시작일 기준 D-7(MD 상품 요청), D-5(디자인 배너 요청), D-2(회신 확인), D-1(사전 QC) 일정과 진행 현황을 자동으로 생성 및 관리합니다.
+                  </p>
+                </div>
+
+                {activeDraftCount > 0 && (
+                  <button
+                    onClick={() => setIsDraftModalOpen(true)}
+                    className="inline-flex items-center gap-2 px-4 py-2.5 bg-amber-400 hover:bg-amber-300 text-slate-950 text-xs font-bold rounded-xl shadow-md transition-all shrink-0 cursor-pointer"
+                  >
+                    <span>🔔 검토 대기 메일 {activeDraftCount}건 확인하기</span>
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* 4.5 & 4.4 게시 전 사전 QC 워크스페이스 (쿠폰 정책 + 가격 계산 정합성) */}
+            {selectedPromotionId && (
+              <QcWorkspace promotionId={selectedPromotionId} />
+            )}
+
+            {/* 4.3 메일 회신 수신 후 배너 자동 합성 & 원클릭 컨펌 스튜디오 */}
+            {selectedPromotionId && (
+              <BannerStudio promotionId={selectedPromotionId} />
+            )}
+
+            {/* 4.6 IDF몰 모바일 라이브 프리뷰 (아이폰 15 프레임) */}
+            {selectedPromotionId && (
+              <MobileLivePreview promotionId={selectedPromotionId} />
+            )}
+
+            {/* 4.1 연간 캘린더 엑셀 업로더 */}
+            <CalendarUploader />
+
+            {/* 4.2 3-Way 매트릭스 필터 (브랜드/부서/업무상태) */}
+            <MatrixFilterBar />
+
+            {/* 4.1 & 4.2 캘린더, 마일스톤 타임라인 & 리마인더 발송 */}
+            <PromotionCalendarView />
+          </>
         )}
-
-        {/* 4.3 메일 회신 수신 후 배너 자동 합성 & 원클릭 컨펌 스튜디오 */}
-        {selectedPromotionId && (
-          <BannerStudio promotionId={selectedPromotionId} />
-        )}
-
-        {/* 4.6 IDF몰 모바일 라이브 프리뷰 (아이폰 15 프레임) */}
-        {selectedPromotionId && (
-          <MobileLivePreview promotionId={selectedPromotionId} />
-        )}
-
-        {/* 4.1 연간 캘린더 엑셀 업로더 */}
-        <CalendarUploader />
-
-        {/* 4.2 3-Way 매트릭스 필터 (브랜드/부서/업무상태) */}
-        <MatrixFilterBar />
-
-        {/* 4.1 & 4.2 캘린더, 마일스톤 타임라인 & 리마인더 발송 */}
-        <PromotionCalendarView />
       </main>
 
       {/* 메일 임시보관함 모달 (Human-in-the-Loop 검토) */}

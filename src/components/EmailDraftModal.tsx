@@ -2,11 +2,20 @@
 
 import React, { useState } from 'react';
 import { useOpsStore } from '@/store/useOpsStore';
-import { X, Mail, Check, Copy, AlertTriangle, Clock, Send, Sparkles } from 'lucide-react';
+import { X, Mail, Check, Copy, AlertTriangle, Clock, Send, Sparkles, Download, FileSpreadsheet } from 'lucide-react';
+import { exportToExcel } from '@/utils/excelExporter';
 
 export default function EmailDraftModal() {
-  const { isDraftModalOpen, setIsDraftModalOpen, emailDrafts, updateDraft, markDraftAsSent, selectedDraftId, setSelectedDraftId } =
-    useOpsStore();
+  const {
+    isDraftModalOpen,
+    setIsDraftModalOpen,
+    emailDrafts,
+    updateDraft,
+    markDraftAsSent,
+    selectedDraftId,
+    setSelectedDraftId,
+    promotions,
+  } = useOpsStore();
 
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
@@ -131,6 +140,47 @@ export default function EmailDraftModal() {
                       <Check className="w-3.5 h-3.5 text-emerald-600" />
                       적발된 SKU 품번 및 수치 정합성 100% 매핑 완료
                     </span>
+                  </div>
+                </div>
+
+                {/* 대량 수백/수천 건 품번 오류 대응용 엑셀 다운로드 바 */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 mb-4 rounded-xl bg-indigo-50/70 border border-indigo-200">
+                  <div className="flex items-center gap-2.5">
+                    <span className="p-1.5 bg-indigo-100 text-indigo-700 rounded-lg">
+                      <FileSpreadsheet className="w-4 h-4" />
+                    </span>
+                    <div>
+                      <p className="text-xs font-bold text-indigo-950">
+                        대량 품번 오류 전달용 엑셀 첨부 파일 (.xlsx)
+                      </p>
+                      <p className="text-[11px] text-slate-500">
+                        수백 개 상품의 오류를 본문 텍스트 대신 부서별 엑셀 파일로 일괄 전달할 수 있습니다.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        exportToExcel(
+                          promotions,
+                          `${currentDraft.toDepartment}팀_오류품번리스트`,
+                          currentDraft.toDepartment
+                        )
+                      }
+                      className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-bold flex items-center gap-1 shadow-2xs transition-colors cursor-pointer"
+                    >
+                      <Download className="w-3.5 h-3.5" />
+                      <span>{currentDraft.toDepartment}팀 엑셀 다운로드</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => exportToExcel(promotions, '전체_프로모션_오류통합리포트')}
+                      className="px-2.5 py-1.5 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 rounded-lg text-xs font-semibold flex items-center gap-1 transition-colors cursor-pointer"
+                    >
+                      <span>전체 엑셀</span>
+                    </button>
                   </div>
                 </div>
 

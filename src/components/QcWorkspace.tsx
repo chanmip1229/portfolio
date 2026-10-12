@@ -13,8 +13,11 @@ import {
   Rocket,
   Mail,
   Info,
+  Download,
+  FileSpreadsheet,
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { exportToExcel } from '@/utils/excelExporter';
 
 interface QcWorkspaceProps {
   promotionId: string;
@@ -219,19 +222,54 @@ export default function QcWorkspace({ promotionId }: QcWorkspaceProps) {
 
       {/* 대상 상품 테이블 & 인라인 수정 인터페이스 */}
       <div className="p-5">
-        <div className="flex items-center justify-between mb-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
           <div className="flex items-center gap-2">
             <span className="text-xs font-bold text-slate-800">게시 예정 대상 상품 목록</span>
             <span className="text-xs text-slate-400">({promo.products.length}종)</span>
           </div>
 
-          <button
-            onClick={() => runQcValidation(promo.id)}
-            className="text-xs font-semibold text-slate-600 hover:text-slate-900 flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors"
-          >
-            <RefreshCw className="w-3.5 h-3.5" />
-            <span>룰 엔진 강제 재검증</span>
-          </button>
+          <div className="flex flex-wrap items-center gap-2">
+            {/* 엑셀 파일 다운로드 버튼군 (전체 및 담당자별) */}
+            <div className="flex items-center rounded-lg bg-slate-100 p-0.5 border border-slate-200 text-xs">
+              <button
+                onClick={() => exportToExcel([promo], `${promo.id}_전체_QC리포트`)}
+                className="px-2.5 py-1 text-[11px] font-bold text-slate-700 hover:text-slate-900 hover:bg-white rounded transition-colors flex items-center gap-1 cursor-pointer"
+                title="해당 기획전의 모든 상품 및 오류 내역을 엑셀로 다운로드"
+              >
+                <Download className="w-3 h-3 text-indigo-600" />
+                <span>전체 엑셀</span>
+              </button>
+              <button
+                onClick={() => exportToExcel([promo], `${promo.id}_MD팀_오류품번`, 'MD')}
+                className="px-2 py-1 text-[11px] font-semibold text-slate-600 hover:text-slate-900 hover:bg-white rounded transition-colors cursor-pointer"
+                title="MD팀 확인 대상(할인율 불일치, 미승인 품번) 엑셀 다운로드"
+              >
+                MD팀용
+              </button>
+              <button
+                onClick={() => exportToExcel([promo], `${promo.id}_디자인팀_배너오류`, 'DESIGN')}
+                className="px-2 py-1 text-[11px] font-semibold text-slate-600 hover:text-slate-900 hover:bg-white rounded transition-colors cursor-pointer"
+                title="디자인팀 확인 대상(배너 규격, 카피) 엑셀 다운로드"
+              >
+                디자인팀용
+              </button>
+              <button
+                onClick={() => exportToExcel([promo], `${promo.id}_운영팀_URL쿠폰오류`, 'EBIZ_OPS')}
+                className="px-2 py-1 text-[11px] font-semibold text-slate-600 hover:text-slate-900 hover:bg-white rounded transition-colors cursor-pointer"
+                title="E-BIZ 운영팀 확인 대상(URL 404, 쿠폰 정책) 엑셀 다운로드"
+              >
+                운영팀용
+              </button>
+            </div>
+
+            <button
+              onClick={() => runQcValidation(promo.id)}
+              className="text-xs font-semibold text-slate-600 hover:text-slate-900 flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors cursor-pointer"
+            >
+              <RefreshCw className="w-3.5 h-3.5" />
+              <span>룰 엔진 강제 재검증</span>
+            </button>
+          </div>
         </div>
 
         <div className="overflow-x-auto rounded-xl border border-slate-200">
@@ -244,7 +282,7 @@ export default function QcWorkspace({ promotionId }: QcWorkspaceProps) {
                 <th className="py-3 px-4 text-right">실제 판매가</th>
                 <th className="py-3 px-4 text-center">수학적 계산치</th>
                 <th className="py-3 px-4 text-center">표기 할인율</th>
-                <th className="py-3 px-4 text-center">쿠폰 적용 여부</th>
+                <th className="py-3 px-4 text-center">쿠폰 정책 및 정합성 QC</th>
                 <th className="py-3 px-4">연결 상세 URL</th>
                 <th className="py-3 px-4 text-center">액션</th>
               </tr>
@@ -359,23 +397,38 @@ export default function QcWorkspace({ promotionId }: QcWorkspaceProps) {
                         </button>
                       ) : (
                         <div className="flex flex-col items-center gap-1">
+                          {/* 쿠폰 정책 정합성 QC 뱃지 (사용자 요청: 정보 일치 vs 확인 필요) */}
+                          {promo.allowCoupon === prod.couponApplicable ? (
+                            <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                              ✓ 정보 일치
+                            </span>
+                          ) : !promo.allowCoupon && prod.couponApplicable ? (
+                            <span className="inline-flex items-center gap-1 text-[10px] font-bold text-rose-700 bg-rose-50 px-2 py-0.5 rounded-full border border-rose-300 animate-pulse">
+                              🚨 확인 필요 (쿠폰 불가 기획)
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1 text-[10px] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-300">
+                              ⚠️ 확인 필요 (쿠폰 미적용)
+                            </span>
+                          )}
+
                           <span
-                            className={`px-2 py-0.5 rounded text-[11px] font-bold ${
+                            className={`px-2 py-0.5 rounded text-[10px] font-semibold ${
                               prod.couponApplicable
-                                ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                                ? 'bg-blue-50 text-blue-700'
                                 : 'bg-slate-100 text-slate-500'
                             }`}
                           >
-                            {prod.couponApplicable ? '쿠폰 적용 O' : '적용 제외'}
+                            {prod.couponApplicable ? '쿠폰 적용 O' : '쿠폰 제외 X'}
                           </span>
 
                           {/* 적용 가능한 쿠폰 태그 목록 (다운로드 & 등급 쿠폰) */}
                           {prod.couponApplicable && prod.applicableCoupons && prod.applicableCoupons.length > 0 && (
-                            <div className="flex flex-wrap justify-center gap-1 max-w-[170px]">
+                            <div className="flex flex-wrap justify-center gap-1 max-w-[170px] pt-0.5">
                               {prod.applicableCoupons.map((c) => (
                                 <span
                                   key={c.id}
-                                  className="text-[9px] px-1 py-0.2 rounded bg-slate-100 text-slate-600 border border-slate-200"
+                                  className="text-[9px] px-1 py-0.2 rounded bg-slate-100 text-slate-600 border border-slate-200 font-mono"
                                   title={`${c.name} (${c.discountRate}%)`}
                                 >
                                   {c.type === 'MEMBERSHIP_TIER' ? '👑' : '📥'}

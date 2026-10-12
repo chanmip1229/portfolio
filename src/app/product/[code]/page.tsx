@@ -378,13 +378,27 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
               </div>
             </div>
 
-            {/* 적용 가능한 쿠폰 상세 요약 카드 (다운로드 쿠폰 + 등급 쿠폰 안내) */}
+            {/* 적용 가능한 쿠폰 상세 요약 카드 (다운로드 쿠폰 + 등급 쿠폰 안내 & QC 검증 상태) */}
             <div className="p-4 rounded-xl bg-indigo-50/60 border border-indigo-100 space-y-3">
               <div className="flex items-center justify-between text-xs font-bold text-indigo-950">
-                <span className="flex items-center gap-1.5">
-                  <Sparkles className="w-4 h-4 text-indigo-600" />
-                  본 상품에 적용 가능한 쿠폰 상세 ({coupons.length}종)
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="flex items-center gap-1.5">
+                    <Sparkles className="w-4 h-4 text-indigo-600" />
+                    본 상품에 적용 가능한 쿠폰 상세 ({coupons.length}종)
+                  </span>
+
+                  {/* 사용자 요청: 그 바로 옆에 QC란으로 두고 바로 확인 (정보 일치 vs 확인 필요) */}
+                  {foundPromo?.allowCoupon && foundProduct.couponApplicable ? (
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold border border-emerald-300">
+                      ✓ 정보 일치
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-rose-100 text-rose-800 text-[10px] font-bold border border-rose-300 animate-pulse">
+                      🚨 확인 필요 (기획서 불일치)
+                    </span>
+                  )}
+                </div>
+
                 <button
                   onClick={() => setIsCouponModalOpen(true)}
                   className="text-[11px] text-indigo-600 hover:underline cursor-pointer font-semibold"
