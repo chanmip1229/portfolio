@@ -99,17 +99,74 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
     ((foundProduct.originalPrice - foundProduct.salePrice) / foundProduct.originalPrice) * 100
   );
 
-  // 8개 썸네일 스트립 이미지 (스크린샷과 동일한 착장 컷 시뮬레이션)
-  const productImages = [
-    foundProduct.thumbnailUrl || 'https://images.unsplash.com/photo-1544441893-675973e31985?w=1000&auto=format&fit=crop&q=80',
-    'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=1000&auto=format&fit=crop&q=80',
-    'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=1000&auto=format&fit=crop&q=80',
-    'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=1000&auto=format&fit=crop&q=80',
-    'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1000&auto=format&fit=crop&q=80',
-    'https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=1000&auto=format&fit=crop&q=80',
-    'https://images.unsplash.com/photo-1509631179647-0177331693ae?w=1000&auto=format&fit=crop&q=80',
-    'https://images.unsplash.com/photo-1485968579580-b6d095142e6e?w=1000&auto=format&fit=crop&q=80',
-  ];
+  // 상품별 정밀 룩북 & 디테일 컷 갤러리 매핑
+  const PRODUCT_GALLERIES: Record<string, string[]> = {
+    SWBLPB21010: [
+      '/images/products/SWBLPB21010_main.jpg',
+      '/images/products/SWBLPB21010_detail_collar.jpg',
+      '/images/products/SWBLPB21010_detail_profile.jpg',
+      '/images/products/SWBLPB21010_detail_belt.jpg',
+      '/images/products/SWBLPB21010_detail_back.jpg',
+      '/images/products/SWBLPB21010_detail_cuff.jpg',
+      '/images/products/SWBLPB21010_detail_fabric.jpg',
+      '/images/products/SWBLPB21010_main.jpg',
+    ],
+    SWJCKB21020: [
+      '/images/products/SWJCKB21020_main.jpg',
+      '/images/products/SWCTKB21099_main.jpg',
+      '/images/products/SWBLPB21010_detail_collar.jpg',
+      '/images/products/SWJCKB21020_main.jpg',
+      '/images/products/SWBLPB21010_detail_fabric.jpg',
+      '/images/products/SWCTKB21099_main.jpg',
+      '/images/products/SWJCKB21020_main.jpg',
+    ],
+    SWCTKB21030: [
+      '/images/products/SWCTKB21030_main.jpg',
+      '/images/products/SWBLPB21050_main.jpg',
+      '/images/products/SWBLPB21010_detail_belt.jpg',
+      '/images/products/SWCTKB21030_main.jpg',
+      '/images/products/SWBLPB21010_detail_cuff.jpg',
+      '/images/products/SWBLPB21050_main.jpg',
+      '/images/products/SWCTKB21030_main.jpg',
+    ],
+    AWWJKQ31060: [
+      '/images/products/AWWJKQ31060_main.jpg',
+      '/images/products/AWWJKQ31060_main.jpg',
+      '/images/products/SWBLPB21010_detail_fabric.jpg',
+      '/images/products/AWWJKQ31060_main.jpg',
+      '/images/products/SWBLPB21010_detail_collar.jpg',
+      '/images/products/AWWJKQ31060_main.jpg',
+    ],
+    SWCTKB21099: [
+      '/images/products/SWCTKB21099_main.jpg',
+      '/images/products/SWJCKB21020_main.jpg',
+      '/images/products/SWBLPB21010_detail_collar.jpg',
+      '/images/products/SWBLPB21010_detail_back.jpg',
+      '/images/products/SWCTKB21099_main.jpg',
+      '/images/products/SWBLPB21010_detail_belt.jpg',
+      '/images/products/SWCTKB21099_main.jpg',
+    ],
+    SWBLPB21050: [
+      '/images/products/SWBLPB21050_main.jpg',
+      '/images/products/SWCTKB21030_main.jpg',
+      '/images/products/SWBLPB21010_detail_collar.jpg',
+      '/images/products/SWBLPB21050_main.jpg',
+      '/images/products/SWBLPB21010_detail_cuff.jpg',
+      '/images/products/SWBLPB21050_main.jpg',
+    ],
+    SWJCKB21060: [
+      '/images/products/SWJCKB21060_main.jpg',
+      '/images/products/SWBLPB21010_main.jpg',
+      '/images/products/SWBLPB21010_detail_belt.jpg',
+      '/images/products/SWJCKB21060_main.jpg',
+      '/images/products/SWBLPB21010_detail_back.jpg',
+      '/images/products/SWJCKB21060_main.jpg',
+    ],
+  };
+
+  const productImages =
+    PRODUCT_GALLERIES[code] ||
+    (foundProduct.thumbnailUrl ? [foundProduct.thumbnailUrl] : ['/images/products/SWBLPB21010_main.jpg']);
 
   // 적용 가능한 쿠폰 목록 (다운로드 쿠폰 + 등급 쿠폰)
   const coupons: import('@/types/promotion').CouponDetail[] = foundProduct.applicableCoupons || [

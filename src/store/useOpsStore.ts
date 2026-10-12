@@ -226,7 +226,7 @@ export const useOpsStore = create<OpsStore>((set, get) => ({
 
     const LOOKBOOK_MAP: Record<Brand, { url: string; filename: string }> = {
       LIST: {
-        url: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=1200&auto=format&fit=crop&q=80',
+        url: '/images/products/SWBLPB21010_main.jpg',
         filename: 'LIST_26SS_TRENCH_LOOKBOOK_FINAL.jpg',
       },
       SHESMISS: {

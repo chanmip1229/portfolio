@@ -26,7 +26,7 @@ export const INITIAL_PROMOTIONS: Promotion[] = [
       return m;
     }),
     banner: {
-      sourceImageUrl: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=1200&auto=format&fit=crop&q=80',
+      sourceImageUrl: '/images/products/SWBLPB21010_main.jpg',
       sourceImageName: 'LIST_26SS_lookbook_trench_main.jpg',
       copyTitle: '2026 SPRING TRENCH COLLECTION',
       copySubtitle: '리스트 봄 시그니처 아우터 특가전',
@@ -45,7 +45,7 @@ export const INITIAL_PROMOTIONS: Promotion[] = [
         isApproved: true,
         couponApplicable: true,
         category: '트렌치코트',
-        thumbnailUrl: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=400&auto=format&fit=crop&q=80',
+        thumbnailUrl: '/images/products/SWBLPB21010_main.jpg',
         isLiveWeek: true,
         liveWeekBenefitText: '라이브위크 단 7일간의 특별한 혜택',
         applicableCoupons: [
@@ -86,7 +86,7 @@ export const INITIAL_PROMOTIONS: Promotion[] = [
         isApproved: true,
         couponApplicable: true,
         category: '트렌치코트',
-        thumbnailUrl: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=400&auto=format&fit=crop&q=80',
+        thumbnailUrl: '/images/products/SWJCKB21020_main.jpg',
         isLiveWeek: true,
         liveWeekBenefitText: '라이브위크 단 7일간의 특별한 혜택',
         applicableCoupons: [
@@ -111,7 +111,7 @@ export const INITIAL_PROMOTIONS: Promotion[] = [
         isApproved: true,
         couponApplicable: true,
         category: '자켓',
-        thumbnailUrl: 'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=400&auto=format&fit=crop&q=80',
+        thumbnailUrl: '/images/products/SWCTKB21030_main.jpg',
         applicableCoupons: [
           {
             id: 'cp-1',
@@ -135,7 +135,7 @@ export const INITIAL_PROMOTIONS: Promotion[] = [
         isApproved: true,
         couponApplicable: true,
         category: '자켓',
-        thumbnailUrl: 'https://images.unsplash.com/photo-1544441893-675973e31985?w=500&auto=format&fit=crop&q=80',
+        thumbnailUrl: '/images/products/AWWJKQ31060_main.jpg',
         isLiveWeek: true,
         liveWeekBenefitText: '라이브위크 단 7일간의 특별한 혜택',
         applicableCoupons: [
@@ -190,7 +190,7 @@ export const INITIAL_PROMOTIONS: Promotion[] = [
         isApproved: false, // MD팀 미승인 품번 에러
         couponApplicable: true,
         category: '트렌치코트',
-        thumbnailUrl: 'https://images.unsplash.com/photo-1544441893-675973e31985?w=500&auto=format&fit=crop&q=80',
+        thumbnailUrl: '/images/products/SWCTKB21099_main.jpg',
         applicableCoupons: [
           {
             id: 'cp-5-1',
@@ -212,7 +212,7 @@ export const INITIAL_PROMOTIONS: Promotion[] = [
         isApproved: true,
         couponApplicable: true,
         category: '블루종',
-        thumbnailUrl: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=400&auto=format&fit=crop&q=80',
+        thumbnailUrl: '/images/products/SWBLPB21050_main.jpg',
         applicableCoupons: [
           {
             id: 'cp-6-1',
@@ -234,7 +234,7 @@ export const INITIAL_PROMOTIONS: Promotion[] = [
         isApproved: true,
         couponApplicable: true,
         category: '코트',
-        thumbnailUrl: 'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=400&auto=format&fit=crop&q=80',
+        thumbnailUrl: '/images/products/SWJCKB21060_main.jpg',
         applicableCoupons: [
           {
             id: 'cp-7-1',

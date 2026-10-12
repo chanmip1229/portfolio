@@ -309,7 +309,7 @@ export default function AiSearchPage() {
                 {/* 썸네일 */}
                 <div className="aspect-3/4 bg-slate-100 relative overflow-hidden">
                   <img
-                    src={prod.thumbnailUrl || 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=400&auto=format&fit=crop&q=80'}
+                    src={prod.thumbnailUrl || '/images/products/SWBLPB21010_main.jpg'}
                     alt={prod.productName}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />

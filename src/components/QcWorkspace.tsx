@@ -468,13 +468,24 @@ export default function QcWorkspace({ promotionId }: QcWorkspaceProps) {
                   >
                     <td className="py-3 px-4 font-mono font-bold text-slate-900">{prod.productCode}</td>
                     <td className="py-3 px-4">
-                      <p className="font-medium text-slate-800">{prod.productName}</p>
-                      {prod.isLiveWeek && (
-                        <p className="text-[10px] font-bold text-rose-600 flex items-center gap-1 mt-0.5">
-                          <span>🔥</span>
-                          <span>{prod.liveWeekBenefitText || '라이브위크 단 7일간의 특별한 혜택'}</span>
-                        </p>
-                      )}
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-13 rounded-lg overflow-hidden bg-slate-100 border border-slate-200 shrink-0">
+                          <img
+                            src={prod.thumbnailUrl}
+                            alt={prod.productName}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        <div>
+                          <p className="font-medium text-slate-800">{prod.productName}</p>
+                          {prod.isLiveWeek && (
+                            <p className="text-[10px] font-bold text-rose-600 flex items-center gap-1 mt-0.5">
+                              <span>🔥</span>
+                              <span>{prod.liveWeekBenefitText || '라이브위크 단 7일간의 특별한 혜택'}</span>
+                            </p>
+                          )}
+                        </div>
+                      </div>
                     </td>
                     <td className="py-3 px-4 text-right font-mono text-slate-500">
                       {prod.originalPrice.toLocaleString()}원
