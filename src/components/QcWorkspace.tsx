@@ -419,22 +419,37 @@ export default function QcWorkspace({ promotionId }: QcWorkspaceProps) {
                                 : 'bg-slate-100 text-slate-500'
                             }`}
                           >
-                            {prod.couponApplicable ? '쿠폰 적용 O' : '쿠폰 제외 X'}
+                            {prod.couponApplicable ? '쿠폰 전체 적용 O' : '쿠폰 제외 X'}
                           </span>
 
-                          {/* 적용 가능한 쿠폰 태그 목록 (다운로드 & 등급 쿠폰) */}
-                          {prod.couponApplicable && prod.applicableCoupons && prod.applicableCoupons.length > 0 && (
-                            <div className="flex flex-wrap justify-center gap-1 max-w-[170px] pt-0.5">
-                              {prod.applicableCoupons.map((c) => (
-                                <span
-                                  key={c.id}
-                                  className="text-[9px] px-1 py-0.2 rounded bg-slate-100 text-slate-600 border border-slate-200 font-mono"
-                                  title={`${c.name} (${c.discountRate}%)`}
-                                >
-                                  {c.type === 'MEMBERSHIP_TIER' ? '👑' : '📥'}
-                                  {c.discountRate}%
+                          {/* 사용자 피드백 반영: 쿠폰 종류별 Y/N 및 시작일/종료일 기간 표기 */}
+                          {prod.couponApplicable ? (
+                            <div className="text-[10px] space-y-0.5 text-left bg-slate-50/80 p-1.5 rounded-lg border border-slate-200/80 w-full min-w-[190px] font-mono mt-1">
+                              <div className="flex items-center justify-between text-slate-700">
+                                <span>신상쿠폰:</span>
+                                <span className="font-bold text-indigo-700">
+                                  Y <span className="text-[9px] text-slate-400 font-normal">10.01~11.01</span>
                                 </span>
-                              ))}
+                              </div>
+                              <div className="flex items-center justify-between text-slate-700">
+                                <span>라이브위크:</span>
+                                <span className={`font-bold ${prod.isLiveWeek ? 'text-rose-600' : 'text-slate-400'}`}>
+                                  {prod.isLiveWeek ? 'Y' : 'N'}{' '}
+                                  <span className="text-[9px] text-slate-400 font-normal">
+                                    {prod.isLiveWeek ? '10.02~10.19' : '-'}
+                                  </span>
+                                </span>
+                              </div>
+                              <div className="flex items-center justify-between text-slate-700">
+                                <span>회원등급:</span>
+                                <span className="font-bold text-amber-700">
+                                  Y <span className="text-[9px] text-slate-400 font-normal">10.01~10.31</span>
+                                </span>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="text-[10px] text-slate-400 bg-slate-50 p-1 rounded border border-slate-100 w-full text-center">
+                              모든 쿠폰 미적용 (N)
                             </div>
                           )}
                         </div>

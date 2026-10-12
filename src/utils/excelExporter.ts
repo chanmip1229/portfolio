@@ -14,7 +14,24 @@ export interface ExportRow {
   판매가: number;
   수학적계산할인율: string;
   표기할인율: string;
-  쿠폰적용여부: string;
+
+  // 사용자 요청: 쿠폰 종류별 열 분리 + Y/N + 시작일/종료일 기간
+  신상쿠폰_적용: 'Y' | 'N';
+  신상쿠폰_시작일: string;
+  신상쿠폰_종료일: string;
+
+  라이브위크쿠폰_적용: 'Y' | 'N';
+  라이브위크쿠폰_시작일: string;
+  라이브위크쿠폰_종료일: string;
+
+  등급쿠폰_적용: 'Y' | 'N';
+  등급쿠폰_시작일: string;
+  등급쿠폰_종료일: string;
+
+  신규웰컴쿠폰_적용: 'Y' | 'N';
+  신규웰컴쿠폰_시작일: string;
+  신규웰컴쿠폰_종료일: string;
+
   쿠폰정책_QC: string;
   적발오류코드: string;
   심각도: string;
@@ -24,6 +41,7 @@ export interface ExportRow {
 
 /**
  * 프로모션 목록으로부터 엑셀 추출용 평탄화 데이터 생성
+ * 각각의 쿠폰 종류(신상, 라이브위크, 등급, 신규웰컴)를 개별 열로 구분하고 Y/N 및 기간(start day, last day)을 기재합니다.
  */
 export function buildExportData(
   promotions: Promotion[],
@@ -50,6 +68,35 @@ export function buildExportData(
       } else if (promo.allowCoupon === true && prod.couponApplicable === false) {
         couponQcStatus = '⚠️ 확인 필요 (쿠폰미적용)';
       }
+
+      // 쿠폰별 Y/N 및 시작일/종료일 파싱
+      const applicable = prod.applicableCoupons || [];
+
+      // 1. 신상 5% 쿠폰
+      const newProdCoupon = applicable.find(
+        (c) => c.name.includes('신상') || (c.type === 'DOWNLOADABLE' && !c.name.includes('LIVE'))
+      );
+      const hasNewProd = prod.couponApplicable && !!newProdCoupon;
+      const [newStart, newEnd] = (newProdCoupon?.period || '2026-10-01 ~ 2026-11-01').split(' ~ ');
+
+      // 2. LIVE WEEK 10% 쿠폰
+      const liveCoupon = applicable.find(
+        (c) => c.type === 'LIVE_WEEK' || c.name.includes('LIVE')
+      );
+      const hasLive = prod.couponApplicable && (prod.isLiveWeek || !!liveCoupon);
+      const [liveStart, liveEnd] = (liveCoupon?.period || '2026-10-02 ~ 2026-10-19').split(' ~ ');
+
+      // 3. 회원 등급 쿠폰 (VIP / GOLD)
+      const tierCoupon = applicable.find(
+        (c) => c.type === 'MEMBERSHIP_TIER' || c.name.includes('VIP') || c.name.includes('등급')
+      );
+      const hasTier = prod.couponApplicable && !!tierCoupon;
+      const [tierStart, tierEnd] = (tierCoupon?.period || '2026-10-01 ~ 2026-10-31').split(' ~ ');
+
+      // 4. 신규가입 웰컴 20% 쿠폰
+      const hasWelcome = prod.couponApplicable;
+      const welcomeStart = '2026-01-01';
+      const welcomeEnd = '2026-12-31';
 
       // 부서 필터링 (MD: 가격/할인율/품번, DESIGN: 배너, EBIZ_OPS: URL/쿠폰)
       const targetDept: Department = productIssues.some(
@@ -88,7 +135,24 @@ export function buildExportData(
             판매가: prod.salePrice,
             수학적계산할인율: `${calculatedRate}%`,
             표기할인율: `${prod.displayDiscountRate}%`,
-            쿠폰적용여부: prod.couponApplicable ? '쿠폰적용 O' : '쿠폰제외 X',
+
+            // 사용자 요청 반영 컬럼
+            신상쿠폰_적용: hasNewProd ? 'Y' : 'N',
+            신상쿠폰_시작일: hasNewProd ? newStart.trim() : '-',
+            신상쿠폰_종료일: hasNewProd ? newEnd.trim() : '-',
+
+            라이브위크쿠폰_적용: hasLive ? 'Y' : 'N',
+            라이브위크쿠폰_시작일: hasLive ? liveStart.trim() : '-',
+            라이브위크쿠폰_종료일: hasLive ? liveEnd.trim() : '-',
+
+            등급쿠폰_적용: hasTier ? 'Y' : 'N',
+            등급쿠폰_시작일: hasTier ? tierStart.trim() : '-',
+            등급쿠폰_종료일: hasTier ? tierEnd.trim() : '-',
+
+            신규웰컴쿠폰_적용: hasWelcome ? 'Y' : 'N',
+            신규웰컴쿠폰_시작일: hasWelcome ? welcomeStart : '-',
+            신규웰컴쿠폰_종료일: hasWelcome ? welcomeEnd : '-',
+
             쿠폰정책_QC: couponQcStatus,
             적발오류코드: issue.ruleCode,
             심각도: issue.severity,
@@ -112,7 +176,24 @@ export function buildExportData(
             판매가: prod.salePrice,
             수학적계산할인율: `${calculatedRate}%`,
             표기할인율: `${prod.displayDiscountRate}%`,
-            쿠폰적용여부: prod.couponApplicable ? '쿠폰적용 O' : '쿠폰제외 X',
+
+            // 사용자 요청 반영 컬럼
+            신상쿠폰_적용: hasNewProd ? 'Y' : 'N',
+            신상쿠폰_시작일: hasNewProd ? newStart.trim() : '-',
+            신상쿠폰_종료일: hasNewProd ? newEnd.trim() : '-',
+
+            라이브위크쿠폰_적용: hasLive ? 'Y' : 'N',
+            라이브위크쿠폰_시작일: hasLive ? liveStart.trim() : '-',
+            라이브위크쿠폰_종료일: hasLive ? liveEnd.trim() : '-',
+
+            등급쿠폰_적용: hasTier ? 'Y' : 'N',
+            등급쿠폰_시작일: hasTier ? tierStart.trim() : '-',
+            등급쿠폰_종료일: hasTier ? tierEnd.trim() : '-',
+
+            신규웰컴쿠폰_적용: hasWelcome ? 'Y' : 'N',
+            신규웰컴쿠폰_시작일: hasWelcome ? welcomeStart : '-',
+            신규웰컴쿠폰_종료일: hasWelcome ? welcomeEnd : '-',
+
             쿠폰정책_QC: couponQcStatus,
             적발오류코드: '정상 (PASS)',
             심각도: '정상',
@@ -142,7 +223,23 @@ export function buildExportData(
           판매가: 0,
           수학적계산할인율: '-',
           표기할인율: promo.banner.discountBadgeText,
-          쿠폰적용여부: promo.allowCoupon ? '쿠폰허용' : '쿠폰불가',
+
+          신상쿠폰_적용: 'N',
+          신상쿠폰_시작일: '-',
+          신상쿠폰_종료일: '-',
+
+          라이브위크쿠폰_적용: 'N',
+          라이브위크쿠폰_시작일: '-',
+          라이브위크쿠폰_종료일: '-',
+
+          등급쿠폰_적용: 'N',
+          등급쿠폰_시작일: '-',
+          등급쿠폰_종료일: '-',
+
+          신규웰컴쿠폰_적용: 'N',
+          신규웰컴쿠폰_시작일: '-',
+          신규웰컴쿠폰_종료일: '-',
+
           쿠폰정책_QC: '-',
           적발오류코드: issue.ruleCode,
           심각도: issue.severity,
@@ -173,7 +270,7 @@ export function exportToExcel(
 
   const worksheet = XLSX.utils.json_to_sheet(data);
 
-  // 컬럼 너비 자동 설정
+  // 컬럼 너비 자동 설정 (사용자 요청 세분화 쿠폰 열 반영)
   const columnWidths = [
     { wch: 18 }, // 행사ID
     { wch: 10 }, // 브랜드
@@ -187,7 +284,24 @@ export function exportToExcel(
     { wch: 10 }, // 판매가
     { wch: 15 }, // 수학적계산할인율
     { wch: 12 }, // 표기할인율
-    { wch: 14 }, // 쿠폰적용여부
+
+    // 쿠폰 종류별 열 (Y/N 및 기간)
+    { wch: 14 }, // 신상쿠폰_적용 (Y/N)
+    { wch: 15 }, // 신상쿠폰_시작일
+    { wch: 15 }, // 신상쿠폰_종료일
+
+    { wch: 18 }, // 라이브위크쿠폰_적용 (Y/N)
+    { wch: 18 }, // 라이브위크쿠폰_시작일
+    { wch: 18 }, // 라이브위크쿠폰_종료일
+
+    { wch: 14 }, // 등급쿠폰_적용 (Y/N)
+    { wch: 15 }, // 등급쿠폰_시작일
+    { wch: 15 }, // 등급쿠폰_종료일
+
+    { wch: 16 }, // 신규웰컴쿠폰_적용 (Y/N)
+    { wch: 16 }, // 신규웰컴쿠폰_시작일
+    { wch: 16 }, // 신규웰컴쿠폰_종료일
+
     { wch: 22 }, // 쿠폰정책_QC
     { wch: 24 }, // 적발오류코드
     { wch: 10 }, // 심각도
