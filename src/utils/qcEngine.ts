@@ -108,7 +108,7 @@ export function runDeterministicQc(promotion: Promotion): QcIssue[] {
     }
   });
 
-  // 6. 배너 컨펌 및 버전 검증
+  // 6. 배너 컨펌 상태 검증
   if (!promotion.banner.isConfirmed) {
     issues.push({
       id: `qc-banner-spec-${Date.now()}`,
@@ -117,6 +117,45 @@ export function runDeterministicQc(promotion: Promotion): QcIssue[] {
       targetField: 'banner.isConfirmed',
       message: '배너 소재가 아직 운영자 최종 컨펌되지 않았습니다. 배너 스튜디오에서 원클릭 컨펌을 완료해주세요.',
     });
+  }
+
+  // 7. 메인 배너 문구(카피)와 실제 행사/상품 정합성 검증 (허위·과장 카피 및 혜택 오기재 방지)
+  const bannerText = `${promotion.banner.copyTitle} ${promotion.banner.copySubtitle} ${promotion.banner.discountBadgeText}`.toLowerCase();
+
+  // (1) 배너 문구에 "쿠폰" 언급이 있는데 행사 쿠폰 정책이 [쿠폰 미적용]인 경우
+  if ((bannerText.includes('쿠폰') || bannerText.includes('coupon')) && promotion.allowCoupon === false) {
+    issues.push({
+      id: `qc-banner-coupon-${Date.now()}`,
+      ruleCode: 'BANNER_COPY_MISMATCH',
+      severity: 'BLOCKER',
+      targetField: 'banner.copySubtitle',
+      message: `[메인화면 배너 카피 오류] 배너 문구에 '쿠폰' 혜택이 표기되어 있으나, 본 기획전은 [쿠폰 적용 제외(특가)] 정책입니다. 고객 불만(CS) 및 허위광고 방지를 위해 배너 카피를 수정하거나 쿠폰 정책을 변경해주세요.`,
+      details: {
+        expected: '쿠폰 미언급 또는 쿠폰 허용',
+        actual: promotion.banner.copySubtitle,
+      },
+    });
+  }
+
+  // (2) 배너 뱃지 할인율(예: UP TO 40%) 대비 실제 상품 최대 할인율 불일치 검증
+  const badgeNumberMatch = promotion.banner.discountBadgeText.match(/(\d+)%/);
+  if (badgeNumberMatch && promotion.products.length > 0) {
+    const bannerBadgeRate = parseInt(badgeNumberMatch[1], 10);
+    const maxProductDiscount = Math.max(...promotion.products.map((p) => p.displayDiscountRate));
+
+    if (bannerBadgeRate > maxProductDiscount) {
+      issues.push({
+        id: `qc-banner-discount-${Date.now()}`,
+        ruleCode: 'BANNER_COPY_MISMATCH',
+        severity: 'BLOCKER',
+        targetField: 'banner.discountBadgeText',
+        message: `[메인화면 배너 할인율 과장] 배너 뱃지 표기 할인율(${bannerBadgeRate}%)보다 실제 등록 상품의 최대 할인율(${maxProductDiscount}%)이 낮습니다. 공정위 표시광고법 위반 위험이 있으므로 배너 문구를 수정해주세요.`,
+        details: {
+          expected: `최대 ${maxProductDiscount}%`,
+          actual: `${bannerBadgeRate}%`,
+        },
+      });
+    }
   }
 
   return issues;

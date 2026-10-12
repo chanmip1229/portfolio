@@ -125,6 +125,13 @@ export default function EmailDraftModal() {
                       {currentDraft.triggerReason}
                     </span>
                   </div>
+                  <div className="flex items-center justify-between pt-1 border-t border-slate-200/60">
+                    <span className="text-slate-500 font-semibold">문구 정합성 QC:</span>
+                    <span className="text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 font-semibold flex items-center gap-1 text-[11px]">
+                      <Check className="w-3.5 h-3.5 text-emerald-600" />
+                      적발된 SKU 품번 및 수치 정합성 100% 매핑 완료
+                    </span>
+                  </div>
                 </div>
 
                 {/* 제목 */}

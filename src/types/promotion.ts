@@ -68,7 +68,8 @@ export interface QcIssue {
     | 'UNAPPROVED_SKU'
     | 'INVALID_URL'
     | 'BANNER_SPEC_MISMATCH'
-    | 'COUPON_POLICY_MISMATCH';
+    | 'COUPON_POLICY_MISMATCH'
+    | 'BANNER_COPY_MISMATCH';
   severity: 'BLOCKER' | 'WARNING';
   targetField: string;
   message: string;
