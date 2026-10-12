@@ -95,6 +95,12 @@ export interface EmailDraft {
   sentAt?: string;
 }
 
+export type EventType =
+  | 'SEASON_SALE'   // 시즌 정기 행사 (신상/클리어런스/시즌오프/얼리버드)
+  | 'LIVE_WEEK'     // LIVE 행사 (라이브위크 스페셜 특가)
+  | 'SPECIAL_EVENT' // 특별 행사 (설맞이/가정의달/추석/블랙프라이데이)
+  | 'BRAND_WEEK';   // 브랜드 위크 (단독 수트/니트/원피스 브랜드 기획전)
+
 export interface Promotion {
   id: string;
   brand: Brand;
@@ -106,6 +112,7 @@ export interface Promotion {
   status: PromotionStatus;
   currentBottleneckDept: Department;
   category: string; // 예: 아우터, 원피스, 전품목
+  eventType?: EventType;
 
   // 타임스탬프 히스토리
   timestamps: {

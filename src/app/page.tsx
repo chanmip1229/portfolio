@@ -13,8 +13,9 @@ import { useOpsStore } from '@/store/useOpsStore';
 import { Sparkles, Calendar, LayoutDashboard } from 'lucide-react';
 
 export default function Home() {
-  const { emailDrafts, selectedPromotionId, resetToDefault, setIsDraftModalOpen } = useOpsStore();
-  const [activeTab, setActiveTab] = useState<'QC_WORKSPACE' | 'ANNUAL_GANTT' | 'LIVE_PREVIEW'>('QC_WORKSPACE');
+  const { emailDrafts, selectedPromotionId, setSelectedPromotionId, resetToDefault, setIsDraftModalOpen } = useOpsStore();
+  // 사용자가 요청한 대로 간트 로드맵 탭을 1번째 기본 탭으로 설정
+  const [activeTab, setActiveTab] = useState<'ANNUAL_GANTT' | 'QC_WORKSPACE' | 'LIVE_PREVIEW'>('ANNUAL_GANTT');
 
   const activeDraftCount = emailDrafts.filter((d) => d.status === 'DRAFT').length;
 
@@ -26,22 +27,11 @@ export default function Home() {
         draftCount={activeDraftCount}
       />
 
-      {/* 상단 메인 네비게이션 3-탭 바 (QC 워크스페이스 / 연간 간트 로드맵 / 앱·웹 라이브 프리뷰) */}
+      {/* 상단 메인 네비게이션 3-탭 바: 1. 연간 간트 로드맵 -> 2. 실시간 사전 QC 워크스페이스 -> 3. 앱·웹 라이브 프리뷰 */}
       <div className="bg-white border-b border-slate-200 sticky top-14 z-20 shadow-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
           <div className="flex items-center gap-1.5 py-2 overflow-x-auto no-scrollbar">
-            <button
-              onClick={() => setActiveTab('QC_WORKSPACE')}
-              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 ${
-                activeTab === 'QC_WORKSPACE'
-                  ? 'bg-indigo-600 text-white shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-              }`}
-            >
-              <LayoutDashboard className="w-4 h-4" />
-              <span>실시간 사전 QC & 부서별 워크스페이스</span>
-            </button>
-
+            {/* 탭 1 (맨 앞): 2026 연간 프로모션 간트 로드맵 & 캘린더 */}
             <button
               onClick={() => setActiveTab('ANNUAL_GANTT')}
               className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 ${
@@ -54,6 +44,20 @@ export default function Home() {
               <span>2026 연간 프로모션 간트 로드맵 & 캘린더</span>
             </button>
 
+            {/* 탭 2: 실시간 사전 QC & 부서별 워크스페이스 */}
+            <button
+              onClick={() => setActiveTab('QC_WORKSPACE')}
+              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 ${
+                activeTab === 'QC_WORKSPACE'
+                  ? 'bg-indigo-600 text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+              }`}
+            >
+              <LayoutDashboard className="w-4 h-4" />
+              <span>실시간 사전 QC & 부서별 워크스페이스</span>
+            </button>
+
+            {/* 탭 3: IDF몰 앱/웹 라이브 프리뷰 & 배너 검수 */}
             <button
               onClick={() => setActiveTab('LIVE_PREVIEW')}
               className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 ${
@@ -74,7 +78,17 @@ export default function Home() {
       </div>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full space-y-8">
-        {/* 탭 1: 실시간 사전 QC & 부서별 정합성 워크스페이스 */}
+        {/* 탭 1: 2026 연간 프로모션 간트 로드맵 & 캘린더 (행사 기간/진행일차/D-Day/종료행사필터/엑셀업로드 통합) */}
+        {activeTab === 'ANNUAL_GANTT' && (
+          <AnnualScheduleView
+            onNavigateToQc={(promoId) => {
+              setSelectedPromotionId(promoId);
+              setActiveTab('QC_WORKSPACE');
+            }}
+          />
+        )}
+
+        {/* 탭 2: 실시간 사전 QC & 부서별 정합성 워크스페이스 */}
         {activeTab === 'QC_WORKSPACE' && (
           <>
             {/* 상단 브리핑 배너 */}
@@ -113,11 +127,6 @@ export default function Home() {
             <MatrixFilterBar />
             <PromotionCalendarView />
           </>
-        )}
-
-        {/* 탭 2: 2026 연간 프로모션 간트 로드맵 & 캘린더 (행사 기간/진행일차/D-Day/종료행사필터/엑셀업로드 통합) */}
-        {activeTab === 'ANNUAL_GANTT' && (
-          <AnnualScheduleView />
         )}
 
         {/* 탭 3: IDF몰 앱/웹 멀티 디바이스 라이브 프리뷰 & 배너 검수 */}
