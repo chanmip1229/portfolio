@@ -265,7 +265,15 @@ export default function QcWorkspace({ promotionId }: QcWorkspaceProps) {
                     }`}
                   >
                     <td className="py-3 px-4 font-mono font-bold text-slate-900">{prod.productCode}</td>
-                    <td className="py-3 px-4 font-medium text-slate-800">{prod.productName}</td>
+                    <td className="py-3 px-4">
+                      <p className="font-medium text-slate-800">{prod.productName}</p>
+                      {prod.isLiveWeek && (
+                        <p className="text-[10px] font-bold text-rose-600 flex items-center gap-1 mt-0.5">
+                          <span>🔥</span>
+                          <span>{prod.liveWeekBenefitText || '라이브위크 단 7일간의 특별한 혜택'}</span>
+                        </p>
+                      )}
+                    </td>
                     <td className="py-3 px-4 text-right font-mono text-slate-500">
                       {prod.originalPrice.toLocaleString()}원
                     </td>
@@ -335,13 +343,13 @@ export default function QcWorkspace({ promotionId }: QcWorkspaceProps) {
                       )}
                     </td>
 
-                    {/* 쿠폰 적용 여부 (토글 수정 가능) */}
+                    {/* 쿠폰 적용 여부 및 적용 쿠폰 상세 (다운로드 쿠폰, 등급 쿠폰) */}
                     <td className="py-3 px-4 text-center">
                       {isEditing ? (
                         <button
                           type="button"
                           onClick={() => setEditCouponApplicable(!editCouponApplicable)}
-                          className={`px-2.5 py-1 rounded-md text-[11px] font-bold transition-colors ${
+                          className={`px-2.5 py-1 rounded-md text-[11px] font-bold transition-colors cursor-pointer ${
                             editCouponApplicable
                               ? 'bg-blue-100 text-blue-800 border border-blue-300'
                               : 'bg-slate-100 text-slate-600 border border-slate-300'
@@ -350,15 +358,33 @@ export default function QcWorkspace({ promotionId }: QcWorkspaceProps) {
                           {editCouponApplicable ? '쿠폰 가능 (O)' : '쿠폰 제외 (X)'}
                         </button>
                       ) : (
-                        <span
-                          className={`px-2 py-0.5 rounded text-[11px] font-semibold ${
-                            prod.couponApplicable
-                              ? 'bg-blue-50 text-blue-700 border border-blue-200'
-                              : 'bg-slate-100 text-slate-500'
-                          }`}
-                        >
-                          {prod.couponApplicable ? '쿠폰 가능' : '적용 불가'}
-                        </span>
+                        <div className="flex flex-col items-center gap-1">
+                          <span
+                            className={`px-2 py-0.5 rounded text-[11px] font-bold ${
+                              prod.couponApplicable
+                                ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                                : 'bg-slate-100 text-slate-500'
+                            }`}
+                          >
+                            {prod.couponApplicable ? '쿠폰 적용 O' : '적용 제외'}
+                          </span>
+
+                          {/* 적용 가능한 쿠폰 태그 목록 (다운로드 & 등급 쿠폰) */}
+                          {prod.couponApplicable && prod.applicableCoupons && prod.applicableCoupons.length > 0 && (
+                            <div className="flex flex-wrap justify-center gap-1 max-w-[170px]">
+                              {prod.applicableCoupons.map((c) => (
+                                <span
+                                  key={c.id}
+                                  className="text-[9px] px-1 py-0.2 rounded bg-slate-100 text-slate-600 border border-slate-200"
+                                  title={`${c.name} (${c.discountRate}%)`}
+                                >
+                                  {c.type === 'MEMBERSHIP_TIER' ? '👑' : '📥'}
+                                  {c.discountRate}%
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                        </div>
                       )}
                     </td>
 

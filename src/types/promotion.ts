@@ -31,6 +31,17 @@ export interface BannerInfo {
   confirmedAt?: string;
 }
 
+export interface CouponDetail {
+  id: string;
+  name: string; // 예: 10월 신상 5%, LIVE WEEK 10%, VIP 등급쿠폰
+  discountRate: number; // 예: 5, 10
+  type: 'DOWNLOADABLE' | 'MEMBERSHIP_TIER' | 'LIVE_WEEK';
+  period: string; // 예: 2026-10-01 ~ 2026-11-01
+  daysLeft?: number;
+  condition?: string; // 예: 제한 없음, 전 등급 적용, 5만원 이상 구매 시
+  isMemberOnly?: boolean;
+}
+
 export interface ProductItem {
   id: string;
   productCode: string; // 예: SWBLPB21010
@@ -43,6 +54,9 @@ export interface ProductItem {
   couponApplicable: boolean; // 쿠폰 적용 가능 여부
   category?: string;
   thumbnailUrl?: string;
+  isLiveWeek?: boolean; // LIVE WEEK 특별관 해당 여부
+  liveWeekBenefitText?: string; // 예: 라이브위크 단 7일간의 특별한 혜택
+  applicableCoupons?: CouponDetail[]; // 적용 가능한 상세 쿠폰 목록
 }
 
 export interface QcIssue {

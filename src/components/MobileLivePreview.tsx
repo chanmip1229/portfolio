@@ -152,6 +152,12 @@ export default function MobileLivePreview({ promotionId }: MobileLivePreviewProp
 
                     {/* 상품 메타 정보 */}
                     <div className="p-2 space-y-1">
+                      {prod.isLiveWeek && (
+                        <p className="text-[8px] font-bold text-rose-600 leading-tight flex items-center gap-0.5">
+                          <span>🔥</span>
+                          <span>라이브위크 혜택</span>
+                        </p>
+                      )}
                       <span className="text-[9px] font-semibold text-slate-400 uppercase">
                         {promo.brand}
                       </span>
@@ -169,11 +175,21 @@ export default function MobileLivePreview({ promotionId }: MobileLivePreviewProp
                       </div>
 
                       {/* 쿠폰 뱃지 */}
-                      <div className="pt-1">
+                      <div className="pt-1 flex flex-wrap gap-1">
                         {prod.couponApplicable ? (
-                          <span className="inline-block text-[8px] font-bold text-blue-600 bg-blue-50 px-1 py-0.2 rounded border border-blue-200">
-                            쿠폰혜택
-                          </span>
+                          <>
+                            <span className="inline-block text-[8px] font-bold text-blue-600 bg-blue-50 px-1 py-0.2 rounded border border-blue-200">
+                              쿠폰적용
+                            </span>
+                            {prod.applicableCoupons && prod.applicableCoupons.slice(0, 2).map((c) => (
+                              <span
+                                key={c.id}
+                                className="inline-block text-[7px] font-semibold text-indigo-600 bg-indigo-50 px-1 py-0.2 rounded"
+                              >
+                                {c.discountRate}%
+                              </span>
+                            ))}
+                          </>
                         ) : (
                           <span className="inline-block text-[8px] font-semibold text-slate-400 bg-slate-50 px-1 py-0.2 rounded">
                             쿠폰제외
