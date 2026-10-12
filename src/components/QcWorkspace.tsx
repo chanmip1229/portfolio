@@ -34,8 +34,8 @@ export default function QcWorkspace({ promotionId }: QcWorkspaceProps) {
 
   // 인라인 수정 모드 상태 (productId)
   const [editingProductId, setEditingProductId] = useState<string | null>(null);
-  const [editPrice, setEditPrice] = useState<number>(0);
-  const [editDiscountRate, setEditDiscountRate] = useState<number>(0);
+  const [editPriceStr, setEditPriceStr] = useState<string>('');
+  const [editDiscountRateStr, setEditDiscountRateStr] = useState<string>('');
   const [editUrl, setEditUrl] = useState<string>('');
 
   if (!promo) return null;
@@ -46,15 +46,18 @@ export default function QcWorkspace({ promotionId }: QcWorkspaceProps) {
 
   const handleStartEdit = (prodId: string, salePrice: number, discountRate: number, url: string) => {
     setEditingProductId(prodId);
-    setEditPrice(salePrice);
-    setEditDiscountRate(discountRate);
+    setEditPriceStr(String(salePrice));
+    setEditDiscountRateStr(String(discountRate));
     setEditUrl(url);
   };
 
   const handleSaveEdit = (prodId: string) => {
+    const finalPrice = Number(editPriceStr.replace(/[^0-9]/g, '')) || 0;
+    const finalRate = Number(editDiscountRateStr.replace(/[^0-9]/g, '')) || 0;
+
     updateProductAndRevalidate(promo.id, prodId, {
-      salePrice: Number(editPrice),
-      displayDiscountRate: Number(editDiscountRate),
+      salePrice: finalPrice,
+      displayDiscountRate: finalRate,
       detailUrl: editUrl,
     });
     setEditingProductId(null);
@@ -260,12 +263,23 @@ export default function QcWorkspace({ promotionId }: QcWorkspaceProps) {
                     {/* 판매가 */}
                     <td className="py-3 px-4 text-right font-mono font-bold">
                       {isEditing ? (
-                        <input
-                          type="number"
-                          value={editPrice}
-                          onChange={(e) => setEditPrice(Number(e.target.value))}
-                          className="w-24 text-right p-1 border rounded bg-white font-mono text-xs focus:ring-1 focus:ring-indigo-500"
-                        />
+                        <div className="relative inline-block">
+                          <input
+                            type="text"
+                            inputMode="numeric"
+                            value={editPriceStr}
+                            onChange={(e) => {
+                              // 숫자만 입력 허용, 다 지우면 빈칸 유지
+                              const val = e.target.value.replace(/[^0-9]/g, '');
+                              setEditPriceStr(val);
+                            }}
+                            className="w-24 text-right pr-6 py-1 pl-1 border rounded bg-white font-mono text-xs focus:ring-1 focus:ring-indigo-500"
+                            placeholder="0"
+                          />
+                          <span className="absolute right-1.5 top-1/2 -translate-y-1/2 text-slate-400 text-[10px] pointer-events-none">
+                            원
+                          </span>
+                        </div>
                       ) : (
                         <span>{prod.salePrice.toLocaleString()}원</span>
                       )}
@@ -278,15 +292,26 @@ export default function QcWorkspace({ promotionId }: QcWorkspaceProps) {
                       </span>
                     </td>
 
-                    {/* 표기 할인율 */}
+                    {/* 표기 할인율 (숫자 지우면 0 안 남고 깔끔하게 지워지며 % 자동 부착) */}
                     <td className="py-3 px-4 text-center font-mono font-bold">
                       {isEditing ? (
-                        <input
-                          type="number"
-                          value={editDiscountRate}
-                          onChange={(e) => setEditDiscountRate(Number(e.target.value))}
-                          className="w-16 text-center p-1 border rounded bg-white font-mono text-xs focus:ring-1 focus:ring-indigo-500"
-                        />
+                        <div className="relative inline-block">
+                          <input
+                            type="text"
+                            inputMode="numeric"
+                            value={editDiscountRateStr}
+                            onChange={(e) => {
+                              // 숫자만 허용, 다 지우면 빈칸 유지
+                              const val = e.target.value.replace(/[^0-9]/g, '');
+                              setEditDiscountRateStr(val);
+                            }}
+                            className="w-16 text-center pr-4 py-1 pl-1 border rounded bg-white font-mono text-xs focus:ring-1 focus:ring-indigo-500 font-bold"
+                            placeholder="0"
+                          />
+                          <span className="absolute right-1 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-bold pointer-events-none">
+                            %
+                          </span>
+                        </div>
                       ) : (
                         <span
                           className={`px-2 py-0.5 rounded ${
