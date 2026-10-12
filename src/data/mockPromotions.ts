@@ -179,6 +179,72 @@ export const INITIAL_PROMOTIONS: Promotion[] = [
           },
         ],
       },
+      {
+        id: 'p-5',
+        productCode: 'SWCTKB21099',
+        productName: '클래식 케이프 트렌치코트 (베이지)',
+        originalPrice: 289000,
+        salePrice: 173400,
+        displayDiscountRate: 40,
+        detailUrl: 'https://www.idfmall.co.kr/product/SWCTKB21099',
+        isApproved: false, // MD팀 미승인 품번 에러
+        couponApplicable: true,
+        category: '트렌치코트',
+        thumbnailUrl: 'https://images.unsplash.com/photo-1544441893-675973e31985?w=500&auto=format&fit=crop&q=80',
+        applicableCoupons: [
+          {
+            id: 'cp-5-1',
+            name: '10월) 신상 5%',
+            discountRate: 5,
+            type: 'DOWNLOADABLE',
+            period: '2026-10-01 ~ 2026-11-01',
+          },
+        ],
+      },
+      {
+        id: 'p-6',
+        productCode: 'SWBLPB21050',
+        productName: '숏 더블 트렌치 블루종',
+        originalPrice: 189000,
+        salePrice: 113400,
+        displayDiscountRate: 40,
+        detailUrl: 'http://broken-link.com/wrong_url', // 잘못된 URL 에러
+        isApproved: true,
+        couponApplicable: true,
+        category: '블루종',
+        thumbnailUrl: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=400&auto=format&fit=crop&q=80',
+        applicableCoupons: [
+          {
+            id: 'cp-6-1',
+            name: '10월) 신상 5%',
+            discountRate: 5,
+            type: 'DOWNLOADABLE',
+            period: '2026-10-01 ~ 2026-11-01',
+          },
+        ],
+      },
+      {
+        id: 'p-7',
+        productCode: 'SWJCKB21060',
+        productName: '루즈핏 벨티드 하프 코트 (특가)',
+        originalPrice: 228000,
+        salePrice: 102600,
+        displayDiscountRate: 55, // 기획 한도(40%) 초과 경고
+        detailUrl: 'https://www.idfmall.co.kr/product/SWJCKB21060',
+        isApproved: true,
+        couponApplicable: true,
+        category: '코트',
+        thumbnailUrl: 'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=400&auto=format&fit=crop&q=80',
+        applicableCoupons: [
+          {
+            id: 'cp-7-1',
+            name: '10월) 신상 5%',
+            discountRate: 5,
+            type: 'DOWNLOADABLE',
+            period: '2026-10-01 ~ 2026-11-01',
+          },
+        ],
+      },
     ],
     qcIssues: [
       {
@@ -191,6 +257,40 @@ export const INITIAL_PROMOTIONS: Promotion[] = [
           productCode: 'SWBLPB21010',
           expected: 30,
           actual: 40,
+        },
+      },
+      {
+        id: 'qc-err-2',
+        ruleCode: 'UNAPPROVED_SKU',
+        severity: 'BLOCKER',
+        targetField: 'SWCTKB21099.isApproved',
+        message: '품번 SWCTKB21099: MD팀 사전 승인표에 미등록된 임의 등록 품번이 감지되었습니다. 승인 여부 재확인이 필요합니다.',
+        details: {
+          productCode: 'SWCTKB21099',
+        },
+      },
+      {
+        id: 'qc-err-3',
+        ruleCode: 'INVALID_URL',
+        severity: 'BLOCKER',
+        targetField: 'SWBLPB21050.detailUrl',
+        message: '품번 SWBLPB21050: 잘못된 상세 URL(http 프로토콜 또는 비정상 도메인)이 감지되어 접속 시 404 오류가 발생합니다.',
+        details: {
+          productCode: 'SWBLPB21050',
+          expected: 'https://www.idfmall.co.kr/product/SWBLPB21050',
+          actual: 'http://broken-link.com/wrong_url',
+        },
+      },
+      {
+        id: 'qc-err-4',
+        ruleCode: 'PLAN_DISCOUNT_MISMATCH',
+        severity: 'WARNING',
+        targetField: 'SWJCKB21060.displayDiscountRate',
+        message: '품번 SWJCKB21060: 기획서 기준 최대 할인율(40%)을 초과하는 55% 할인이 설정되었습니다. 역마진 발생 여부 확인이 권장됩니다.',
+        details: {
+          productCode: 'SWJCKB21060',
+          expected: 40,
+          actual: 55,
         },
       },
     ],
