@@ -300,7 +300,7 @@ export default function QcWorkspace({ promotionId }: QcWorkspaceProps) {
                       )}
                     </td>
 
-                    {/* URL */}
+                    {/* URL (클릭 시 가라 IDF몰 상세 페이지로 이동) */}
                     <td className="py-3 px-4 text-slate-500 max-w-[200px] truncate">
                       {isEditing ? (
                         <input
@@ -311,10 +311,11 @@ export default function QcWorkspace({ promotionId }: QcWorkspaceProps) {
                         />
                       ) : (
                         <a
-                          href={prod.detailUrl}
+                          href={`/product/${prod.productCode}`}
                           target="_blank"
                           rel="noreferrer"
                           className="hover:underline flex items-center gap-1 text-slate-600 hover:text-indigo-600"
+                          title="가라 IDF몰 상세 페이지 열기"
                         >
                           <span className="truncate">{prod.detailUrl}</span>
                           <ExternalLink className="w-3 h-3 shrink-0" />
