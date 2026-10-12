@@ -1,6 +1,6 @@
 export type Brand = 'SHESMISS' | 'LIST' | 'SISTINA';
 
-export type Department = 'MD' | 'DESIGN' | 'EBIZ_OPS';
+export type Department = 'MD' | 'DESIGN' | 'DEV' | 'MARKETING' | 'EBIZ_OPS';
 
 export type PromotionStatus =
   | 'PLANNING'          // 1. 기획/등록됨
@@ -61,6 +61,7 @@ export interface ProductItem {
 
 export interface QcIssue {
   id: string;
+  department?: 'MD' | 'DESIGN' | 'DEV' | 'MARKETING';
   ruleCode:
     | 'DATE_ORDER_INVALID'
     | 'MATH_DISCOUNT_MISMATCH'

@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import Header from '@/components/Header';
-import CalendarUploader from '@/components/CalendarUploader';
 import MatrixFilterBar from '@/components/MatrixFilterBar';
 import PromotionCalendarView from '@/components/PromotionCalendarView';
 import BannerStudio from '@/components/BannerStudio';
@@ -15,7 +14,7 @@ import { Sparkles, Calendar, LayoutDashboard } from 'lucide-react';
 
 export default function Home() {
   const { emailDrafts, selectedPromotionId, resetToDefault, setIsDraftModalOpen } = useOpsStore();
-  const [activeTab, setActiveTab] = useState<'WORKSPACE' | 'ANNUAL_CALENDAR'>('WORKSPACE');
+  const [activeTab, setActiveTab] = useState<'QC_WORKSPACE' | 'ANNUAL_GANTT' | 'LIVE_PREVIEW'>('QC_WORKSPACE');
 
   const activeDraftCount = emailDrafts.filter((d) => d.status === 'DRAFT').length;
 
@@ -27,47 +26,56 @@ export default function Home() {
         draftCount={activeDraftCount}
       />
 
-      {/* 상단 메인 네비게이션 탭 (운영 QC 워크스페이스 vs 2026 연간 마스터 캘린더) */}
-      <div className="bg-white border-b border-slate-200 sticky top-14 z-20 shadow-2xs">
+      {/* 상단 메인 네비게이션 3-탭 바 (QC 워크스페이스 / 연간 간트 로드맵 / 앱·웹 라이브 프리뷰) */}
+      <div className="bg-white border-b border-slate-200 sticky top-14 z-20 shadow-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-          <div className="flex items-center gap-2 py-2">
+          <div className="flex items-center gap-1.5 py-2 overflow-x-auto no-scrollbar">
             <button
-              onClick={() => setActiveTab('WORKSPACE')}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                activeTab === 'WORKSPACE'
+              onClick={() => setActiveTab('QC_WORKSPACE')}
+              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 ${
+                activeTab === 'QC_WORKSPACE'
                   ? 'bg-indigo-600 text-white shadow-xs'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
               }`}
             >
               <LayoutDashboard className="w-4 h-4" />
-              <span>실시간 운영 QC & 타임라인 워크스페이스</span>
+              <span>실시간 사전 QC & 부서별 워크스페이스</span>
             </button>
 
             <button
-              onClick={() => setActiveTab('ANNUAL_CALENDAR')}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                activeTab === 'ANNUAL_CALENDAR'
+              onClick={() => setActiveTab('ANNUAL_GANTT')}
+              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 ${
+                activeTab === 'ANNUAL_GANTT'
                   ? 'bg-indigo-600 text-white shadow-xs'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
               }`}
             >
               <Calendar className="w-4 h-4" />
-              <span>2026 연간 프로모션 마스터 캘린더 (연간 일정 & 진척도)</span>
+              <span>2026 연간 프로모션 간트 로드맵 & 캘린더</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('LIVE_PREVIEW')}
+              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 ${
+                activeTab === 'LIVE_PREVIEW'
+                  ? 'bg-indigo-600 text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+              }`}
+            >
+              <Sparkles className="w-4 h-4" />
+              <span>IDF몰 앱/웹 라이브 프리뷰 & 배너 검수</span>
             </button>
           </div>
 
-          <div className="hidden md:flex items-center gap-2 text-xs text-slate-400">
+          <div className="hidden lg:flex items-center gap-2 text-xs text-slate-400">
             <span>인동FN (SHESMISS · LIST · SISTINA) E-BIZ 자율 운영 시스템</span>
           </div>
         </div>
       </div>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full space-y-8">
-        {activeTab === 'ANNUAL_CALENDAR' ? (
-          /* 연간 일정 한 번에 확인하는 탭 (Annual Promo Roadmap & Progress) */
-          <AnnualScheduleView />
-        ) : (
-          /* 실시간 운영 워크스페이스 뷰 */
+        {/* 탭 1: 실시간 사전 QC & 부서별 정합성 워크스페이스 */}
+        {activeTab === 'QC_WORKSPACE' && (
           <>
             {/* 상단 브리핑 배너 */}
             <div className="bg-linear-to-r from-slate-900 to-indigo-950 text-white rounded-2xl p-6 shadow-sm">
@@ -78,10 +86,10 @@ export default function Home() {
                     E-BIZ 프로모션 자율 운영 엔진 가동 중
                   </div>
                   <h1 className="text-xl md:text-2xl font-black tracking-tight">
-                    인동FN 자사몰 프로모션 캘린더 & 마일스톤 관리
+                    실시간 사전 QC & 부서별 정합성 워크스페이스
                   </h1>
                   <p className="text-xs text-slate-300 mt-1 max-w-2xl">
-                    연간 행사 계획 엑셀을 업로드하면 시작일 기준 D-7(MD 상품 요청), D-5(디자인 배너 요청), D-2(회신 확인), D-1(사전 QC) 일정과 진행 현황을 자동으로 생성 및 관리합니다.
+                    MD팀(가격/할인율/승인여부), 디자인팀(배너 해상도), 웹개발팀(링크 오류), 마케팅팀(쿠폰 중복) 등 부서별 오류를 실시간 검출하고 즉시 이메일·슬랙·구글챗으로 전송합니다.
                   </p>
                 </div>
 
@@ -90,36 +98,38 @@ export default function Home() {
                     onClick={() => setIsDraftModalOpen(true)}
                     className="inline-flex items-center gap-2 px-4 py-2.5 bg-amber-400 hover:bg-amber-300 text-slate-950 text-xs font-bold rounded-xl shadow-md transition-all shrink-0 cursor-pointer"
                   >
-                    <span>🔔 검토 대기 메일 {activeDraftCount}건 확인하기</span>
+                    <span>🔔 검토 대기 발송건 {activeDraftCount}건 확인하기</span>
                   </button>
                 )}
               </div>
             </div>
 
-            {/* 4.5 & 4.4 게시 전 사전 QC 워크스페이스 (쿠폰 정책 + 가격 계산 정합성) */}
+            {/* 실시간 사전 QC 워크스페이스 (부서별 탭, 쿠폰 매트릭스, 엑셀 다운로드, 즉시 발송) */}
             {selectedPromotionId && (
               <QcWorkspace promotionId={selectedPromotionId} />
             )}
 
-            {/* 4.3 메일 회신 수신 후 배너 자동 합성 & 원클릭 컨펌 스튜디오 */}
-            {selectedPromotionId && (
-              <BannerStudio promotionId={selectedPromotionId} />
-            )}
-
-            {/* 4.6 IDF몰 모바일 라이브 프리뷰 (아이폰 15 프레임) */}
-            {selectedPromotionId && (
-              <MobileLivePreview promotionId={selectedPromotionId} />
-            )}
-
-            {/* 4.1 연간 캘린더 엑셀 업로더 */}
-            <CalendarUploader />
-
-            {/* 4.2 3-Way 매트릭스 필터 (브랜드/부서/업무상태) */}
+            {/* 마일스톤 타임라인 & 필터 바 */}
             <MatrixFilterBar />
-
-            {/* 4.1 & 4.2 캘린더, 마일스톤 타임라인 & 리마인더 발송 */}
             <PromotionCalendarView />
           </>
+        )}
+
+        {/* 탭 2: 2026 연간 프로모션 간트 로드맵 & 캘린더 (행사 기간/진행일차/D-Day/종료행사필터/엑셀업로드 통합) */}
+        {activeTab === 'ANNUAL_GANTT' && (
+          <AnnualScheduleView />
+        )}
+
+        {/* 탭 3: IDF몰 앱/웹 멀티 디바이스 라이브 프리뷰 & 배너 검수 */}
+        {activeTab === 'LIVE_PREVIEW' && (
+          <div className="space-y-8">
+            {selectedPromotionId && (
+              <>
+                <BannerStudio promotionId={selectedPromotionId} />
+                <MobileLivePreview promotionId={selectedPromotionId} />
+              </>
+            )}
+          </div>
         )}
       </main>
 

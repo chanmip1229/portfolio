@@ -84,6 +84,34 @@ export default function QcWorkspace({ promotionId }: QcWorkspaceProps) {
     });
   };
 
+  const [selectedQcDeptFilter, setSelectedQcDeptFilter] = useState<
+    'ALL' | 'MD' | 'DESIGN' | 'DEV' | 'MARKETING'
+  >('ALL');
+
+  // 부서별 이슈 카운트 계산
+  const mdIssues = promo.qcIssues.filter((i) => (i.department || 'MD') === 'MD');
+  const designIssues = promo.qcIssues.filter((i) => i.department === 'DESIGN');
+  const devIssues = promo.qcIssues.filter((i) => i.department === 'DEV');
+  const mktIssues = promo.qcIssues.filter((i) => i.department === 'MARKETING');
+
+  const filteredQcIssues = promo.qcIssues.filter((issue) => {
+    if (selectedQcDeptFilter === 'ALL') return true;
+    return (issue.department || 'MD') === selectedQcDeptFilter;
+  });
+
+  const getDeptDraftId = (dept?: string) => {
+    if (dept === 'DESIGN') return 'draft-list-trench-design';
+    if (dept === 'DEV') return 'draft-list-trench-dev';
+    if (dept === 'MARKETING') return 'draft-list-trench-mkt';
+    return 'draft-list-trench-1';
+  };
+
+  const handleOpenDeptDraft = (dept?: string) => {
+    const draftId = getDeptDraftId(dept);
+    setSelectedDraftId(draftId);
+    setIsDraftModalOpen(true);
+  };
+
   return (
     <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden mb-8">
       {/* QC 헤더 */}
@@ -150,72 +178,208 @@ export default function QcWorkspace({ promotionId }: QcWorkspaceProps) {
         </div>
       </div>
 
-      {/* 실시간 감지된 QC 이슈 리포트 영역 */}
+      {/* 실시간 감지된 부서별 QC 이슈 리포트 영역 */}
       {promo.qcIssues.length > 0 && (
         <div className="p-5 bg-rose-50/40 border-b border-rose-100">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-bold text-rose-900 flex items-center gap-1.5">
-              <AlertTriangle className="w-4 h-4 text-rose-600" />
-              검출된 정합성 오류 상세 리포트 ({promo.qcIssues.length}건)
-            </span>
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 mb-4">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-bold text-rose-900 flex items-center gap-1.5">
+                <AlertTriangle className="w-4 h-4 text-rose-600" />
+                부서별 검출된 정합성 오류 상세 리포트 ({promo.qcIssues.length}건)
+              </span>
+              <span className="text-[11px] text-slate-500">
+                (MD팀 외 디자인, 개발, 마케팅 부서 이슈를 탭으로 분리 확인 가능)
+              </span>
+            </div>
 
-            {/* 재확인 요청 메일 연동 버튼 */}
-            {promo.emailDraftIds.length > 0 && (
+            {/* 부서별 즉시 조치 메일/슬랙 전송 버튼 그룹 */}
+            <div className="flex flex-wrap items-center gap-1.5">
               <button
-                onClick={() => {
-                  setSelectedDraftId(promo.emailDraftIds[0]);
-                  setIsDraftModalOpen(true);
-                }}
-                className="text-xs font-bold text-indigo-700 hover:text-indigo-900 bg-white hover:bg-indigo-50 px-3 py-1 rounded-lg border border-indigo-200 flex items-center gap-1.5 transition-colors shadow-xs"
+                type="button"
+                onClick={() => handleOpenDeptDraft('MD')}
+                className="text-[11px] font-bold text-blue-700 hover:text-blue-900 bg-white hover:bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-200 flex items-center gap-1 transition-colors shadow-2xs cursor-pointer"
+                title="MD팀에 할인율/품번 재확인 메일 및 슬랙 발송"
               >
-                <Mail className="w-3.5 h-3.5 text-indigo-600" />
-                <span>MD팀 재확인 요청 메일 초안 확인 (임시보관함)</span>
+                <Mail className="w-3 h-3 text-blue-600" />
+                <span>✉️ MD팀 요청 ({mdIssues.length})</span>
               </button>
-            )}
+
+              <button
+                type="button"
+                onClick={() => handleOpenDeptDraft('DESIGN')}
+                className="text-[11px] font-bold text-purple-700 hover:text-purple-900 bg-white hover:bg-purple-50 px-2.5 py-1 rounded-lg border border-purple-200 flex items-center gap-1 transition-colors shadow-2xs cursor-pointer"
+                title="디자인팀에 배너 규격 수정 요청 메일 발송"
+              >
+                <Mail className="w-3 h-3 text-purple-600" />
+                <span>✉️ 디자인팀 요청 ({designIssues.length})</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleOpenDeptDraft('DEV')}
+                className="text-[11px] font-bold text-emerald-700 hover:text-emerald-900 bg-white hover:bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200 flex items-center gap-1 transition-colors shadow-2xs cursor-pointer"
+                title="웹개발/퍼블리싱팀에 404 URL 단절 조치 요청 메일 발송"
+              >
+                <Mail className="w-3 h-3 text-emerald-600" />
+                <span>✉️ 개발팀 요청 ({devIssues.length})</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleOpenDeptDraft('MARKETING')}
+                className="text-[11px] font-bold text-amber-700 hover:text-amber-900 bg-white hover:bg-amber-50 px-2.5 py-1 rounded-lg border border-amber-200 flex items-center gap-1 transition-colors shadow-2xs cursor-pointer"
+                title="마케팅팀에 쿠폰 중복 정책 확인 요청 메일 발송"
+              >
+                <Mail className="w-3 h-3 text-amber-600" />
+                <span>✉️ 마케팅팀 요청 ({mktIssues.length})</span>
+              </button>
+            </div>
           </div>
 
-          <div className="space-y-2">
-            {promo.qcIssues.map((issue) => (
-              <div
-                key={issue.id}
-                className={`p-3 rounded-xl border text-xs flex items-start justify-between gap-3 ${
-                  issue.severity === 'BLOCKER'
-                    ? 'bg-white border-rose-200 text-rose-900 shadow-xs'
-                    : 'bg-white border-amber-200 text-amber-900 shadow-xs'
-                }`}
-              >
-                <div className="flex items-start gap-2">
-                  <span
-                    className={`px-1.5 py-0.5 rounded text-[10px] font-mono font-bold mt-0.5 shrink-0 ${
-                      issue.severity === 'BLOCKER'
-                        ? 'bg-rose-100 text-rose-800'
-                        : 'bg-amber-100 text-amber-800'
-                    }`}
-                  >
-                    {issue.ruleCode}
-                  </span>
-                  <div>
-                    <p className="font-semibold leading-relaxed">{issue.message}</p>
-                    {issue.details && (
-                      <p className="text-[11px] text-slate-500 mt-1 font-mono">
-                        기대값(Expected): {String(issue.details.expected)} / 현재값(Actual):{' '}
-                        <span className="text-rose-600 font-bold">{String(issue.details.actual)}</span>
-                      </p>
-                    )}
-                  </div>
-                </div>
+          {/* 부서별 필터 탭 */}
+          <div className="flex items-center gap-1.5 mb-3 bg-white/80 p-1 rounded-xl border border-rose-200/80 w-fit text-xs font-bold">
+            <button
+              type="button"
+              onClick={() => setSelectedQcDeptFilter('ALL')}
+              className={`px-3 py-1 rounded-lg transition-colors cursor-pointer ${
+                selectedQcDeptFilter === 'ALL'
+                  ? 'bg-rose-600 text-white shadow-2xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              전체 부서 ({promo.qcIssues.length})
+            </button>
+            <button
+              type="button"
+              onClick={() => setSelectedQcDeptFilter('MD')}
+              className={`px-3 py-1 rounded-lg transition-colors cursor-pointer flex items-center gap-1 ${
+                selectedQcDeptFilter === 'MD'
+                  ? 'bg-blue-600 text-white shadow-2xs'
+                  : 'text-blue-700 hover:bg-blue-50'
+              }`}
+            >
+              <span>👗 MD팀</span>
+              <span className="text-[10px] opacity-80">({mdIssues.length})</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setSelectedQcDeptFilter('DESIGN')}
+              className={`px-3 py-1 rounded-lg transition-colors cursor-pointer flex items-center gap-1 ${
+                selectedQcDeptFilter === 'DESIGN'
+                  ? 'bg-purple-600 text-white shadow-2xs'
+                  : 'text-purple-700 hover:bg-purple-50'
+              }`}
+            >
+              <span>🎨 디자인팀</span>
+              <span className="text-[10px] opacity-80">({designIssues.length})</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setSelectedQcDeptFilter('DEV')}
+              className={`px-3 py-1 rounded-lg transition-colors cursor-pointer flex items-center gap-1 ${
+                selectedQcDeptFilter === 'DEV'
+                  ? 'bg-emerald-600 text-white shadow-2xs'
+                  : 'text-emerald-700 hover:bg-emerald-50'
+              }`}
+            >
+              <span>💻 웹개발/퍼블팀</span>
+              <span className="text-[10px] opacity-80">({devIssues.length})</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setSelectedQcDeptFilter('MARKETING')}
+              className={`px-3 py-1 rounded-lg transition-colors cursor-pointer flex items-center gap-1 ${
+                selectedQcDeptFilter === 'MARKETING'
+                  ? 'bg-amber-600 text-white shadow-2xs'
+                  : 'text-amber-700 hover:bg-amber-50'
+              }`}
+            >
+              <span>📢 마케팅팀</span>
+              <span className="text-[10px] opacity-80">({mktIssues.length})</span>
+            </button>
+          </div>
 
-                <span
-                  className={`text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0 ${
+          {/* 필터링된 이슈 목록 */}
+          <div className="space-y-2">
+            {filteredQcIssues.map((issue) => {
+              const dept = issue.department || 'MD';
+
+              return (
+                <div
+                  key={issue.id}
+                  className={`p-3 rounded-xl border text-xs flex items-start justify-between gap-3 ${
                     issue.severity === 'BLOCKER'
-                      ? 'bg-rose-600 text-white'
-                      : 'bg-amber-500 text-white'
+                      ? 'bg-white border-rose-200 text-rose-900 shadow-xs'
+                      : 'bg-white border-amber-200 text-amber-900 shadow-xs'
                   }`}
                 >
-                  {issue.severity}
-                </span>
-              </div>
-            ))}
+                  <div className="flex items-start gap-2.5">
+                    {/* 부서 태그 */}
+                    <span
+                      className={`px-2 py-0.5 rounded text-[10px] font-bold mt-0.5 shrink-0 border ${
+                        dept === 'MD'
+                          ? 'bg-blue-50 text-blue-800 border-blue-200'
+                          : dept === 'DESIGN'
+                          ? 'bg-purple-50 text-purple-800 border-purple-200'
+                          : dept === 'DEV'
+                          ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                          : 'bg-amber-50 text-amber-800 border-amber-200'
+                      }`}
+                    >
+                      {dept === 'MD'
+                        ? 'MD팀'
+                        : dept === 'DESIGN'
+                        ? '디자인팀'
+                        : dept === 'DEV'
+                        ? '웹개발팀'
+                        : '마케팅팀'}
+                    </span>
+
+                    <span
+                      className={`px-1.5 py-0.5 rounded text-[10px] font-mono font-bold mt-0.5 shrink-0 ${
+                        issue.severity === 'BLOCKER'
+                          ? 'bg-rose-100 text-rose-800'
+                          : 'bg-amber-100 text-amber-800'
+                      }`}
+                    >
+                      {issue.ruleCode}
+                    </span>
+
+                    <div>
+                      <p className="font-semibold leading-relaxed text-slate-900">{issue.message}</p>
+                      {issue.details && (
+                        <p className="text-[11px] text-slate-500 mt-1 font-mono">
+                          기대값(Expected): {String(issue.details.expected)} / 현재값(Actual):{' '}
+                          <span className="text-rose-600 font-bold">{String(issue.details.actual)}</span>
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => handleOpenDeptDraft(dept)}
+                      className="px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] font-bold rounded-md border border-slate-200 transition-colors cursor-pointer flex items-center gap-1"
+                      title="해당 부서 메일/슬랙 초안 열기"
+                    >
+                      <Mail className="w-3 h-3 text-slate-500" />
+                      <span>{dept}팀 조치 요청 &gt;</span>
+                    </button>
+
+                    <span
+                      className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                        issue.severity === 'BLOCKER'
+                          ? 'bg-rose-600 text-white'
+                          : 'bg-amber-500 text-white'
+                      }`}
+                    >
+                      {issue.severity}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       )}

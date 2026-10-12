@@ -95,6 +95,69 @@ E-BIZ 운영팀 드림`,
     createdAt: '2026-03-05 11:22',
   },
   {
+    id: 'draft-list-trench-design',
+    promotionId: 'promo-list-trench-2026',
+    emailType: 'RECHECK_ERROR',
+    toDepartment: 'DESIGN',
+    recipientName: '디자인팀 박민지 책임',
+    subject: '[긴급 수정 요청] [LIST] 26SS 트렌치코트전 - PC 메인 배너 해상도 규격 미달의 건',
+    body: `안녕하세요 박민지 책임님, E-BIZ 자사몰 운영팀입니다.
+
+전달주신 [LIST] 26SS 트렌치코트전 PC 배너 소재 사전 검수 결과, 권장 해상도 규격(1920x600 px)에 미달하는 저해상도 파일(1200x400 px)이 등록되어 모니터 출력 시 타이포그래피 깨짐 현상이 확인되었습니다.
+
+■ 조치 요청 사항:
+- PC 메인 배너 원본 고해상도(1920x600 px, 72dpi 이상, 1MB 이하) 재전달
+- 조치 마감: 2026년 3월 8일(금) 15:00까지
+
+행사 오픈 전 배너 교체를 위해 빠른 재송부 부탁드립니다. 감사합니다.
+E-BIZ 운영팀 드림`,
+    triggerReason: 'PC 메인 배너 규격 미달(1200x400)로 텍스트 가독성 불량 감지 (BLOCKER)',
+    status: 'DRAFT',
+    createdAt: '2026-03-05 11:25',
+  },
+  {
+    id: 'draft-list-trench-dev',
+    promotionId: 'promo-list-trench-2026',
+    emailType: 'RECHECK_ERROR',
+    toDepartment: 'DEV',
+    recipientName: '웹개발/퍼블리싱팀 정우진 선임',
+    subject: '[긴급 조치 요청] [LIST] 26SS 트렌치코트전 - 품번 SWBLPB21050 404 URL 단절의 건',
+    body: `안녕하세요 정우진 선임님, E-BIZ 자사몰 운영팀입니다.
+
+[LIST] 26SS 트렌치코트전 등록 상품 URL 유효성 검증 중, 품번 SWBLPB21050의 상세페이지 링크가 외부 테스트 도메인(http://broken-link.com)으로 기재되어 404 페이지 오류가 발생하고 있습니다.
+
+■ 조치 요청 사항:
+- 정상 카페24 자사몰 경로(https://www.idfmall.co.kr/product/SWBLPB21050)로 라우팅 수정
+- 조치 마감: 즉시 조치 요망 (오픈 전 필수)
+
+빠른 확인 및 서버 링크 갱신 부탁드립니다.
+E-BIZ 운영팀 드림`,
+    triggerReason: '상세페이지 URL 404 단절 오류 감지 (BLOCKER)',
+    status: 'DRAFT',
+    createdAt: '2026-03-05 11:28',
+  },
+  {
+    id: 'draft-list-trench-mkt',
+    promotionId: 'promo-list-trench-2026',
+    emailType: 'RECHECK_ERROR',
+    toDepartment: 'MARKETING',
+    recipientName: '마케팅팀 최현우 팀장',
+    subject: '[정책 확인 요청] [LIST] 26SS 트렌치코트전 - LIVE WEEK 쿠폰 중복 적용 플래그 검토의 건',
+    body: `안녕하세요 최현우 팀장님, E-BIZ 자사몰 운영팀입니다.
+
+[LIST] 26SS 트렌치코트전 프로모션 정책 검증 중, LIVE WEEK 한정 특가 상품군에 신규회원 웰컴 쿠폰 중복 적용 허용 플래그가 활성화되어 있어 마진율 역전 위험이 감지되었습니다.
+
+■ 검토 요청 사항:
+- LIVE WEEK 특가 상품의 중복 쿠폰 적용 허용 여부 최종 승인
+- 기획서 원안대로 '중복 불가'로 변경할지 여부 회신 요망
+
+확인 후 메일 또는 슬랙으로 회신 부탁드립니다. 감사합니다.
+E-BIZ 운영팀 드림`,
+    triggerReason: '특가 상품군 쿠폰 중복 적용 플래그 설정 검토 (WARNING)',
+    status: 'DRAFT',
+    createdAt: '2026-03-05 11:30',
+  },
+  {
     id: 'draft-shesmiss-reminder-1',
     promotionId: 'promo-shesmiss-suit-2026',
     emailType: 'REMINDER_DELAY',

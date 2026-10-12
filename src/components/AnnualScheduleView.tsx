@@ -4,6 +4,7 @@ import React, { useState, useMemo } from 'react';
 import { useOpsStore } from '@/store/useOpsStore';
 import { Brand, Promotion } from '@/types/promotion';
 import { exportToExcel } from '@/utils/excelExporter';
+import CalendarUploader from '@/components/CalendarUploader';
 import {
   Calendar,
   Filter,
@@ -17,6 +18,9 @@ import {
   Sliders,
   Flame,
   ArrowRight,
+  Plus,
+  Eye,
+  EyeOff,
 } from 'lucide-react';
 
 export default function AnnualScheduleView() {
@@ -29,6 +33,8 @@ export default function AnnualScheduleView() {
 
   const [selectedQuarter, setSelectedQuarter] = useState<'ALL' | 'Q1' | 'Q2' | 'Q3' | 'Q4'>('ALL');
   const [selectedStatusFilter, setSelectedStatusFilter] = useState<'ALL' | 'COMPLETED' | 'IN_PROGRESS'>('ALL');
+  const [hideEndedEvents, setHideEndedEvents] = useState(false);
+  const [showUploader, setShowUploader] = useState(false);
 
   // 분기 판정 헬퍼
   const getQuarter = (dateStr: string): 'Q1' | 'Q2' | 'Q3' | 'Q4' => {
@@ -39,16 +45,57 @@ export default function AnnualScheduleView() {
     return 'Q4';
   };
 
+  // 행사 기간, 오늘 진행 일차, 마감 D-Day 계산 헬퍼 (기준일: 2026-03-08)
+  const getPromoTiming = (startDate: string, endDate: string) => {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const today = new Date('2026-03-08');
+
+    // 총 행사 일수
+    const totalDays = Math.round((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+
+    if (end < today) {
+      return {
+        statusType: 'ENDED',
+        totalDays,
+        badgeText: '행사 종료',
+        subText: `${totalDays}일간 진행 완료 (${endDate.slice(5)} 마감)`,
+        isEnded: true,
+      };
+    } else if (start <= today && today <= end) {
+      const elapsedDays = Math.floor((today.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+      const daysLeft = Math.floor((end.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+      return {
+        statusType: 'RUNNING',
+        totalDays,
+        elapsedDays,
+        daysLeft,
+        badgeText: `진행 ${elapsedDays}일차 (D-${daysLeft})`,
+        subText: `총 ${totalDays}일 중 오늘 ${elapsedDays}일째 (마감까지 ${daysLeft}일 남음)`,
+        isEnded: false,
+      };
+    } else {
+      const daysUntil = Math.floor((start.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+      return {
+        statusType: 'UPCOMING',
+        totalDays,
+        daysUntil,
+        badgeText: `오픈 D-${daysUntil}`,
+        subText: `총 ${totalDays}일간 예정 (오픈까지 ${daysUntil}일 남음)`,
+        isEnded: false,
+      };
+    }
+  };
+
   // 진행률 (완료 정도 %) 계산 헬퍼
   const calculateProgress = (promo: Promotion): number => {
-    if (promo.status === 'READY_TO_PUBLISH') return 100;
+    const timing = getPromoTiming(promo.startDate, promo.endDate);
+    if (timing.isEnded || promo.status === 'READY_TO_PUBLISH') return 100;
+
     const completedMilestones = promo.milestones.filter((m) => m.isCompleted).length;
     const totalMilestones = promo.milestones.length || 5;
 
-    // 마일스톤 완료 비율 (최대 80%)
     let score = Math.round((completedMilestones / totalMilestones) * 70);
-
-    // QC 통과 여부 반영
     const blockerCount = promo.qcIssues.filter((i) => i.severity === 'BLOCKER').length;
     if (promo.banner.isConfirmed) score += 15;
     if (promo.products.length > 0 && blockerCount === 0) score += 15;
@@ -59,6 +106,11 @@ export default function AnnualScheduleView() {
   // 필터링된 프로모션 목록
   const filteredPromos = useMemo(() => {
     return promotions.filter((promo) => {
+      const timing = getPromoTiming(promo.startDate, promo.endDate);
+
+      // 종료된 행사 숨기기
+      if (hideEndedEvents && timing.isEnded) return false;
+
       // 브랜드 필터
       if (selectedBrand !== 'ALL' && promo.brand !== selectedBrand) return false;
 
@@ -66,18 +118,19 @@ export default function AnnualScheduleView() {
       if (selectedQuarter !== 'ALL' && getQuarter(promo.startDate) !== selectedQuarter) return false;
 
       // 상태 필터
-      const isCompleted = promo.status === 'READY_TO_PUBLISH';
+      const isCompleted = promo.status === 'READY_TO_PUBLISH' || timing.isEnded;
       if (selectedStatusFilter === 'COMPLETED' && !isCompleted) return false;
       if (selectedStatusFilter === 'IN_PROGRESS' && isCompleted) return false;
 
       return true;
     }).sort((a, b) => a.startDate.localeCompare(b.startDate));
-  }, [promotions, selectedBrand, selectedQuarter, selectedStatusFilter]);
+  }, [promotions, selectedBrand, selectedQuarter, selectedStatusFilter, hideEndedEvents]);
 
   // 연간 종합 요약 통계
   const totalCount = promotions.length;
-  const completedCount = promotions.filter((p) => p.status === 'READY_TO_PUBLISH').length;
-  const inProgressCount = totalCount - completedCount;
+  const endedCount = promotions.filter((p) => getPromoTiming(p.startDate, p.endDate).isEnded).length;
+  const completedCount = promotions.filter((p) => p.status === 'READY_TO_PUBLISH' || getPromoTiming(p.startDate, p.endDate).isEnded).length;
+  const inProgressCount = totalCount - endedCount;
   const avgProgress = Math.round(
     promotions.reduce((acc, curr) => acc + calculateProgress(curr), 0) / (totalCount || 1)
   );
@@ -101,7 +154,7 @@ export default function AnnualScheduleView() {
 
   // 타임라인 좌표 계산 헬퍼 (1~12월 365일 비례 계산)
   const getTimelineCoordinates = (startDate: string, endDate: string) => {
-    const sMonth = parseInt(startDate.slice(5, 7), 10) - 1; // 0 to 11
+    const sMonth = parseInt(startDate.slice(5, 7), 10) - 1;
     const sDay = parseInt(startDate.slice(8, 10), 10) || 1;
     const eMonth = parseInt(endDate.slice(5, 7), 10) - 1;
     const eDay = parseInt(endDate.slice(8, 10), 10) || 28;
@@ -111,7 +164,7 @@ export default function AnnualScheduleView() {
 
     const leftPercent = Math.max(0, Math.min(94, startRatio * 100));
     const rawWidth = (endRatio - startRatio) * 100;
-    const widthPercent = Math.max(5.5, Math.min(100 - leftPercent, rawWidth));
+    const widthPercent = Math.max(6.5, Math.min(100 - leftPercent, rawWidth));
 
     return {
       left: `${leftPercent.toFixed(1)}%`,
@@ -141,7 +194,7 @@ export default function AnnualScheduleView() {
             </p>
           </div>
 
-          {/* 뷰 모드 토글 & 엑셀 일괄 다운로드 버튼 */}
+          {/* 뷰 모드 토글, 엑셀 다운로드, 신규 등록 업로더 토글 버튼 */}
           <div className="flex flex-wrap items-center gap-2">
             <div className="flex items-center bg-slate-100 p-1 rounded-xl text-xs font-bold text-slate-600">
               <button
@@ -174,14 +227,34 @@ export default function AnnualScheduleView() {
             </div>
 
             <button
+              type="button"
+              onClick={() => setShowUploader(!showUploader)}
+              className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer ${
+                showUploader
+                  ? 'bg-indigo-600 text-white'
+                  : 'bg-white hover:bg-slate-50 text-indigo-700 border border-indigo-200'
+              }`}
+            >
+              <Plus className="w-4 h-4" />
+              <span>{showUploader ? '업로더 닫기' : '➕ 연간 행사 등록 (엑셀 업로드)'}</span>
+            </button>
+
+            <button
               onClick={() => exportToExcel(promotions, '2026_연간_프로모션_마스터_리포트')}
-              className="inline-flex items-center gap-1.5 px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
             >
               <Download className="w-4 h-4" />
-              <span>연간 전체 엑셀 (.xlsx)</span>
+              <span>연간 엑셀 (.xlsx)</span>
             </button>
           </div>
         </div>
+
+        {/* 연간 캘린더 엑셀 업로더 (통합 인라인) */}
+        {showUploader && (
+          <div className="pt-6 border-b border-slate-100 pb-2 animate-in fade-in slide-in-from-top-2 duration-200">
+            <CalendarUploader />
+          </div>
+        )}
 
         {/* 4대 KPI 요약 게이지 */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-6">
@@ -194,7 +267,7 @@ export default function AnnualScheduleView() {
           </div>
 
           <div className="p-4 rounded-xl bg-emerald-50/60 border border-emerald-200">
-            <span className="text-[11px] font-bold text-emerald-700 uppercase">게시 완료 (100% 달성)</span>
+            <span className="text-[11px] font-bold text-emerald-700 uppercase">게시 완료 및 행사 종료</span>
             <div className="flex items-baseline gap-2 mt-1">
               <span className="text-2xl font-black text-emerald-800 font-mono">{completedCount}</span>
               <span className="text-xs text-emerald-600">개 행사</span>
@@ -202,7 +275,7 @@ export default function AnnualScheduleView() {
           </div>
 
           <div className="p-4 rounded-xl bg-amber-50/60 border border-amber-200">
-            <span className="text-[11px] font-bold text-amber-700 uppercase">운영·QC 진행 중</span>
+            <span className="text-[11px] font-bold text-amber-700 uppercase">운영·진행 중인 행사</span>
             <div className="flex items-baseline gap-2 mt-1">
               <span className="text-2xl font-black text-amber-800 font-mono">{inProgressCount}</span>
               <span className="text-xs text-amber-600">개 행사</span>
@@ -223,7 +296,7 @@ export default function AnnualScheduleView() {
           </div>
         </div>
 
-        {/* 필터 툴바 (브랜드, 분기, 완료상태) */}
+        {/* 필터 툴바 (브랜드, 분기, 완료상태, 종료 행사 숨기기) */}
         <div className="flex flex-wrap items-center justify-between gap-4 pt-6 mt-6 border-t border-slate-100">
           <div className="flex flex-wrap items-center gap-2 text-xs">
             {/* 브랜드 필터 */}
@@ -308,7 +381,26 @@ export default function AnnualScheduleView() {
           </div>
 
           <div className="flex items-center gap-2 text-xs">
-            <span className="text-slate-400 font-semibold">완료도 필터:</span>
+            {/* 종료된 행사 숨기기 토글 필터 */}
+            <button
+              type="button"
+              onClick={() => setHideEndedEvents(!hideEndedEvents)}
+              className={`px-3 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                hideEndedEvents
+                  ? 'bg-rose-50 border-rose-300 text-rose-700 shadow-2xs'
+                  : 'bg-white border-slate-200 text-slate-600 hover:border-slate-300'
+              }`}
+            >
+              {hideEndedEvents ? (
+                <EyeOff className="w-3.5 h-3.5 text-rose-600" />
+              ) : (
+                <Eye className="w-3.5 h-3.5 text-slate-400" />
+              )}
+              <span>{hideEndedEvents ? '종료 행사 숨김 적용 중' : '종료된 행사 숨기기'}</span>
+              <span className="text-[10px] opacity-75 font-mono">({endedCount}건)</span>
+            </button>
+
+            <span className="text-slate-400 font-semibold ml-1">상태:</span>
             <select
               value={selectedStatusFilter}
               onChange={(e) => setSelectedStatusFilter(e.target.value as any)}
@@ -329,10 +421,10 @@ export default function AnnualScheduleView() {
             <div>
               <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
                 <span>📊</span>
-                <span>2026 연간 타임라인 간트 차트 (실제 일정 비례 배치)</span>
+                <span>2026 연간 타임라인 간트 차트 (행사 기간·진행 일차·마감 D-Day 실시간 연동)</span>
               </h3>
               <p className="text-xs text-slate-500 mt-0.5">
-                행사의 시작일~종료일에 맞춰 12개월 타임라인 상의 실제 위치에 바가 배치되며, 진행률이 바 내부에 실시간 충전됩니다.
+                행사의 시작일~종료일에 맞춰 12개월 타임라인 상의 실제 위치에 바가 배치되며, 진행 일차와 마감 D-Day가 실시간 표시됩니다.
               </p>
             </div>
 
@@ -340,7 +432,11 @@ export default function AnnualScheduleView() {
             <div className="flex flex-wrap items-center gap-3 text-[11px] font-semibold text-slate-600 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200">
               <span className="flex items-center gap-1.5">
                 <span className="w-2.5 h-2.5 rounded-sm bg-emerald-500"></span>
-                게시 완료(100%)
+                완료/승인(100%)
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-sm bg-slate-400"></span>
+                행사 종료
               </span>
               <span className="flex items-center gap-1.5">
                 <span className="w-2.5 h-2.5 rounded-sm bg-rose-500"></span>
@@ -352,7 +448,7 @@ export default function AnnualScheduleView() {
               </span>
               <span className="flex items-center gap-1.5 text-rose-600">
                 <span className="w-2 h-2 rounded-full bg-rose-500 ring-2 ring-rose-200"></span>
-                현재 시점 (3월)
+                현재 시점 (3월 2주차)
               </span>
             </div>
           </div>
@@ -363,7 +459,7 @@ export default function AnnualScheduleView() {
               {/* 헤더: 좌측 프로모션 정보 열 + 우측 12개월 캘린더 그리드 */}
               <div className="flex items-end border-b border-slate-300 pb-3 font-bold text-xs">
                 <div className="w-72 shrink-0 pr-4 text-slate-500 uppercase tracking-wider">
-                  프로모션 / 브랜드 / D-Day
+                  프로모션 / 기간(일수) / 마감 현황
                 </div>
                 <div className="flex-1 grid grid-cols-12 text-center text-slate-600 relative">
                   {months.map((m) => (
@@ -407,6 +503,7 @@ export default function AnnualScheduleView() {
                 </div>
 
                 {filteredPromos.map((promo) => {
+                  const timing = getPromoTiming(promo.startDate, promo.endDate);
                   const progress = calculateProgress(promo);
                   const blockerCount = promo.qcIssues.filter((i) => i.severity === 'BLOCKER').length;
                   const isCompleted = promo.status === 'READY_TO_PUBLISH';
@@ -416,24 +513,33 @@ export default function AnnualScheduleView() {
                     <div
                       key={promo.id}
                       onClick={() => setSelectedPromotionId(promo.id)}
-                      className="flex items-center py-3.5 hover:bg-slate-50/80 transition-colors group cursor-pointer relative z-10"
+                      className={`flex items-center py-3.5 hover:bg-slate-50/80 transition-colors group cursor-pointer relative z-10 ${
+                        timing.isEnded ? 'opacity-75' : ''
+                      }`}
                     >
                       {/* 좌측 정보 컬럼 */}
                       <div className="w-72 shrink-0 pr-4">
-                        <div className="flex items-center gap-1.5 mb-1">
-                          <span
-                            className={`px-1.5 py-0.2 rounded text-[10px] font-bold ${
-                              promo.brand === 'SHESMISS'
-                                ? 'bg-purple-100 text-purple-800'
-                                : promo.brand === 'LIST'
-                                ? 'bg-blue-100 text-blue-800'
-                                : 'bg-emerald-100 text-emerald-800'
-                            }`}
-                          >
-                            {promo.brand}
-                          </span>
-                          <span className="font-mono text-[11px] text-slate-400">
-                            {promo.startDate.slice(5)} ~ {promo.endDate.slice(5)}
+                        <div className="flex items-center justify-between mb-1">
+                          <div className="flex items-center gap-1.5">
+                            <span
+                              className={`px-1.5 py-0.2 rounded text-[10px] font-bold ${
+                                promo.brand === 'SHESMISS'
+                                  ? 'bg-purple-100 text-purple-800'
+                                  : promo.brand === 'LIST'
+                                  ? 'bg-blue-100 text-blue-800'
+                                  : 'bg-emerald-100 text-emerald-800'
+                              }`}
+                            >
+                              {promo.brand}
+                            </span>
+                            <span className="font-mono text-[11px] text-slate-400">
+                              {promo.startDate.slice(5)} ~ {promo.endDate.slice(5)}
+                            </span>
+                          </div>
+
+                          {/* 행사 총 일수 뱃지 */}
+                          <span className="text-[10px] font-bold bg-slate-100 text-slate-600 px-1.5 py-0.2 rounded">
+                            총 {timing.totalDays}일간
                           </span>
                         </div>
 
@@ -441,22 +547,30 @@ export default function AnnualScheduleView() {
                           {promo.title}
                         </h4>
 
-                        <div className="flex items-center gap-1.5 text-[10px]">
-                          {blockerCount > 0 ? (
-                            <span className="bg-rose-100 text-rose-800 font-bold px-1.5 py-0.2 rounded flex items-center gap-1">
-                              <AlertTriangle className="w-3 h-3 text-rose-600" />
-                              오류 {blockerCount}건 조치대기
+                        <div className="flex items-center gap-1.5 text-[10px] flex-wrap">
+                          {/* 오늘 기준 상태 태그 */}
+                          {timing.isEnded ? (
+                            <span className="bg-slate-200 text-slate-600 font-bold px-1.5 py-0.2 rounded">
+                              ✓ 행사 종료
                             </span>
-                          ) : isCompleted ? (
-                            <span className="bg-emerald-100 text-emerald-800 font-bold px-1.5 py-0.2 rounded flex items-center gap-0.5">
-                              <CheckCircle2 className="w-3 h-3 text-emerald-600" />
-                              100% 승인완료
+                          ) : timing.statusType === 'RUNNING' ? (
+                            <span className="bg-rose-100 text-rose-800 font-bold px-1.5 py-0.2 rounded flex items-center gap-1 animate-pulse">
+                              <Flame className="w-3 h-3 text-rose-600" />
+                              진행 {timing.elapsedDays}일차 (D-{timing.daysLeft})
                             </span>
                           ) : (
-                            <span className="bg-indigo-100 text-indigo-800 font-semibold px-1.5 py-0.2 rounded">
-                              진척도 {progress}%
+                            <span className="bg-indigo-100 text-indigo-800 font-bold px-1.5 py-0.2 rounded">
+                              오픈 D-{timing.daysUntil}
                             </span>
                           )}
+
+                          {blockerCount > 0 && !timing.isEnded ? (
+                            <span className="bg-rose-100 text-rose-800 font-bold px-1.5 py-0.2 rounded flex items-center gap-0.5">
+                              <AlertTriangle className="w-3 h-3 text-rose-600" />
+                              오류 {blockerCount}건
+                            </span>
+                          ) : null}
+
                           <span className="text-slate-400 font-mono">
                             {promo.targetDiscountRate}% / {promo.allowCoupon ? '쿠폰O' : '쿠폰X'}
                           </span>
@@ -466,27 +580,35 @@ export default function AnnualScheduleView() {
                       {/* 우측 간트 트랙 & 날짜 비례 바 */}
                       <div className="flex-1 relative h-9 flex items-center">
                         <div
-                          className="absolute h-8 rounded-lg shadow-xs transition-all duration-300 group-hover:shadow-md flex items-center justify-between px-2.5 overflow-hidden border cursor-pointer"
+                          className={`absolute h-8 rounded-lg shadow-xs transition-all duration-300 group-hover:shadow-md flex items-center justify-between px-2.5 overflow-hidden border cursor-pointer ${
+                            timing.isEnded ? 'grayscale-[35%]' : ''
+                          }`}
                           style={{
                             left: coords.left,
                             width: coords.width,
-                            backgroundColor: isCompleted
+                            backgroundColor: timing.isEnded
+                              ? '#f1f5f9'
+                              : isCompleted
                               ? '#ecfdf5'
                               : blockerCount > 0
                               ? '#fff1f2'
                               : '#eef2ff',
-                            borderColor: isCompleted
+                            borderColor: timing.isEnded
+                              ? '#cbd5e1'
+                              : isCompleted
                               ? '#a7f3d0'
                               : blockerCount > 0
                               ? '#fecdd3'
                               : '#c7d2fe',
                           }}
-                          title={`${promo.title} (${promo.startDate} ~ ${promo.endDate}) - 완료도 ${progress}%`}
+                          title={`${promo.title} (${promo.startDate} ~ ${promo.endDate}) - ${timing.subText}`}
                         >
                           {/* 내부 진행률 충전 게이지 (Progress fill bar) */}
                           <div
                             className={`absolute left-0 top-0 bottom-0 opacity-25 rounded-l-lg transition-all duration-500 ${
-                              isCompleted
+                              timing.isEnded
+                                ? 'bg-slate-500'
+                                : isCompleted
                                 ? 'bg-emerald-600'
                                 : blockerCount > 0
                                 ? 'bg-rose-600'
@@ -499,7 +621,9 @@ export default function AnnualScheduleView() {
                           <div className="relative z-10 flex items-center gap-1.5 min-w-0">
                             <span
                               className={`w-2 h-2 rounded-full shrink-0 ${
-                                isCompleted
+                                timing.isEnded
+                                  ? 'bg-slate-400'
+                                  : isCompleted
                                   ? 'bg-emerald-600'
                                   : blockerCount > 0
                                   ? 'bg-rose-600'
@@ -509,19 +633,24 @@ export default function AnnualScheduleView() {
                             <span className="text-[11px] font-bold text-slate-900 truncate">
                               {promo.title}
                             </span>
+                            <span className="text-[10px] text-slate-500 font-normal shrink-0">
+                              ({timing.totalDays}일간)
+                            </span>
                           </div>
 
                           <div className="relative z-10 flex items-center gap-1 shrink-0 ml-1">
                             <span
                               className={`text-[10px] font-mono font-extrabold px-1.5 py-0.2 rounded-full ${
-                                isCompleted
+                                timing.isEnded
+                                  ? 'bg-slate-200 text-slate-700'
+                                  : isCompleted
                                   ? 'bg-emerald-200 text-emerald-900'
                                   : blockerCount > 0
                                   ? 'bg-rose-200 text-rose-900'
                                   : 'bg-indigo-200 text-indigo-900'
                               }`}
                             >
-                              {progress}%
+                              {timing.isEnded ? '행사 종료' : `${progress}%`}
                             </span>
                           </div>
                         </div>
@@ -550,18 +679,21 @@ export default function AnnualScheduleView() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredPromos.map((promo) => {
+              const timing = getPromoTiming(promo.startDate, promo.endDate);
               const progress = calculateProgress(promo);
               const blockerCount = promo.qcIssues.filter((i) => i.severity === 'BLOCKER').length;
 
               return (
                 <div
                   key={promo.id}
-                  className="bg-white rounded-2xl border border-slate-200 hover:border-slate-300 shadow-xs hover:shadow-md transition-all p-5 flex flex-col justify-between"
+                  className={`bg-white rounded-2xl border border-slate-200 hover:border-slate-300 shadow-xs hover:shadow-md transition-all p-5 flex flex-col justify-between ${
+                    timing.isEnded ? 'opacity-80' : ''
+                  }`}
                 >
                   <div>
                     {/* 상단 뱃지 바 */}
                     <div className="flex items-center justify-between gap-2 mb-3">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1.5">
                         <span
                           className={`px-2 py-0.5 rounded text-[10px] font-bold ${
                             promo.brand === 'SHESMISS'
@@ -576,18 +708,21 @@ export default function AnnualScheduleView() {
                         <span className="text-xs text-slate-400 font-mono">
                           {promo.startDate.slice(5, 7)}월 행사
                         </span>
+                        <span className="text-[10px] font-bold bg-slate-100 text-slate-600 px-1.5 py-0.2 rounded">
+                          총 {timing.totalDays}일간
+                        </span>
                       </div>
 
                       <span
                         className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                          progress === 100
-                            ? 'bg-emerald-100 text-emerald-800'
-                            : blockerCount > 0
-                            ? 'bg-rose-100 text-rose-800'
+                          timing.isEnded
+                            ? 'bg-slate-200 text-slate-700'
+                            : timing.statusType === 'RUNNING'
+                            ? 'bg-rose-100 text-rose-800 animate-pulse'
                             : 'bg-indigo-100 text-indigo-800'
                         }`}
                       >
-                        진척도 {progress}%
+                        {timing.badgeText}
                       </span>
                     </div>
 
@@ -596,25 +731,27 @@ export default function AnnualScheduleView() {
                       {promo.title}
                     </h4>
                     <p className="text-xs text-slate-500 font-mono mb-4">
-                      {promo.startDate} ~ {promo.endDate}
+                      {promo.startDate} ~ {promo.endDate} ({timing.totalDays}일간)
                     </p>
 
                     {/* 이벤트 완료 정도 프로그레스 바 */}
                     <div className="space-y-1.5 mb-4">
                       <div className="flex justify-between text-[11px] font-semibold text-slate-600">
                         <span>이벤트 완료 진척도</span>
-                        <span className="font-mono text-slate-900">{progress}%</span>
+                        <span className="font-mono text-slate-900">{timing.isEnded ? '100% (종료)' : `${progress}%`}</span>
                       </div>
                       <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
                         <div
                           className={`h-full rounded-full transition-all duration-500 ${
-                            progress === 100
+                            timing.isEnded
+                              ? 'bg-slate-500'
+                              : progress === 100
                               ? 'bg-emerald-500'
                               : blockerCount > 0
                               ? 'bg-rose-500'
                               : 'bg-indigo-600'
                           }`}
-                          style={{ width: `${progress}%` }}
+                          style={{ width: `${timing.isEnded ? 100 : progress}%` }}
                         ></div>
                       </div>
                     </div>

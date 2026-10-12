@@ -249,6 +249,7 @@ export const INITIAL_PROMOTIONS: Promotion[] = [
     qcIssues: [
       {
         id: 'qc-err-1',
+        department: 'MD',
         ruleCode: 'MATH_DISCOUNT_MISMATCH',
         severity: 'BLOCKER',
         targetField: 'SWBLPB21010.displayDiscountRate',
@@ -261,6 +262,7 @@ export const INITIAL_PROMOTIONS: Promotion[] = [
       },
       {
         id: 'qc-err-2',
+        department: 'MD',
         ruleCode: 'UNAPPROVED_SKU',
         severity: 'BLOCKER',
         targetField: 'SWCTKB21099.isApproved',
@@ -271,6 +273,7 @@ export const INITIAL_PROMOTIONS: Promotion[] = [
       },
       {
         id: 'qc-err-3',
+        department: 'DEV',
         ruleCode: 'INVALID_URL',
         severity: 'BLOCKER',
         targetField: 'SWBLPB21050.detailUrl',
@@ -283,6 +286,7 @@ export const INITIAL_PROMOTIONS: Promotion[] = [
       },
       {
         id: 'qc-err-4',
+        department: 'MD',
         ruleCode: 'PLAN_DISCOUNT_MISMATCH',
         severity: 'WARNING',
         targetField: 'SWJCKB21060.displayDiscountRate',
@@ -293,8 +297,32 @@ export const INITIAL_PROMOTIONS: Promotion[] = [
           actual: 55,
         },
       },
+      {
+        id: 'qc-err-5',
+        department: 'DESIGN',
+        ruleCode: 'BANNER_SPEC_MISMATCH',
+        severity: 'BLOCKER',
+        targetField: 'banner.pcBannerUrl',
+        message: '디자인팀 배너 해상도 규격 불일치: PC 메인 배너 권장 규격(1920x600 px) 미달(업로드 규격: 1200x400 px, 텍스트 깨짐 발생). 고해상도 재전달 필요.',
+        details: {
+          expected: '1920x600 px',
+          actual: '1200x400 px',
+        },
+      },
+      {
+        id: 'qc-err-6',
+        department: 'MARKETING',
+        ruleCode: 'COUPON_POLICY_MISMATCH',
+        severity: 'WARNING',
+        targetField: 'allowCoupon',
+        message: '마케팅팀 프로모션 쿠폰 정책 충돌: LIVE WEEK 한정 특가 상품군에 신규회원 웰컴 쿠폰 중복 적용 허용 플래그가 켜져 있어 마진율 방어 확인 필요.',
+        details: {
+          expected: '쿠폰 중복 불가',
+          actual: '중복 허용됨',
+        },
+      },
     ],
-    emailDraftIds: ['draft-list-trench-1'],
+    emailDraftIds: ['draft-list-trench-1', 'draft-list-trench-design', 'draft-list-trench-dev', 'draft-list-trench-mkt'],
   },
   {
     id: 'promo-shesmiss-suit-2026',
