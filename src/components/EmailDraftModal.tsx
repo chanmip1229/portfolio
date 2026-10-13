@@ -251,7 +251,8 @@ ${s.issues
 감사합니다.
 
 Best regards,
-E-BIZ 자사몰 운영팀 박찬미 드림`;
+E-BIZ 자사몰 운영팀
+박찬미 드림`;
     });
     return bodies;
   }, [deptSummaries]);

@@ -87,7 +87,8 @@ const INITIAL_DRAFTS: EmailDraft[] = [
 감사합니다.
 
 Best regards,
-E-BIZ 자사몰 운영팀 박찬미 드림`,
+E-BIZ 자사몰 운영팀
+박찬미 드림`,
     triggerReason: '품번 SWBLPB21010 할인율 계산 불일치 및 SWCTKB21030 80% 트렌드 이상치 감지 (MD+디자인 다부서 복합 이슈)',
     status: 'DRAFT',
     createdAt: '2026-03-05 11:32',
@@ -120,7 +121,8 @@ E-BIZ 자사몰 운영팀 박찬미 드림`,
 감사합니다.
 
 Best regards,
-E-BIZ 자사몰 운영팀 박찬미 드림`,
+E-BIZ 자사몰 운영팀
+박찬미 드림`,
     triggerReason: '품번 SWBLPB21010 대표 썸네일 해상도 규격 미달 및 착용 컷 교체 필요 (MD+디자인 다부서 복합 이슈)',
     status: 'DRAFT',
     createdAt: '2026-03-05 11:32',
@@ -156,7 +158,8 @@ E-BIZ 자사몰 운영팀 박찬미 드림`,
 감사합니다.
 
 Best regards,
-E-BIZ 자사몰 운영팀 박찬미 드림`,
+E-BIZ 자사몰 운영팀
+박찬미 드림`,
     triggerReason: '카테고리 평균(30%) 대비 80% 극단치 오기입 의심 (역마진 방지)',
     status: 'DRAFT',
     createdAt: '2026-03-05 11:35',
@@ -186,7 +189,8 @@ E-BIZ 자사몰 운영팀 박찬미 드림`,
 감사합니다.
 
 Best regards,
-E-BIZ 자사몰 운영팀 박찬미 드림`,
+E-BIZ 자사몰 운영팀
+박찬미 드림`,
     triggerReason: '상품 대표 썸네일 링크 깨짐(404 / 엑스박스) 감지 (BLOCKER)',
     status: 'DRAFT',
     createdAt: '2026-03-05 11:38',
@@ -231,7 +235,8 @@ E-BIZ 자사몰 운영팀 박찬미 드림`,
 감사합니다.
 
 Best regards,
-E-BIZ 자사몰 운영팀 박찬미 드림`,
+E-BIZ 자사몰 운영팀
+박찬미 드림`,
     triggerReason: '품번 SWBLPB21010 외 3건의 다건 정합성 오류 감지 (BLOCKER 3건 / WARNING 1건)',
     status: 'DRAFT',
     createdAt: '2026-03-05 11:22',
@@ -257,7 +262,8 @@ E-BIZ 자사몰 운영팀 박찬미 드림`,
 감사합니다.
 
 Best regards,
-E-BIZ 자사몰 운영팀 박찬미 드림`,
+E-BIZ 자사몰 운영팀
+박찬미 드림`,
     triggerReason: 'PC 메인 배너 규격 미달(1200x400)로 텍스트 가독성 불량 감지 (BLOCKER)',
     status: 'DRAFT',
     createdAt: '2026-03-05 11:25',
@@ -283,7 +289,8 @@ E-BIZ 자사몰 운영팀 박찬미 드림`,
 감사합니다.
 
 Best regards,
-E-BIZ 자사몰 운영팀 박찬미 드림`,
+E-BIZ 자사몰 운영팀
+박찬미 드림`,
     triggerReason: '상세페이지 URL 404 단절 오류 감지 (BLOCKER)',
     status: 'DRAFT',
     createdAt: '2026-03-05 11:28',
@@ -309,7 +316,8 @@ E-BIZ 자사몰 운영팀 박찬미 드림`,
 감사합니다.
 
 Best regards,
-E-BIZ 자사몰 운영팀 박찬미 드림`,
+E-BIZ 자사몰 운영팀
+박찬미 드림`,
     triggerReason: '특가 상품군 쿠폰 중복 적용 플래그 설정 검토 (WARNING)',
     status: 'DRAFT',
     createdAt: '2026-03-05 11:30',
@@ -337,7 +345,8 @@ E-BIZ 자사몰 운영팀 박찬미 드림`,
 감사합니다.
 
 Best regards,
-E-BIZ 자사몰 운영팀 박찬미 드림`,
+E-BIZ 자사몰 운영팀
+박찬미 드림`,
     triggerReason: '소재 요청 후 48시간 이상 미회신 & 행사 D-3 도래에 따른 지연 방지 리마인더',
     status: 'DRAFT',
     createdAt: '2026-03-06 09:30',
@@ -576,7 +585,8 @@ ${promo.startDate} 오픈 예정인 [${promo.title}]과 관련하여,
 감사합니다.
 
 Best regards,
-E-BIZ 자사몰 운영팀 박찬미 드림`,
+E-BIZ 자사몰 운영팀
+박찬미 드림`,
       triggerReason: `운영자가 [${promo.title}] 회신 지연에 따른 긴급 리마인더 초안 생성 트리거`,
       status: 'DRAFT',
       createdAt: nowStr,
