@@ -57,11 +57,22 @@ export interface ProductItem {
   isLiveWeek?: boolean; // LIVE WEEK 특별관 해당 여부
   liveWeekBenefitText?: string; // 예: 라이브위크 단 7일간의 특별한 혜택
   applicableCoupons?: CouponDetail[]; // 적용 가능한 상세 쿠폰 목록
+
+  // 신규: 카테고리/시즌 트렌드 기준 할인율 및 이상치(Anomaly) 노티스
+  categoryAvgDiscountRate?: number; // 해당 카테고리/시즌 평균 할인율 (예: 30%)
+  anomalyNotice?: string; // 예: "카테고리 시즌 평균(30%) 대비 80%로 극단치 감지 (오기입 의심)"
+  hasTrendAnomaly?: boolean; // 트렌드 이상치 여부
+
+  // 신규: 다부서 복합 이슈 여부
+  multiDeptIssueDepartments?: Department[]; // 예: ['MD', 'DESIGN']
 }
 
 export interface QcIssue {
   id: string;
-  department?: 'MD' | 'DESIGN' | 'DEV' | 'MARKETING';
+  department?: Department;
+  secondaryDepartment?: Department; // 다부서 이슈일 경우 추가 부서
+  isMultiDeptIssue?: boolean;
+  relatedDepartments?: Department[];
   ruleCode:
     | 'DATE_ORDER_INVALID'
     | 'MATH_DISCOUNT_MISMATCH'
@@ -70,7 +81,10 @@ export interface QcIssue {
     | 'INVALID_URL'
     | 'BANNER_SPEC_MISMATCH'
     | 'COUPON_POLICY_MISMATCH'
-    | 'BANNER_COPY_MISMATCH';
+    | 'BANNER_COPY_MISMATCH'
+    | 'TREND_OUTLIER_NOTICE' // 신규: 원본 기획 데이터 트렌드 이상치 (예: 30% 평균 대비 80% 극단치 오기입)
+    | 'IMAGE_SPEC_MISMATCH' // 신규: 상품 단품 썸네일/룩북 해상도 규격 미달
+    | 'MULTI_DEPT_BLOCKER'; // 신규: 단일 품번에 복수 부서 결함 동시 발생
   severity: 'BLOCKER' | 'WARNING';
   targetField: string;
   message: string;
@@ -78,6 +92,7 @@ export interface QcIssue {
     productCode?: string;
     expected?: string | number | boolean;
     actual?: string | number | boolean;
+    categoryAvg?: number; // 카테고리 평균치
   };
 }
 
@@ -93,6 +108,9 @@ export interface EmailDraft {
   status: 'DRAFT' | 'REVIEWED' | 'SENT';
   createdAt: string;
   sentAt?: string;
+  relatedProductCode?: string; // 관련 품번 (예: SWBLPB21010)
+  isMultiDeptSplitDraft?: boolean; // 듀얼 분할 발송 초안 여부
+  pairedDraftId?: string; // 짝이 되는 다른 부서 초안 ID (예: MD <-> DESIGN)
 }
 
 export type EventType =

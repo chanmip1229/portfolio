@@ -40,13 +40,15 @@ export const INITIAL_PROMOTIONS: Promotion[] = [
         productCode: 'SWBLPB21010',
         productName: '클래식 더블 버튼 트렌치코트 (네이비)',
         originalPrice: 198000,
-        salePrice: 138600, // 30% 할인이나 시트에 40%로 기재됨 (오류 케이스!)
+        salePrice: 138600, // 30% 할인이나 시트에 40%로 기재됨 (MD 오류 케이스!)
         displayDiscountRate: 40,
         detailUrl: 'https://www.idfmall.co.kr/product/SWBLPB21010',
         isApproved: true,
         couponApplicable: true,
         category: '트렌치코트',
+        categoryAvgDiscountRate: 30,
         thumbnailUrl: '/images/products/SWBLPB21010_main.jpg',
+        multiDeptIssueDepartments: ['MD', 'DESIGN'], // MD + 디자인 다부서 복합 결함!
         isLiveWeek: true,
         liveWeekBenefitText: '라이브위크 단 7일간의 특별한 혜택',
         applicableCoupons: [
@@ -87,6 +89,7 @@ export const INITIAL_PROMOTIONS: Promotion[] = [
         isApproved: true,
         couponApplicable: true,
         category: '트렌치코트',
+        categoryAvgDiscountRate: 30,
         thumbnailUrl: '/images/products/SWJCKB21020_main.jpg',
         isLiveWeek: true,
         liveWeekBenefitText: '라이브위크 단 7일간의 특별한 혜택',
@@ -106,8 +109,11 @@ export const INITIAL_PROMOTIONS: Promotion[] = [
         productCode: 'SWCTKB21030',
         productName: '벨티드 하프 트렌치 자켓 (카키)',
         originalPrice: 178000,
-        salePrice: 106800,
-        displayDiscountRate: 40,
+        salePrice: 35600, // 보통 할인율 30%인데 80%로 담당자가 처음부터 잘못 기입한 트렌드 이상치 케이스!
+        displayDiscountRate: 80,
+        categoryAvgDiscountRate: 30,
+        hasTrendAnomaly: true,
+        anomalyNotice: '자켓 카테고리 시즌 평균(30%) 대비 80%로 극단치 감지 (MD 초기 원본 오기입/0 누락 의심)',
         detailUrl: 'https://www.idfmall.co.kr/product/SWCTKB21030',
         isApproved: true,
         couponApplicable: true,
@@ -136,6 +142,7 @@ export const INITIAL_PROMOTIONS: Promotion[] = [
         isApproved: true,
         couponApplicable: true,
         category: '자켓',
+        categoryAvgDiscountRate: 25,
         thumbnailUrl: '/images/products/AWWJKQ31060_main.jpg',
         isLiveWeek: true,
         liveWeekBenefitText: '라이브위크 단 7일간의 특별한 혜택',
@@ -191,6 +198,7 @@ export const INITIAL_PROMOTIONS: Promotion[] = [
         isApproved: false, // MD팀 미승인 품번 에러
         couponApplicable: true,
         category: '트렌치코트',
+        categoryAvgDiscountRate: 30,
         thumbnailUrl: '/images/products/SWCTKB21099_main.jpg',
         applicableCoupons: [
           {
@@ -213,6 +221,7 @@ export const INITIAL_PROMOTIONS: Promotion[] = [
         isApproved: true,
         couponApplicable: true,
         category: '블루종',
+        categoryAvgDiscountRate: 35,
         thumbnailUrl: '/images/products/SWBLPB21050_main.jpg',
         applicableCoupons: [
           {
@@ -235,6 +244,7 @@ export const INITIAL_PROMOTIONS: Promotion[] = [
         isApproved: true,
         couponApplicable: true,
         category: '코트',
+        categoryAvgDiscountRate: 30,
         thumbnailUrl: '/images/products/SWJCKB21060_main.jpg',
         applicableCoupons: [
           {
@@ -251,14 +261,47 @@ export const INITIAL_PROMOTIONS: Promotion[] = [
       {
         id: 'qc-err-1',
         department: 'MD',
+        secondaryDepartment: 'DESIGN',
+        isMultiDeptIssue: true,
+        relatedDepartments: ['MD', 'DESIGN'],
         ruleCode: 'MATH_DISCOUNT_MISMATCH',
         severity: 'BLOCKER',
         targetField: 'SWBLPB21010.displayDiscountRate',
-        message: '품번 SWBLPB21010: 정가(198,000) 대비 판매가(138,600)의 실제 계산 할인율은 30%이나 표기 할인율이 40%로 기재되었습니다.',
+        message: '품번 SWBLPB21010: 정가(198,000) 대비 판매가(138,600)의 실제 계산 할인율은 30%이나 표기 할인율이 40%로 기재되었습니다. (디자인팀 썸네일 이슈와 함께 다부서 확인 필요)',
         details: {
           productCode: 'SWBLPB21010',
           expected: 30,
           actual: 40,
+        },
+      },
+      {
+        id: 'qc-err-1-design',
+        department: 'DESIGN',
+        secondaryDepartment: 'MD',
+        isMultiDeptIssue: true,
+        relatedDepartments: ['MD', 'DESIGN'],
+        ruleCode: 'IMAGE_SPEC_MISMATCH',
+        severity: 'BLOCKER',
+        targetField: 'SWBLPB21010.thumbnailUrl',
+        message: '품번 SWBLPB21010: 상품 대표 썸네일 해상도 규격 미달(300x400 px, 모바일 확대 시 깨짐 발생). 디자인팀 고해상도 룩북 착용 컷 재전달 필요. (MD팀 가격오류와 동시 발생)',
+        details: {
+          productCode: 'SWBLPB21010',
+          expected: '750x1000 px',
+          actual: '300x400 px',
+        },
+      },
+      {
+        id: 'qc-err-trend',
+        department: 'MD',
+        ruleCode: 'TREND_OUTLIER_NOTICE',
+        severity: 'WARNING',
+        targetField: 'SWCTKB21030.displayDiscountRate',
+        message: '품번 SWCTKB21030: 원본 기획 데이터 트렌드 이상치 감지: 자켓 카테고리 시즌 평균(30%) 대비 비정상적인 80%가 초기 기입되었습니다. 담당자(MD) 오기입(0 누락 또는 수치 오입력) 여부 확인이 권장됩니다.',
+        details: {
+          productCode: 'SWCTKB21030',
+          expected: '시즌 평균 30% (허용 20~45%)',
+          actual: 80,
+          categoryAvg: 30,
         },
       },
       {
@@ -323,7 +366,7 @@ export const INITIAL_PROMOTIONS: Promotion[] = [
         },
       },
     ],
-    emailDraftIds: ['draft-list-trench-1', 'draft-list-trench-design', 'draft-list-trench-dev', 'draft-list-trench-mkt'],
+    emailDraftIds: ['draft-multi-dept-md', 'draft-multi-dept-design', 'draft-list-trench-1', 'draft-list-trench-design', 'draft-list-trench-dev', 'draft-list-trench-mkt'],
   },
   {
     id: 'promo-shesmiss-suit-2026',

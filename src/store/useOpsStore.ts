@@ -53,6 +53,69 @@ interface OpsStore {
 
 const INITIAL_DRAFTS: EmailDraft[] = [
   {
+    id: 'draft-multi-dept-md',
+    promotionId: 'promo-list-trench-2026',
+    emailType: 'RECHECK_ERROR',
+    toDepartment: 'MD',
+    recipientName: 'MD1팀 김지현 대리',
+    relatedProductCode: 'SWBLPB21010',
+    isMultiDeptSplitDraft: true,
+    pairedDraftId: 'draft-multi-dept-design',
+    subject: '[긴급 재확인 요청] [SWBLPB21010] 할인율 표기 불일치(30% vs 40%) 및 가격 소명의 건',
+    body: `안녕하세요 김지현 대리님, E-BIZ 자사몰 운영팀입니다.
+
+[LIST] 26SS 트렌치코트 얼리버드 위크 등록 품번 [SWBLPB21010] 및 기획 데이터 사전 QC 결과, 가격 정합성 오류가 확인되어 확인 요청드립니다.
+(※ 본 품번은 디자인팀 썸네일 해상도 오류와 동시 적발되어 양 부서에 각각 별도 요청이 발송되었습니다.)
+
+■ MD팀 확인 필요 사항:
+1. 품번: SWBLPB21010 (클래식 더블 버튼 트렌치코트 - 네이비)
+   - 정가: 198,000원 / 실제 판매가: 138,600원
+   - 계산 할인율은 30%이나, 등록 시트 표기 할인율이 40%로 기재됨.
+   - 요청: 실제 판매가를 118,800원으로 인하할 것인지, 표기 할인율을 30%로 정정할 것인지 승인 요망
+
+2. [트렌드 이상치 주의 품번]: SWCTKB21030 (벨티드 하프 트렌치 자켓)
+   - 자켓 카테고리 시즌 평균 할인율(30%) 대비 80%로 기재되어 0 누락 또는 오입력 여부 확인 필요.
+
+■ 조치 마감: 2026년 3월 8일(금) 17:00까지
+첨부 엑셀(MD팀_오류품번리스트.xlsx) 확인 후 회신 부탁드립니다.
+감사합니다.
+
+E-BIZ 운영팀 드림`,
+    triggerReason: '품번 SWBLPB21010 할인율 계산 불일치 및 SWCTKB21030 80% 트렌드 이상치 감지 (MD+디자인 다부서 복합 이슈)',
+    status: 'DRAFT',
+    createdAt: '2026-03-05 11:32',
+  },
+  {
+    id: 'draft-multi-dept-design',
+    promotionId: 'promo-list-trench-2026',
+    emailType: 'RECHECK_ERROR',
+    toDepartment: 'DESIGN',
+    recipientName: '디자인팀 박민지 책임',
+    relatedProductCode: 'SWBLPB21010',
+    isMultiDeptSplitDraft: true,
+    pairedDraftId: 'draft-multi-dept-md',
+    subject: '[긴급 수정 요청] [SWBLPB21010] 상품 썸네일 해상도 규격 미달 및 룩북 착용 컷 교체의 건',
+    body: `안녕하세요 박민지 책임님, E-BIZ 자사몰 운영팀입니다.
+
+[LIST] 26SS 트렌치코트 얼리버드 위크 대표 등록 품번 [SWBLPB21010]의 이미지 에셋 사전 검수 결과, 해상도 규격 미달이 확인되어 재전달 요청드립니다.
+(※ 본 품번은 MD팀 가격 오류와 동시 적발되어 양 부서에 각각 별도 요청이 발송되었습니다.)
+
+■ 디자인팀 조치 필요 사항:
+1. 품번: SWBLPB21010 (클래식 더블 버튼 트렌치코트 - 네이비)
+   - 현재 등록 이미지: 300 x 400 px 저해상도 (모바일 상세 확대 시 심각한 픽셀 깨짐)
+   - 권장 규격: 750 x 1000 px 이상 (3:4 비율 고해상도)
+   - 추가 요청: 현재 원단 디테일 컷이 대표로 지정되어 있어, 26SS 모델 착용 룩북 메인 컷으로 썸네일 교체 요망
+
+■ 조치 마감: 2026년 3월 8일(금) 15:00까지
+첨부 엑셀(디자인팀_오류품번리스트.xlsx) 참조 부탁드립니다.
+감사합니다.
+
+E-BIZ 운영팀 드림`,
+    triggerReason: '품번 SWBLPB21010 대표 썸네일 해상도 규격 미달 및 착용 컷 교체 필요 (MD+디자인 다부서 복합 이슈)',
+    status: 'DRAFT',
+    createdAt: '2026-03-05 11:32',
+  },
+  {
     id: 'draft-list-trench-1',
     promotionId: 'promo-list-trench-2026',
     emailType: 'RECHECK_ERROR',

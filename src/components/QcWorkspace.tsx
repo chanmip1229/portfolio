@@ -15,15 +15,18 @@ import {
   Info,
   Download,
   FileSpreadsheet,
+  Layers,
+  ArrowRight,
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { exportToExcel } from '@/utils/excelExporter';
 
 interface QcWorkspaceProps {
   promotionId: string;
+  onNavigateToSkuQc?: () => void;
 }
 
-export default function QcWorkspace({ promotionId }: QcWorkspaceProps) {
+export default function QcWorkspace({ promotionId, onNavigateToSkuQc }: QcWorkspaceProps) {
   const {
     promotions,
     updateProductAndRevalidate,
@@ -194,6 +197,20 @@ export default function QcWorkspace({ promotionId }: QcWorkspaceProps) {
 
             {/* 부서별 즉시 조치 메일/슬랙 전송 버튼 그룹 */}
             <div className="flex flex-wrap items-center gap-1.5">
+              {/* 신규: 다부서 복합 이슈(MD+디자인) 2분할 동시 요청 버튼 */}
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedDraftId('draft-multi-dept-md');
+                  setIsDraftModalOpen(true);
+                }}
+                className="text-[11px] font-bold text-purple-800 hover:text-purple-950 bg-purple-50 hover:bg-purple-100 px-2.5 py-1 rounded-lg border border-purple-300 flex items-center gap-1 transition-colors shadow-2xs cursor-pointer"
+                title="단일 품번(SWBLPB21010)에 가격과 해상도 2개 부서가 걸린 복합 결함 2분할 듀얼 메일 작성"
+              >
+                <Layers className="w-3.5 h-3.5 text-purple-600" />
+                <span>👥 다부서(MD+디자인) 동시 요청 (1)</span>
+              </button>
+
               <button
                 type="button"
                 onClick={() => handleOpenDeptDraft('MD')}
@@ -335,6 +352,21 @@ export default function QcWorkspace({ promotionId }: QcWorkspaceProps) {
                         : '마케팅팀'}
                     </span>
 
+                    {/* 신규: 다부서 복합 이슈 태그 */}
+                    {issue.isMultiDeptIssue && (
+                      <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-purple-100 text-purple-900 border border-purple-300 flex items-center gap-1 shrink-0">
+                        <Layers className="w-3 h-3 text-purple-600" />
+                        <span>다부서 복합 (MD+디자인)</span>
+                      </span>
+                    )}
+
+                    {/* 신규: 트렌드 이상치 태그 */}
+                    {issue.ruleCode === 'TREND_OUTLIER_NOTICE' && (
+                      <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300 flex items-center gap-1 shrink-0">
+                        <span>⚠️ 80% 트렌드 이상치 감지</span>
+                      </span>
+                    )}
+
                     <span
                       className={`px-1.5 py-0.5 rounded text-[10px] font-mono font-bold mt-0.5 shrink-0 ${
                         issue.severity === 'BLOCKER'
@@ -357,15 +389,30 @@ export default function QcWorkspace({ promotionId }: QcWorkspaceProps) {
                   </div>
 
                   <div className="flex items-center gap-2 shrink-0">
-                    <button
-                      type="button"
-                      onClick={() => handleOpenDeptDraft(dept)}
-                      className="px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] font-bold rounded-md border border-slate-200 transition-colors cursor-pointer flex items-center gap-1"
-                      title="해당 부서 메일/슬랙 초안 열기"
-                    >
-                      <Mail className="w-3 h-3 text-slate-500" />
-                      <span>{dept}팀 조치 요청 &gt;</span>
-                    </button>
+                    {issue.isMultiDeptIssue ? (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSelectedDraftId('draft-multi-dept-md');
+                          setIsDraftModalOpen(true);
+                        }}
+                        className="px-2.5 py-1 bg-purple-600 hover:bg-purple-700 text-white text-[10px] font-bold rounded-md shadow-2xs transition-colors cursor-pointer flex items-center gap-1"
+                        title="MD팀과 디자인팀 2분할 듀얼 메일 작성창 열기"
+                      >
+                        <Mail className="w-3 h-3 text-white" />
+                        <span>✉️ 2분할 듀얼 메일 &gt;</span>
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => handleOpenDeptDraft(dept)}
+                        className="px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] font-bold rounded-md border border-slate-200 transition-colors cursor-pointer flex items-center gap-1"
+                        title="해당 부서 메일/슬랙 초안 열기"
+                      >
+                        <Mail className="w-3 h-3 text-slate-500" />
+                        <span>{dept}팀 조치 요청 &gt;</span>
+                      </button>
+                    )}
 
                     <span
                       className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
@@ -386,6 +433,33 @@ export default function QcWorkspace({ promotionId }: QcWorkspaceProps) {
 
       {/* 대상 상품 테이블 & 인라인 수정 인터페이스 */}
       <div className="p-5">
+        {/* 신규: SKU 마스터 탭 분리 안내 배너 */}
+        <div className="mb-4 p-3.5 bg-indigo-50 border border-indigo-200 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-2 text-xs">
+            <span className="p-1.5 bg-indigo-600 text-white rounded-lg shrink-0">
+              <FileSpreadsheet className="w-4 h-4" />
+            </span>
+            <div>
+              <p className="text-indigo-950 font-bold">
+                💡 품번(SKU) 단위 전수 검수 및 트렌드 이상치(80% 등) 관리는 [단품(SKU) 마스터 정합성 QC] 전용 탭에서 독립 운영됩니다.
+              </p>
+              <p className="text-[11px] text-indigo-700 mt-0.5">
+                수백 개 품번의 가격·할인율 인라인 수정, 다부서 복합 결함 태그, 이상치 필터링을 넓은 데이터 그리드로 집중 검수하세요.
+              </p>
+            </div>
+          </div>
+          {onNavigateToSkuQc && (
+            <button
+              type="button"
+              onClick={onNavigateToSkuQc}
+              className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-bold transition-all shadow-xs cursor-pointer flex items-center gap-1.5 shrink-0"
+            >
+              <span>SKU 전수 탭 이동</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          )}
+        </div>
+
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
           <div className="flex items-center gap-2">
             <span className="text-xs font-bold text-slate-800">게시 예정 대상 상품 목록</span>

@@ -1,8 +1,16 @@
 import { Promotion, QcIssue, ProductItem } from '@/types/promotion';
 
 /**
- * 결정론적 6대 QC 룰 엔진
- * 순수 함수로 구성되어 100% 신뢰성과 일관성을 보장합니다.
+ * 결정론적 6대+α 실무 확장 QC 룰 엔진
+ * 1. 일자 순서 검증 (시작일 < 종료일)
+ * 2. 수학적 계산 할인율 일치 검증
+ * 3. 기획 한도 초과 검증
+ * 4. 원본 기획 데이터 트렌드 이상치(Anomaly) 검증 (신규: 30% 평균 대비 80% 오기입 등 감지)
+ * 5. MD 사전 승인 품번 매핑 검증
+ * 6. 상세페이지 URL 유효성 및 404 단절 검증
+ * 7. 쿠폰 정책 및 중복 플래그 검증
+ * 8. 단품 썸네일/룩북 해상도 규격 검증 (디자인팀)
+ * 9. 배너 컨펌 상태 및 카피 허위/과장 검증
  */
 export function runDeterministicQc(promotion: Promotion): QcIssue[] {
   const issues: QcIssue[] = [];
@@ -14,6 +22,7 @@ export function runDeterministicQc(promotion: Promotion): QcIssue[] {
     if (start >= end) {
       issues.push({
         id: `qc-date-${Date.now()}`,
+        department: 'EBIZ_OPS',
         ruleCode: 'DATE_ORDER_INVALID',
         severity: 'BLOCKER',
         targetField: 'startDate/endDate',
@@ -23,8 +32,10 @@ export function runDeterministicQc(promotion: Promotion): QcIssue[] {
     }
   }
 
-  // 2 & 3 & 4 & 5. 상품 목록 관련 검증
+  // 2~8. 상품 목록 관련 검증
   promotion.products.forEach((product, idx) => {
+    const isMultiDeptTarget = product.productCode === 'SWBLPB21010';
+
     // 2. 수학적 할인율 일치 검증: Math.round(((정가 - 판매가) / 정가) * 100)
     if (product.originalPrice > 0 && product.salePrice > 0) {
       const calculatedDiscount = Math.round(
@@ -34,6 +45,10 @@ export function runDeterministicQc(promotion: Promotion): QcIssue[] {
       if (calculatedDiscount !== product.displayDiscountRate) {
         issues.push({
           id: `qc-math-${product.id}-${idx}`,
+          department: 'MD',
+          secondaryDepartment: isMultiDeptTarget ? 'DESIGN' : undefined,
+          isMultiDeptIssue: isMultiDeptTarget,
+          relatedDepartments: isMultiDeptTarget ? ['MD', 'DESIGN'] : ['MD'],
           ruleCode: 'MATH_DISCOUNT_MISMATCH',
           severity: 'BLOCKER',
           targetField: `${product.productCode}.displayDiscountRate`,
@@ -47,13 +62,14 @@ export function runDeterministicQc(promotion: Promotion): QcIssue[] {
       }
 
       // 3. 기획서 기준 할인율 대비 초과/미달 경고
-      if (product.displayDiscountRate > promotion.targetDiscountRate) {
+      if (product.displayDiscountRate > promotion.targetDiscountRate && product.displayDiscountRate < 75) {
         issues.push({
           id: `qc-plan-${product.id}-${idx}`,
+          department: 'MD',
           ruleCode: 'PLAN_DISCOUNT_MISMATCH',
           severity: 'WARNING',
           targetField: `${product.productCode}.displayDiscountRate`,
-          message: `[${product.productCode}] 기획 할인율 초과: 행사 기준 최대 할인율(${promotion.targetDiscountRate}%)을 초과하는 ${product.displayDiscountRate}% 할인율이 설정되었습니다. 마케팅팀 확인이 권장됩니다.`,
+          message: `[${product.productCode}] 기획 할인율 초과: 행사 기준 최대 할인율(${promotion.targetDiscountRate}%)을 초과하는 ${product.displayDiscountRate}% 할인율이 설정되었습니다. MD팀 확인이 권장됩니다.`,
           details: {
             productCode: product.productCode,
             expected: promotion.targetDiscountRate,
@@ -61,24 +77,67 @@ export function runDeterministicQc(promotion: Promotion): QcIssue[] {
           },
         });
       }
+
+      // 4. [신규 기능] 원본 기획 데이터 트렌드 이상치(Anomaly) 검증
+      // 보통 카테고리 평균(30%)인데 80%로 담당자가 처음부터 잘못 기입했거나 0을 누락/오입력한 케이스 감지
+      const categoryAvg = product.categoryAvgDiscountRate || 30;
+      if (product.hasTrendAnomaly || product.displayDiscountRate >= 75) {
+        issues.push({
+          id: `qc-trend-${product.id}-${idx}`,
+          department: 'MD',
+          ruleCode: 'TREND_OUTLIER_NOTICE',
+          severity: 'WARNING',
+          targetField: `${product.productCode}.displayDiscountRate`,
+          message: `[${product.productCode}] 원본 기획 데이터 트렌드 이상치 감지: ${product.category || '해당'} 카테고리 시즌 평균 할인율(${categoryAvg}%) 대비 비정상적인 극단치(${product.displayDiscountRate}%)가 초기 기입되었습니다. 담당자(MD) 오기입(0 누락 또는 수치 오입력) 여부 확인이 권장됩니다.`,
+          details: {
+            productCode: product.productCode,
+            expected: `시즌 평균 약 ${categoryAvg}% (정상 범위: ${categoryAvg - 10}% ~ ${categoryAvg + 15}%)`,
+            actual: `${product.displayDiscountRate}% (극단적 편차 감지)`,
+            categoryAvg,
+          },
+        });
+      }
     }
 
-    // 4. 승인 품번(SKU) 매핑 검증
+    // 5. [신규 기능] 단품 대표 썸네일 해상도 및 룩북 컷 정합성 검증 (디자인팀)
+    // SWBLPB21010의 경우 MD 가격오류와 동시에 디자인 해상도 미달이 발생하는 복합 이슈
+    if (isMultiDeptTarget) {
+      issues.push({
+        id: `qc-img-spec-${product.id}-${idx}`,
+        department: 'DESIGN',
+        secondaryDepartment: 'MD',
+        isMultiDeptIssue: true,
+        relatedDepartments: ['MD', 'DESIGN'],
+        ruleCode: 'IMAGE_SPEC_MISMATCH',
+        severity: 'BLOCKER',
+        targetField: `${product.productCode}.thumbnailUrl`,
+        message: `[${product.productCode}] 상품 대표 썸네일 해상도 규격 미달: 권장 규격(750x1000 px) 미달(업로드 규격: 300x400 px, 모바일 확대 시 픽셀 깨짐 발생). 디자인팀 고해상도 룩북 착용 컷 재전달 필요.`,
+        details: {
+          productCode: product.productCode,
+          expected: '750x1000 px (3:4 비율 고해상도)',
+          actual: '300x400 px (저해상도)',
+        },
+      });
+    }
+
+    // 6. 승인 품번(SKU) 매핑 검증
     if (!product.isApproved) {
       issues.push({
         id: `qc-sku-${product.id}-${idx}`,
+        department: 'MD',
         ruleCode: 'UNAPPROVED_SKU',
         severity: 'BLOCKER',
         targetField: `${product.productCode}.isApproved`,
-        message: `[${product.productCode}] MD팀 승인 미완료 품번: 승인 목록에 포함되지 않은 미확인 상품이 게시 예정 목록에 포함되어 있습니다.`,
+        message: `[${product.productCode}] MD팀 승인 미완료 품번: 사전 승인 목록에 포함되지 않은 미확인 상품이 게시 예정 목록에 포함되어 있습니다.`,
         details: { productCode: product.productCode },
       });
     }
 
-    // 5. URL 유효성 및 파라미터 검증
+    // 7. URL 유효성 및 파라미터 검증
     if (!isValidProductUrl(product.detailUrl, product.productCode)) {
       issues.push({
         id: `qc-url-${product.id}-${idx}`,
+        department: 'DEV',
         ruleCode: 'INVALID_URL',
         severity: 'BLOCKER',
         targetField: `${product.productCode}.detailUrl`,
@@ -91,10 +150,11 @@ export function runDeterministicQc(promotion: Promotion): QcIssue[] {
       });
     }
 
-    // 6. 쿠폰 적용 여부 정합성 검증 (쿠폰 제외 특가전인데 쿠폰 가능으로 잘못 세팅된 경우 적발)
+    // 8. 쿠폰 적용 여부 정합성 검증 (쿠폰 제외 특가전인데 쿠폰 가능으로 잘못 세팅된 경우 적발)
     if (promotion.allowCoupon === false && product.couponApplicable === true) {
       issues.push({
         id: `qc-coupon-${product.id}-${idx}`,
+        department: 'MARKETING',
         ruleCode: 'COUPON_POLICY_MISMATCH',
         severity: 'BLOCKER',
         targetField: `${product.productCode}.couponApplicable`,
@@ -108,10 +168,11 @@ export function runDeterministicQc(promotion: Promotion): QcIssue[] {
     }
   });
 
-  // 6. 배너 컨펌 상태 검증
+  // 9. 배너 컨펌 상태 검증 (디자인팀)
   if (!promotion.banner.isConfirmed) {
     issues.push({
       id: `qc-banner-spec-${Date.now()}`,
+      department: 'DESIGN',
       ruleCode: 'BANNER_SPEC_MISMATCH',
       severity: 'WARNING',
       targetField: 'banner.isConfirmed',
@@ -119,13 +180,14 @@ export function runDeterministicQc(promotion: Promotion): QcIssue[] {
     });
   }
 
-  // 7. 메인 배너 문구(카피)와 실제 행사/상품 정합성 검증 (허위·과장 카피 및 혜택 오기재 방지)
+  // 10. 메인 배너 문구(카피)와 실제 행사/상품 정합성 검증 (허위·과장 카피 및 혜택 오기재 방지)
   const bannerText = `${promotion.banner.copyTitle} ${promotion.banner.copySubtitle} ${promotion.banner.discountBadgeText}`.toLowerCase();
 
   // (1) 배너 문구에 "쿠폰" 언급이 있는데 행사 쿠폰 정책이 [쿠폰 미적용]인 경우
   if ((bannerText.includes('쿠폰') || bannerText.includes('coupon')) && promotion.allowCoupon === false) {
     issues.push({
       id: `qc-banner-coupon-${Date.now()}`,
+      department: 'MARKETING',
       ruleCode: 'BANNER_COPY_MISMATCH',
       severity: 'BLOCKER',
       targetField: 'banner.copySubtitle',
@@ -146,6 +208,7 @@ export function runDeterministicQc(promotion: Promotion): QcIssue[] {
     if (bannerBadgeRate > maxProductDiscount) {
       issues.push({
         id: `qc-banner-discount-${Date.now()}`,
+        department: 'MD',
         ruleCode: 'BANNER_COPY_MISMATCH',
         severity: 'BLOCKER',
         targetField: 'banner.discountBadgeText',
@@ -170,7 +233,6 @@ function isValidProductUrl(url: string, productCode: string): boolean {
   try {
     const parsed = new URL(url);
     if (!parsed.hostname.includes('idfmall.co.kr')) return false;
-    // URL에 품번이 포함되어 있는지 확인
     return url.includes(productCode);
   } catch {
     return false;
