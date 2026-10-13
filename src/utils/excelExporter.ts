@@ -319,3 +319,74 @@ export function exportToExcel(
 
   XLSX.writeFile(workbook, fullFilename);
 }
+
+/**
+ * MD 기획자용 표준 엑셀 양식 템플릿 다운로드
+ */
+export function downloadMdStandardTemplate() {
+  const templateRows = [
+    {
+      품번_SKU: 'SWBLPB21010',
+      상품명: '쉬즈미스 클래식 싱글 트렌치코트',
+      브랜드: 'SHESMISS',
+      카테고리: '아우터',
+      정상가: 298000,
+      판매가: 208600,
+      표기할인율: 30,
+      쿠폰적용가능: 'Y',
+      상세URL: 'https://idfn.co.kr/product/SWBLPB21010',
+      대표이미지URL: 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=600&auto=format&fit=crop&q=80',
+      사전승인여부: 'Y',
+      비고: '정상 등록 기준 예시',
+    },
+    {
+      품번_SKU: 'SWCTKB21030',
+      상품명: '쉬즈미스 벨티드 하프 트렌치 자켓',
+      브랜드: 'SHESMISS',
+      카테고리: '아우터',
+      정상가: 358000,
+      판매가: 71600,
+      표기할인율: 80,
+      쿠폰적용가능: 'Y',
+      상세URL: 'https://idfn.co.kr/product/SWCTKB21030',
+      대표이미지URL: 'https://images.unsplash.com/photo-1544441893-675973e31985?w=600&auto=format&fit=crop&q=80',
+      사전승인여부: 'Y',
+      비고: '트렌드 이상치(80% 극단치) 테스트 예시',
+    },
+    {
+      품번_SKU: 'SWOPPB11010',
+      상품명: '쉬즈미스 신년 플리츠 벨티드 원피스',
+      브랜드: 'SHESMISS',
+      카테고리: '원피스',
+      정상가: 198000,
+      판매가: 138600,
+      표기할인율: 30,
+      쿠폰적용가능: 'Y',
+      상세URL: 'https://idfn.co.kr/product/SWOPPB11010',
+      대표이미지URL: '/images/products/SWOPPB11010_broken_404.jpg',
+      사전승인여부: 'Y',
+      비고: '이미지 404 누락/엑스박스 테스트 예시',
+    },
+  ];
+
+  const worksheet = XLSX.utils.json_to_sheet(templateRows);
+  worksheet['!cols'] = [
+    { wch: 16 }, // 품번_SKU
+    { wch: 30 }, // 상품명
+    { wch: 12 }, // 브랜드
+    { wch: 12 }, // 카테고리
+    { wch: 12 }, // 정상가
+    { wch: 12 }, // 판매가
+    { wch: 12 }, // 표기할인율
+    { wch: 14 }, // 쿠폰적용가능
+    { wch: 36 }, // 상세URL
+    { wch: 45 }, // 대표이미지URL
+    { wch: 14 }, // 사전승인여부
+    { wch: 30 }, // 비고
+  ];
+
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'MD_기획_표준양식');
+  XLSX.writeFile(workbook, '인동FN_MD기획전_표준_입력양식_템플릿.xlsx');
+}
+

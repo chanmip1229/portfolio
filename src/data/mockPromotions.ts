@@ -469,6 +469,8 @@ export const INITIAL_PROMOTIONS: Promotion[] = [
         isApproved: true,
         couponApplicable: true,
         category: '원피스',
+        categoryAvgDiscountRate: 30,
+        thumbnailUrl: '/images/products/SWOPPB11010_broken_404.jpg', // 깨진 404 이미지 에러 케이스!
         applicableCoupons: [
           {
             id: 'cp-jan-1',
@@ -480,8 +482,22 @@ export const INITIAL_PROMOTIONS: Promotion[] = [
         ],
       },
     ],
-    qcIssues: [],
-    emailDraftIds: [],
+    qcIssues: [
+      {
+        id: 'qc-err-jan-img',
+        department: 'DESIGN',
+        ruleCode: 'IMAGE_LOAD_FAILED',
+        severity: 'BLOCKER',
+        targetField: 'SWOPPB11010.thumbnailUrl',
+        message: '품번 SWOPPB11010: 상품 대표 썸네일 링크 깨짐(404 / 엑스박스): 썸네일 이미지 파일이 서버에 누락되어 고객 화면에 엑스박스가 발생하고 있습니다. 디자인팀 원본 룩북 착용 컷 긴급 재등록 필요.',
+        details: {
+          productCode: 'SWOPPB11010',
+          expected: '750x1000 px 고해상도 룩북 컷',
+          actual: '404 File Not Found (엑스박스)',
+        },
+      },
+    ],
+    emailDraftIds: ['draft-jan-design-img'],
   },
   {
     id: 'promo-sistina-feb-2026',

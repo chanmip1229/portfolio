@@ -1,9 +1,11 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import { useOpsStore } from '@/store/useOpsStore';
 import { ProductItem, Promotion, Brand } from '@/types/promotion';
-import { exportToExcel } from '@/utils/excelExporter';
+import { exportToExcel, downloadMdStandardTemplate } from '@/utils/excelExporter';
+import { runDeterministicQc } from '@/utils/qcEngine';
+import * as XLSX from 'xlsx';
 import {
   FileSpreadsheet,
   AlertTriangle,
@@ -27,6 +29,10 @@ import {
   HelpCircle,
   ChevronDown,
   ChevronUp,
+  UploadCloud,
+  FileUp,
+  ImageOff,
+  CheckCircle,
 } from 'lucide-react';
 
 interface SkuMasterQcViewProps {
@@ -42,6 +48,7 @@ export default function SkuMasterQcView({ onOpenDualDraftModal }: SkuMasterQcVie
     runQcValidation,
     setIsDraftModalOpen,
     setSelectedDraftId,
+    addPromotions,
   } = useOpsStore();
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -58,6 +65,17 @@ export default function SkuMasterQcView({ onOpenDualDraftModal }: SkuMasterQcVie
 
   const [showTrendGuide, setShowTrendGuide] = useState(true);
 
+  // 이미지 404/깨짐 동적 감지 상태 (클라이언트 img onError)
+  const [imageLoadErrors, setImageLoadErrors] = useState<Record<string, boolean>>({
+    SWOPPB11010: true, // 목업 초기 상태 반영 (쉬즈미스 신년 플리츠 원피스)
+  });
+
+  // 엑셀 업로드 모달 상태
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const [uploadSuccessMessage, setUploadSuccessMessage] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   // 모든 프로모션의 상품 목록을 평탄화 (Flat list of all SKUs with promotion metadata)
   const allSkuItems = useMemo(() => {
     const list: Array<{
@@ -67,6 +85,7 @@ export default function SkuMasterQcView({ onOpenDualDraftModal }: SkuMasterQcVie
       isMathMismatch: boolean;
       isTrendAnomaly: boolean;
       isMultiDept: boolean;
+      hasBrokenImage: boolean;
       hasBlocker: boolean;
     }> = [];
 
@@ -81,8 +100,23 @@ export default function SkuMasterQcView({ onOpenDualDraftModal }: SkuMasterQcVie
 
         const isMathMismatch = calculatedDiscount !== prod.displayDiscountRate;
         const isTrendAnomaly = Boolean(prod.hasTrendAnomaly || prod.displayDiscountRate >= 75);
-        const isMultiDept = Boolean(prod.productCode === 'SWBLPB21010' || (prod.multiDeptIssueDepartments && prod.multiDeptIssueDepartments.length >= 2));
-        const hasBlocker = Boolean(isMathMismatch || !prod.isApproved || (prod.detailUrl && prod.detailUrl.includes('broken-link')) || isMultiDept);
+        const isMultiDept = Boolean(
+          prod.productCode === 'SWBLPB21010' ||
+          (prod.multiDeptIssueDepartments && prod.multiDeptIssueDepartments.length >= 2)
+        );
+        const hasBrokenImage = Boolean(
+          prod.hasBrokenImage ||
+          !prod.thumbnailUrl ||
+          prod.thumbnailUrl.includes('broken') ||
+          imageLoadErrors[prod.productCode]
+        );
+        const hasBlocker = Boolean(
+          isMathMismatch ||
+          !prod.isApproved ||
+          (prod.detailUrl && prod.detailUrl.includes('broken-link')) ||
+          isMultiDept ||
+          hasBrokenImage
+        );
 
         list.push({
           promo,
@@ -91,13 +125,14 @@ export default function SkuMasterQcView({ onOpenDualDraftModal }: SkuMasterQcVie
           isMathMismatch,
           isTrendAnomaly,
           isMultiDept,
+          hasBrokenImage,
           hasBlocker,
         });
       });
     });
 
     return list;
-  }, [promotions, selectedBrand]);
+  }, [promotions, selectedBrand, imageLoadErrors]);
 
   // 검색 및 필터링 적용
   const filteredSkuItems = useMemo(() => {
@@ -127,6 +162,225 @@ export default function SkuMasterQcView({ onOpenDualDraftModal }: SkuMasterQcVie
   const trendAnomalyCount = allSkuItems.filter((i) => i.isTrendAnomaly).length;
   const blockerCount = allSkuItems.filter((i) => i.hasBlocker).length;
   const passedCount = allSkuItems.filter((i) => !i.hasBlocker && !i.isTrendAnomaly).length;
+
+  // 엑셀 파싱 및 즉시 전수 QC 실행 핸들러
+  const handleExcelUpload = (file: File) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const data = e.target?.result;
+        const workbook = XLSX.read(data, { type: 'binary' });
+        const firstSheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[firstSheetName];
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const jsonRows: any[] = XLSX.utils.sheet_to_json(worksheet);
+
+        if (!jsonRows || jsonRows.length === 0) {
+          alert('엑셀 파일 내 유효한 행 데이터가 없습니다.');
+          return;
+        }
+
+        // 행 데이터를 ProductItem 배열로 파싱
+        const parsedProducts: ProductItem[] = jsonRows.map((row, idx) => {
+          const productCode = String(row['품번_SKU'] || row['품번'] || row['상품코드'] || `NEW_SKU_${idx + 1}`).trim();
+          const productName = String(row['상품명'] || `기획 상품 ${idx + 1}`).trim();
+          const originalPrice = Number(String(row['정상가'] || row['정가'] || 0).replace(/[^0-9]/g, '')) || 198000;
+          const salePrice = Number(String(row['판매가'] || 0).replace(/[^0-9]/g, '')) || 138600;
+          const displayDiscountRate = Number(String(row['표기할인율'] || row['할인율'] || 0).replace(/[^0-9]/g, '')) || 30;
+          const couponApplicable = String(row['쿠폰적용가능'] || row['쿠폰'] || 'Y').toUpperCase().includes('Y');
+          const detailUrl = String(row['상세URL'] || `https://idfn.co.kr/product/${productCode}`).trim();
+          const thumbnailUrl = String(row['대표이미지URL'] || row['이미지'] || '').trim();
+          const category = String(row['카테고리'] || '의류').trim();
+          const isApproved = !String(row['사전승인여부'] || 'Y').toUpperCase().includes('N');
+
+          const hasBrokenImage = !thumbnailUrl || thumbnailUrl.includes('broken');
+          const isTrendAnomaly = displayDiscountRate >= 75;
+
+          return {
+            id: `prod-upload-${Date.now()}-${idx}`,
+            productCode,
+            productName,
+            originalPrice,
+            salePrice,
+            displayDiscountRate,
+            couponApplicable,
+            isApproved,
+            isLiveWeek: false,
+            detailUrl,
+            thumbnailUrl,
+            category,
+            categoryAvgDiscountRate: 30,
+            hasTrendAnomaly: isTrendAnomaly,
+            hasBrokenImage,
+          };
+        });
+
+        // 새 기획전 인스턴스 생성 및 룰 엔진 검증 실행
+        const brandFromExcel = (jsonRows[0]?.['브랜드'] || 'SHESMISS') as Brand;
+        const uploadPromo: Promotion = {
+          id: `promo-upload-${Date.now()}`,
+          title: `[엑셀 업로드] ${file.name.replace(/\.[^/.]+$/, '')}`,
+          brand: brandFromExcel,
+          startDate: '2026-03-10',
+          endDate: '2026-03-24',
+          targetDiscountRate: parsedProducts[0]?.displayDiscountRate || 30,
+          category: parsedProducts[0]?.category || '아우터',
+          status: 'NEEDS_CHECK',
+          currentBottleneckDept: 'MD',
+          allowCoupon: true,
+          products: parsedProducts,
+          qcIssues: [],
+          emailDraftIds: [],
+          banner: {
+            sourceImageUrl: parsedProducts[0]?.thumbnailUrl || 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1200',
+            copyTitle: `${file.name.replace(/\.[^/.]+$/, '')} 특가전`,
+            copySubtitle: '인동FN 공식몰 단독 시즌 기획전',
+            discountBadgeText: `${parsedProducts[0]?.displayDiscountRate || 30}%`,
+            isConfirmed: true,
+          },
+          milestones: [],
+          timestamps: {
+            plannedAt: '2026-03-01 09:00',
+            dataReceivedAt: '2026-03-08 14:00',
+            issueDetectedAt: '2026-03-08 14:01',
+          },
+        };
+
+        const issues = runDeterministicQc(uploadPromo);
+        uploadPromo.qcIssues = issues;
+        uploadPromo.status = issues.length > 0 ? 'NEEDS_CHECK' : 'QC_PASSED';
+
+        addPromotions([uploadPromo]);
+        setUploadSuccessMessage(`🎉 엑셀 [${file.name}] 업로드 완료! 총 ${parsedProducts.length}개 품번(SKU)이 즉시 룰 엔진 전수 검수되었습니다.`);
+        setIsUploadModalOpen(false);
+      } catch (err) {
+        console.error(err);
+        alert('엑셀 파싱 중 오류가 발생했습니다. 표준 엑셀 양식을 확인해 주세요.');
+      }
+    };
+    reader.readAsBinaryString(file);
+  };
+
+  // 프리셋 시뮬레이션 업로드 로더
+  const handleLoadPresetScenario = (scenarioType: 'LIST_MULTI' | 'ANOMALY_80' | 'IMAGE_404') => {
+    let mockTitle = '';
+    let mockProducts: ProductItem[] = [];
+
+    if (scenarioType === 'LIST_MULTI') {
+      mockTitle = '[업로드 시연] 26SS LIST 상품기획서 (다부서 복합 결함 포함)';
+      mockProducts = [
+        {
+          id: `preset-${Date.now()}-1`,
+          productCode: 'SWBLPB21010',
+          productName: '쉬즈미스 클래식 싱글 트렌치코트',
+          originalPrice: 198000,
+          salePrice: 138600,
+          displayDiscountRate: 40,
+          couponApplicable: true,
+          isApproved: true,
+          isLiveWeek: false,
+          detailUrl: 'https://idfn.co.kr/product/SWBLPB21010',
+          thumbnailUrl: '/images/products/SWBLPB21010_main.jpg',
+          category: '트렌치코트',
+          categoryAvgDiscountRate: 30,
+          hasTrendAnomaly: false,
+          multiDeptIssueDepartments: ['MD', 'DESIGN'],
+        },
+        {
+          id: `preset-${Date.now()}-2`,
+          productCode: 'SWJCKB21020',
+          productName: '쉬즈미스 베이직 맥 싱글 자켓',
+          originalPrice: 258000,
+          salePrice: 180600,
+          displayDiscountRate: 30,
+          couponApplicable: true,
+          isApproved: true,
+          isLiveWeek: false,
+          detailUrl: 'https://idfn.co.kr/product/SWJCKB21020',
+          thumbnailUrl: 'https://images.unsplash.com/photo-1544441893-675973e31985?w=600',
+          category: '자켓',
+          categoryAvgDiscountRate: 30,
+        },
+      ];
+    } else if (scenarioType === 'ANOMALY_80') {
+      mockTitle = '[업로드 시연] MD 원본 80% 극단치 오기입 기획서';
+      mockProducts = [
+        {
+          id: `preset-${Date.now()}-3`,
+          productCode: 'SWCTKB21030',
+          productName: '쉬즈미스 벨티드 하프 트렌치 자켓',
+          originalPrice: 358000,
+          salePrice: 71600,
+          displayDiscountRate: 80,
+          couponApplicable: true,
+          isApproved: true,
+          isLiveWeek: false,
+          detailUrl: 'https://idfn.co.kr/product/SWCTKB21030',
+          thumbnailUrl: 'https://images.unsplash.com/photo-1544441893-675973e31985?w=600',
+          category: '아우터',
+          categoryAvgDiscountRate: 30,
+          hasTrendAnomaly: true,
+        },
+      ];
+    } else {
+      mockTitle = '[업로드 시연] 404 썸네일 파일 유실 기획서';
+      mockProducts = [
+        {
+          id: `preset-${Date.now()}-4`,
+          productCode: 'SWOPPB11010',
+          productName: '쉬즈미스 신년 플리츠 벨티드 원피스',
+          originalPrice: 198000,
+          salePrice: 138600,
+          displayDiscountRate: 30,
+          couponApplicable: true,
+          isApproved: true,
+          isLiveWeek: false,
+          detailUrl: 'https://idfn.co.kr/product/SWOPPB11010',
+          thumbnailUrl: '/images/products/SWOPPB11010_broken_404.jpg',
+          category: '원피스',
+          categoryAvgDiscountRate: 30,
+          hasBrokenImage: true,
+        },
+      ];
+    }
+
+    const uploadPromo: Promotion = {
+      id: `promo-preset-${Date.now()}`,
+      title: mockTitle,
+      brand: 'SHESMISS',
+      startDate: '2026-03-12',
+      endDate: '2026-03-25',
+      targetDiscountRate: 30,
+      category: '아우터',
+      status: 'NEEDS_CHECK',
+      currentBottleneckDept: 'MD',
+      allowCoupon: true,
+      products: mockProducts,
+      qcIssues: [],
+      emailDraftIds: [],
+      banner: {
+        sourceImageUrl: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1200',
+        copyTitle: mockTitle,
+        copySubtitle: '인동FN 공식몰 시즌 기획전',
+        discountBadgeText: '30%',
+        isConfirmed: true,
+      },
+      milestones: [],
+      timestamps: {
+        plannedAt: '2026-03-01 09:00',
+        dataReceivedAt: '2026-03-08 14:00',
+        issueDetectedAt: '2026-03-08 14:01',
+      },
+    };
+
+    const issues = runDeterministicQc(uploadPromo);
+    uploadPromo.qcIssues = issues;
+    uploadPromo.status = issues.length > 0 ? 'NEEDS_CHECK' : 'QC_PASSED';
+
+    addPromotions([uploadPromo]);
+    setUploadSuccessMessage(`🎉 시나리오 [${mockTitle}] 불러오기 완료! 즉시 룰 엔진 검수가 실행되었습니다.`);
+    setIsUploadModalOpen(false);
+  };
 
   const handleStartEdit = (
     promoId: string,
@@ -186,6 +440,21 @@ export default function SkuMasterQcView({ onOpenDualDraftModal }: SkuMasterQcVie
 
           <div className="flex flex-wrap items-center gap-2">
             <button
+              onClick={() => downloadMdStandardTemplate()}
+              className="inline-flex items-center gap-1.5 px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition-all shadow-2xs cursor-pointer border border-slate-200"
+              title="MD 기획자 표준 엑셀 양식 다운로드"
+            >
+              <Download className="w-3.5 h-3.5 text-slate-500" />
+              <span>📥 MD 표준 양식 다운로드</span>
+            </button>
+            <button
+              onClick={() => setIsUploadModalOpen(true)}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
+            >
+              <UploadCloud className="w-4 h-4" />
+              <span>📤 MD 기획 엑셀 업로드 &amp; 즉시 QC</span>
+            </button>
+            <button
               onClick={() => exportToExcel(promotions, '2026SS_전체_SKU_정합성_마스터_리포트')}
               className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
             >
@@ -194,6 +463,22 @@ export default function SkuMasterQcView({ onOpenDualDraftModal }: SkuMasterQcVie
             </button>
           </div>
         </div>
+
+        {/* 엑셀 업로드 성공 알림 토스트 배너 */}
+        {uploadSuccessMessage && (
+          <div className="mt-4 p-3 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-between text-xs text-emerald-800 animate-fadeIn">
+            <div className="flex items-center gap-2">
+              <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
+              <span className="font-semibold">{uploadSuccessMessage}</span>
+            </div>
+            <button
+              onClick={() => setUploadSuccessMessage(null)}
+              className="text-emerald-600 hover:text-emerald-800 text-[11px] font-bold cursor-pointer"
+            >
+              닫기 ✕
+            </button>
+          </div>
+        )}
 
         {/* 2. 5대 핵심 SKU 상태 지표 카드 */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3 pt-6">
@@ -480,7 +765,7 @@ export default function SkuMasterQcView({ onOpenDualDraftModal }: SkuMasterQcVie
                   </td>
                 </tr>
               ) : (
-                filteredSkuItems.map(({ promo, product: prod, calculatedDiscount, isMathMismatch, isTrendAnomaly, isMultiDept, hasBlocker }) => {
+                filteredSkuItems.map(({ promo, product: prod, calculatedDiscount, isMathMismatch, isTrendAnomaly, isMultiDept, hasBrokenImage, hasBlocker }) => {
                   const editKey = `${promo.id}_${prod.id}`;
                   const isEditing = editingKey === editKey;
 
@@ -526,9 +811,23 @@ export default function SkuMasterQcView({ onOpenDualDraftModal }: SkuMasterQcVie
                               src={prod.thumbnailUrl}
                               alt={prod.productName}
                               className="w-full h-full object-cover"
+                              onError={() =>
+                                setImageLoadErrors((prev) => ({
+                                  ...prev,
+                                  [prod.productCode]: true,
+                                }))
+                              }
                             />
+                            {/* 이미지 404 / 엑스박스 결함 뱃지 */}
+                            {hasBrokenImage && (
+                              <div className="absolute inset-0 bg-rose-950/85 flex flex-col items-center justify-center text-[9px] text-white font-bold text-center leading-tight p-0.5 z-10">
+                                <span className="text-xs">❌</span>
+                                <span className="text-rose-200 mt-0.5">404 깨짐</span>
+                                <span className="text-[8px] text-rose-300">엑스박스</span>
+                              </div>
+                            )}
                             {/* 다부서 이슈 상품(SWBLPB21010)의 썸네일 해상도 경고 뱃지 */}
-                            {isMultiDept && (
+                            {isMultiDept && !hasBrokenImage && (
                               <div className="absolute inset-0 bg-purple-900/40 flex items-center justify-center text-[9px] text-white font-bold text-center leading-tight p-0.5">
                                 300x400
                                 <br />
@@ -653,6 +952,32 @@ export default function SkuMasterQcView({ onOpenDualDraftModal }: SkuMasterQcVie
                               <span>✉️ 2분할 듀얼 메일 초안 열기</span>
                             </button>
                           </div>
+                        ) : hasBrokenImage ? (
+                          <div className="bg-rose-50 border border-rose-300 p-2 rounded-lg text-rose-900 space-y-1.5">
+                            <div className="flex items-center justify-between">
+                              <span className="font-bold text-[11px] text-rose-900 flex items-center gap-1">
+                                <AlertTriangle className="w-3.5 h-3.5 text-rose-600 shrink-0" />
+                                🎨 디자인팀: 이미지 깨짐(404 / 엑스박스)
+                              </span>
+                              <span className="text-[9px] bg-rose-200 text-rose-900 font-bold px-1.5 py-0.2 rounded">
+                                BLOCKER
+                              </span>
+                            </div>
+                            <p className="text-[10px] text-rose-700 leading-snug">
+                              대표 썸네일 파일 경로 누락 또는 404 깨짐 감지. 룩북 에셋 교체 필요.
+                            </p>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setSelectedDraftId('draft-jan-design-img');
+                                setIsDraftModalOpen(true);
+                              }}
+                              className="w-full py-1 bg-rose-600 hover:bg-rose-700 text-white rounded text-[10px] font-bold transition-colors flex items-center justify-center gap-1 shadow-2xs cursor-pointer"
+                            >
+                              <Mail className="w-3 h-3" />
+                              <span>✉️ 디자인팀 조치 요청 메일 작성 &gt;</span>
+                            </button>
+                          </div>
                         ) : isMathMismatch ? (
                           <div className="text-[11px] text-rose-700 font-semibold flex items-center gap-1">
                             <AlertTriangle className="w-3.5 h-3.5 text-rose-600 shrink-0" />
@@ -667,6 +992,32 @@ export default function SkuMasterQcView({ onOpenDualDraftModal }: SkuMasterQcVie
                           <div className="text-[11px] text-rose-700 font-semibold flex items-center gap-1">
                             <AlertTriangle className="w-3.5 h-3.5 text-rose-600 shrink-0" />
                             <span>💻 개발팀: 404 URL 단절</span>
+                          </div>
+                        ) : isTrendAnomaly ? (
+                          <div className="bg-amber-50 border border-amber-300 p-2 rounded-lg text-amber-900 space-y-1.5">
+                            <div className="flex items-center justify-between">
+                              <span className="font-bold text-[11px] text-amber-900 flex items-center gap-1">
+                                <AlertTriangle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                                ⚠️ MD팀: 80% 트렌드 이상치 소명 필요
+                              </span>
+                              <span className="text-[9px] bg-amber-200 text-amber-900 font-bold px-1.5 py-0.2 rounded">
+                                확인 대기
+                              </span>
+                            </div>
+                            <p className="text-[10px] text-amber-700 leading-snug">
+                              시즌 평균({prod.categoryAvgDiscountRate || 30}%) 대비 과도 할인. 원본 오기입 소명 필요.
+                            </p>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setSelectedDraftId('draft-trend-anomaly-md');
+                                setIsDraftModalOpen(true);
+                              }}
+                              className="w-full py-1 bg-amber-600 hover:bg-amber-700 text-white rounded text-[10px] font-bold transition-colors flex items-center justify-center gap-1 shadow-2xs cursor-pointer"
+                            >
+                              <Mail className="w-3 h-3" />
+                              <span>✉️ MD팀 확인 요청 메일 작성 &gt;</span>
+                            </button>
                           </div>
                         ) : (
                           <div className="text-[11px] text-emerald-700 font-semibold flex items-center gap-1">
@@ -713,6 +1064,174 @@ export default function SkuMasterQcView({ onOpenDualDraftModal }: SkuMasterQcVie
           </table>
         </div>
       </div>
+
+      {/* 6. MD 기획 엑셀 파일 업로드 & 즉시 전수 QC 모달 */}
+      {isUploadModalOpen && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full overflow-hidden border border-slate-200 animate-in fade-in zoom-in-95 duration-200">
+            {/* 모달 헤더 */}
+            <div className="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/80">
+              <div className="flex items-center gap-2.5">
+                <span className="p-2 bg-indigo-100 text-indigo-700 rounded-xl">
+                  <UploadCloud className="w-5 h-5" />
+                </span>
+                <div>
+                  <h3 className="text-base font-black text-slate-900 tracking-tight">
+                    MD 기획 엑셀 업로드 및 즉시 전수 QC
+                  </h3>
+                  <p className="text-[11px] text-slate-500">
+                    MD 기획 시트를 시스템에 업로드하여 계산 수식, 트렌드 이상치, 404 깨짐을 즉시 검수합니다.
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsUploadModalOpen(false)}
+                className="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* 모달 본문 */}
+            <div className="p-6 space-y-6">
+              {/* 드래그 앤 드롭 영역 */}
+              <div
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  setIsDragging(true);
+                }}
+                onDragLeave={() => setIsDragging(false)}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  setIsDragging(false);
+                  if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                    handleExcelUpload(e.dataTransfer.files[0]);
+                  }
+                }}
+                onClick={() => fileInputRef.current?.click()}
+                className={`border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-all ${
+                  isDragging
+                    ? 'border-indigo-500 bg-indigo-50/60 scale-[0.99]'
+                    : 'border-slate-300 hover:border-indigo-400 bg-slate-50/50 hover:bg-indigo-50/20'
+                }`}
+              >
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  accept=".xlsx, .xls, .csv"
+                  onChange={(e) => {
+                    if (e.target.files && e.target.files[0]) {
+                      handleExcelUpload(e.target.files[0]);
+                    }
+                  }}
+                  className="hidden"
+                />
+                <div className="w-12 h-12 mx-auto rounded-full bg-indigo-100/80 text-indigo-600 flex items-center justify-center mb-3">
+                  <FileUp className="w-6 h-6" />
+                </div>
+                <h4 className="text-sm font-bold text-slate-900">
+                  기획 엑셀 파일을 여기로 드래그하거나 클릭하여 선택
+                </h4>
+                <p className="text-xs text-slate-500 mt-1">
+                  지원 형식: .xlsx, .xls, .csv (인동FN 표준 기획전 양식 권장)
+                </p>
+                <div className="mt-4 flex items-center justify-center gap-2">
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      downloadMdStandardTemplate();
+                    }}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-[11px] font-bold shadow-2xs"
+                  >
+                    <Download className="w-3.5 h-3.5 text-slate-500" />
+                    <span>MD 표준 엑셀 양식 다운로드 (.xlsx)</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* 실무 검증용 원클릭 시나리오 프리셋 */}
+              <div>
+                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-2">
+                  💡 파일이 없는 경우 즉시 시연할 수 있는 샘플 프리셋
+                </span>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-2.5">
+                  <button
+                    type="button"
+                    onClick={() => handleLoadPresetScenario('LIST_MULTI')}
+                    className="p-3 text-left rounded-xl border border-purple-200 bg-purple-50/60 hover:bg-purple-100/70 transition-all cursor-pointer group"
+                  >
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-xs font-bold text-purple-900">시나리오 1</span>
+                      <span className="text-[9px] font-bold bg-purple-200 text-purple-900 px-1.5 py-0.2 rounded">
+                        다부서 결함
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-purple-700 font-medium">
+                      26SS LIST 트렌치코트 기획서
+                    </p>
+                    <span className="text-[10px] text-purple-600/80 block mt-1">
+                      MD 할인율 오류 + 디자인 해상도 미달
+                    </span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => handleLoadPresetScenario('ANOMALY_80')}
+                    className="p-3 text-left rounded-xl border border-amber-200 bg-amber-50/60 hover:bg-amber-100/70 transition-all cursor-pointer group"
+                  >
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-xs font-bold text-amber-900">시나리오 2</span>
+                      <span className="text-[9px] font-bold bg-amber-200 text-amber-900 px-1.5 py-0.2 rounded">
+                        트렌드 이상치
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-amber-700 font-medium">
+                      80% 극단치 오기입 기획서
+                    </p>
+                    <span className="text-[10px] text-amber-600/80 block mt-1">
+                      아우터 30% 평균 대비 80% 오입력
+                    </span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => handleLoadPresetScenario('IMAGE_404')}
+                    className="p-3 text-left rounded-xl border border-rose-200 bg-rose-50/60 hover:bg-rose-100/70 transition-all cursor-pointer group"
+                  >
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-xs font-bold text-rose-900">시나리오 3</span>
+                      <span className="text-[9px] font-bold bg-rose-200 text-rose-900 px-1.5 py-0.2 rounded">
+                        이미지 깨짐
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-rose-700 font-medium">
+                      404 썸네일 경로 유실 기획서
+                    </p>
+                    <span className="text-[10px] text-rose-600/80 block mt-1">
+                      대표 룩북 404 Not Found 감지
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* 모달 푸터 */}
+            <div className="p-4 border-t border-slate-100 bg-slate-50 flex items-center justify-between text-xs">
+              <span className="text-slate-500 text-[11px]">
+                업로드 즉시 6대 룰 엔진이 자동 실행되어 상단 그리드에 반영됩니다.
+              </span>
+              <button
+                type="button"
+                onClick={() => setIsUploadModalOpen(false)}
+                className="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-800 rounded-xl font-bold cursor-pointer"
+              >
+                닫기
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

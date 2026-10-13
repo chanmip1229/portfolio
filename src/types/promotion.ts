@@ -65,6 +65,7 @@ export interface ProductItem {
 
   // 신규: 다부서 복합 이슈 여부
   multiDeptIssueDepartments?: Department[]; // 예: ['MD', 'DESIGN']
+  hasBrokenImage?: boolean; // 대표 이미지 404 / 깨짐 여부
 }
 
 export interface QcIssue {
@@ -84,6 +85,7 @@ export interface QcIssue {
     | 'BANNER_COPY_MISMATCH'
     | 'TREND_OUTLIER_NOTICE' // 신규: 원본 기획 데이터 트렌드 이상치 (예: 30% 평균 대비 80% 극단치 오기입)
     | 'IMAGE_SPEC_MISMATCH' // 신규: 상품 단품 썸네일/룩북 해상도 규격 미달
+    | 'IMAGE_LOAD_FAILED' // 신규: 상품 썸네일 링크 깨짐 / 404 / 엑스박스 오류
     | 'MULTI_DEPT_BLOCKER'; // 신규: 단일 품번에 복수 부서 결함 동시 발생
   severity: 'BLOCKER' | 'WARNING';
   targetField: string;

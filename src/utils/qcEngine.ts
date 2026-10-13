@@ -120,6 +120,24 @@ export function runDeterministicQc(promotion: Promotion): QcIssue[] {
       });
     }
 
+    // 5-2. [신규 기능] 단품 썸네일 이미지 링크 누락/깨짐(404 / 엑스박스) 검증 (디자인팀)
+    const isImageBroken = !product.thumbnailUrl || product.thumbnailUrl.trim() === '' || product.thumbnailUrl.includes('broken');
+    if (isImageBroken) {
+      issues.push({
+        id: `qc-img-broken-${product.id}-${idx}`,
+        department: 'DESIGN',
+        ruleCode: 'IMAGE_LOAD_FAILED',
+        severity: 'BLOCKER',
+        targetField: `${product.productCode}.thumbnailUrl`,
+        message: `[${product.productCode}] 상품 대표 썸네일 링크 누락/깨짐(404 / 엑스박스): 썸네일 이미지 경로가 누락되었거나 존재하지 않는 파일로 연결되어 엑스박스가 노출됩니다. 디자인팀 룩북 컷 긴급 재등록 필요.`,
+        details: {
+          productCode: product.productCode,
+          expected: '정상 룩북 이미지 URL (750x1000 px)',
+          actual: product.thumbnailUrl || '이미지 누락(404/엑스박스)',
+        },
+      });
+    }
+
     // 6. 승인 품번(SKU) 매핑 검증
     if (!product.isApproved) {
       issues.push({

@@ -116,6 +116,66 @@ E-BIZ 운영팀 드림`,
     createdAt: '2026-03-05 11:32',
   },
   {
+    id: 'draft-trend-anomaly-md',
+    promotionId: 'promo-list-trench-2026',
+    emailType: 'RECHECK_ERROR',
+    toDepartment: 'MD',
+    recipientName: 'MD1팀 김지현 대리',
+    relatedProductCode: 'SWCTKB21030',
+    subject: '[원본 확인 요청] [SWCTKB21030] 기획서 기입 할인율(80%) 원본 오입력 여부 확인의 건',
+    body: `안녕하세요 김지현 대리님, E-BIZ 자사몰 운영팀입니다.
+
+[LIST] 26SS 트렌치코트 얼리버드 위크 상품 등록 엑셀 사전 검증 중,
+품번 [SWCTKB21030] (벨티드 하프 트렌치 자켓)의 기획 할인율에 대해 통계적 이상치가 감지되어 확인 요청드립니다.
+
+■ 감지된 트렌드 이상치 내역:
+• 품번: SWCTKB21030 (벨티드 하프 트렌치 자켓 - 카키)
+• 정가: 178,000원 ➔ 기획 행사가: 35,600원 (할인율 80%)
+• 자켓 카테고리 시즌 평균 할인율: 약 30% (정상 범위: 20% ~ 40%)
+• 이상치 소견: 시즌 봄 신상품에 80% 할인이 등록되어 심각한 역마진 발생 위험이 있습니다.
+  '0' 누락(예: 35,600원이 아니라 135,600원 의도) 또는 엑셀 기입 실수 여부 확인이 필요합니다.
+
+■ 조치 요청 사항:
+1. 의도된 한정 파격가인 경우: 담당 MD 승인 확인 회신
+2. 엑셀 작성 시 오기입된 경우: 정상 행사가 및 할인율 정정 회신 요망
+
+■ 조치 마감: 2026년 3월 8일(금) 17:00까지
+첨부 엑셀(MD팀_오류품번리스트.xlsx) 확인 후 회신 부탁드립니다.
+감사합니다.
+
+E-BIZ 운영팀 드림`,
+    triggerReason: '카테고리 평균(30%) 대비 80% 극단치 오기입 의심 (역마진 방지)',
+    status: 'DRAFT',
+    createdAt: '2026-03-05 11:35',
+  },
+  {
+    id: 'draft-jan-design-img',
+    promotionId: 'promo-shesmiss-jan-2026',
+    emailType: 'RECHECK_ERROR',
+    toDepartment: 'DESIGN',
+    recipientName: '디자인팀 박민지 책임',
+    relatedProductCode: 'SWOPPB11010',
+    subject: '[긴급 조치 요청] [SWOPPB11010] 상품 대표 썸네일 링크 깨짐(404 / 엑스박스) 재등록의 건',
+    body: `안녕하세요 박민지 책임님, E-BIZ 자사몰 운영팀입니다.
+
+[SHESMISS] 26 신년 퍼스트 브랜드위크 등록 상품 사전 검수 중,
+품번 [SWOPPB11010] (신년 플리츠 벨티드 원피스)의 대표 썸네일 이미지 파일이 서버에 존재하지 않아 고객 화면에 엑스박스(깨진 이미지)가 노출되고 있습니다.
+
+■ 조치 요청 사항:
+• 품번: SWOPPB11010 (신년 플리츠 벨티드 원피스)
+• 현재 상태: 썸네일 이미지 링크 404 Not Found (엑스박스 노출)
+• 요청 파일: 750 x 1000 px 고해상도 모델 룩북 착용 컷
+• 조치 마감: 즉시 조치 요망 (고객 노출 차단 중)
+
+빠른 원본 이미지 재전달 부탁드립니다.
+감사합니다.
+
+E-BIZ 운영팀 드림`,
+    triggerReason: '상품 대표 썸네일 링크 깨짐(404 / 엑스박스) 감지 (BLOCKER)',
+    status: 'DRAFT',
+    createdAt: '2026-03-05 11:38',
+  },
+  {
     id: 'draft-list-trench-1',
     promotionId: 'promo-list-trench-2026',
     emailType: 'RECHECK_ERROR',
