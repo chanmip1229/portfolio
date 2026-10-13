@@ -11,15 +11,30 @@ import EmailDraftModal from '@/components/EmailDraftModal';
 import AnnualScheduleView from '@/components/AnnualScheduleView';
 import SkuMasterQcView from '@/components/SkuMasterQcView';
 import { useOpsStore } from '@/store/useOpsStore';
-import { Sparkles, Calendar, LayoutDashboard, FileSpreadsheet } from 'lucide-react';
+import {
+  Sparkles,
+  Calendar,
+  LayoutDashboard,
+  FileSpreadsheet,
+  ShieldCheck,
+} from 'lucide-react';
 
 export default function Home() {
-  const { emailDrafts, selectedPromotionId, setSelectedPromotionId, resetToDefault, setIsDraftModalOpen, setSelectedDraftId } = useOpsStore();
-  
-  // 4대 메인 네비게이션: 간트 로드맵 -> 기획전 사전 QC -> 단품(SKU) 마스터 QC -> 앱/웹 라이브 프리뷰
-  const [activeTab, setActiveTab] = useState<
-    'ANNUAL_GANTT' | 'QC_WORKSPACE' | 'SKU_MASTER_QC' | 'LIVE_PREVIEW'
-  >('ANNUAL_GANTT');
+  const {
+    emailDrafts,
+    selectedPromotionId,
+    setSelectedPromotionId,
+    resetToDefault,
+    setIsDraftModalOpen,
+    setSelectedDraftId,
+  } = useOpsStore();
+
+  // 기능별 그룹화: 3단계 이커머스 운영 파이프라인
+  // 1. 프로모션 기획 & 연간 로드맵
+  // 2. 정합성 통합 검증 (QC 센터) - [서브탭 1: 기획전·부서별 사전 QC / 서브탭 2: 단품(SKU) 마스터 전수 QC]
+  // 3. 최종 전시 프리뷰 & 배너 검수
+  const [activeTab, setActiveTab] = useState<'ANNUAL_GANTT' | 'QC_CENTER' | 'LIVE_PREVIEW'>('ANNUAL_GANTT');
+  const [qcSubTab, setQcSubTab] = useState<'CAMPAIGN_QC' | 'SKU_MASTER_QC'>('CAMPAIGN_QC');
 
   const activeDraftCount = emailDrafts.filter((d) => d.status === 'DRAFT').length;
 
@@ -31,63 +46,75 @@ export default function Home() {
         draftCount={activeDraftCount}
       />
 
-      {/* 상단 메인 네비게이션 4-탭 바 */}
+      {/* 상단 3단계 운영 파이프라인 메인 네비게이션 */}
       <div className="bg-white border-b border-slate-200 sticky top-14 z-20 shadow-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-          <div className="flex items-center gap-1.5 py-2 overflow-x-auto no-scrollbar">
-            {/* 탭 1 (맨 앞): 2026 연간 프로모션 간트 로드맵 & 캘린더 */}
+          <div className="flex items-center gap-2 py-2 overflow-x-auto no-scrollbar">
+            {/* STEP 1: 프로모션 기획 & 연간 로드맵 */}
             <button
               onClick={() => setActiveTab('ANNUAL_GANTT')}
-              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 ${
+              className={`flex items-center gap-2.5 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 ${
                 activeTab === 'ANNUAL_GANTT'
                   ? 'bg-indigo-600 text-white shadow-xs'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
               }`}
             >
+              <span
+                className={`text-[10px] px-1.5 py-0.2 rounded font-extrabold ${
+                  activeTab === 'ANNUAL_GANTT' ? 'bg-indigo-500 text-white' : 'bg-slate-200 text-slate-700'
+                }`}
+              >
+                STEP 1
+              </span>
               <Calendar className="w-4 h-4" />
-              <span>2026 연간 프로모션 간트 로드맵 & 캘린더</span>
+              <span>프로모션 기획 & 연간 로드맵</span>
             </button>
 
-            {/* 탭 2: 실시간 사전 QC & 부서별 워크스페이스 (기획전 중심) */}
+            {/* STEP 2: 정합성 통합 검증 (QC 센터) — 기획전 사전 QC + 단품(SKU) 전수 검수 통합 */}
             <button
-              onClick={() => setActiveTab('QC_WORKSPACE')}
-              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 ${
-                activeTab === 'QC_WORKSPACE'
+              onClick={() => setActiveTab('QC_CENTER')}
+              className={`flex items-center gap-2.5 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 ${
+                activeTab === 'QC_CENTER'
                   ? 'bg-indigo-600 text-white shadow-xs'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
               }`}
             >
-              <LayoutDashboard className="w-4 h-4" />
-              <span>실시간 사전 QC & 부서별 워크스페이스</span>
-            </button>
-
-            {/* 탭 3 (신설): 단품(SKU) 마스터 정합성 QC (품번 단위 전수 검수 & 트렌드 이상치 감지) */}
-            <button
-              onClick={() => setActiveTab('SKU_MASTER_QC')}
-              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 ${
-                activeTab === 'SKU_MASTER_QC'
-                  ? 'bg-indigo-600 text-white shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-              }`}
-            >
-              <FileSpreadsheet className="w-4 h-4" />
-              <span>단품(SKU) 마스터 정합성 QC</span>
-              <span className="text-[10px] bg-amber-400 text-slate-950 px-1.5 py-0.2 rounded font-extrabold">
-                신설
+              <span
+                className={`text-[10px] px-1.5 py-0.2 rounded font-extrabold ${
+                  activeTab === 'QC_CENTER' ? 'bg-indigo-500 text-white' : 'bg-slate-200 text-slate-700'
+                }`}
+              >
+                STEP 2
+              </span>
+              <ShieldCheck className="w-4 h-4" />
+              <span>정합성 통합 검증 (QC 센터)</span>
+              <span
+                className={`text-[10px] px-1.5 py-0.2 rounded font-extrabold ${
+                  activeTab === 'QC_CENTER' ? 'bg-amber-400 text-slate-950' : 'bg-slate-100 text-slate-600'
+                }`}
+              >
+                기획전 + SKU 전수
               </span>
             </button>
 
-            {/* 탭 4: IDF몰 앱/웹 라이브 프리뷰 & 배너 검수 */}
+            {/* STEP 3: 최종 전시 프리뷰 & 배너 검수 */}
             <button
               onClick={() => setActiveTab('LIVE_PREVIEW')}
-              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 ${
+              className={`flex items-center gap-2.5 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 ${
                 activeTab === 'LIVE_PREVIEW'
                   ? 'bg-indigo-600 text-white shadow-xs'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
               }`}
             >
+              <span
+                className={`text-[10px] px-1.5 py-0.2 rounded font-extrabold ${
+                  activeTab === 'LIVE_PREVIEW' ? 'bg-indigo-500 text-white' : 'bg-slate-200 text-slate-700'
+                }`}
+              >
+                STEP 3
+              </span>
               <Sparkles className="w-4 h-4" />
-              <span>IDF몰 앱/웹 라이브 프리뷰 & 배너 검수</span>
+              <span>최종 전시 프리뷰 & 배너 검수</span>
             </button>
           </div>
 
@@ -98,32 +125,34 @@ export default function Home() {
       </div>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full space-y-8">
-        {/* 탭 1: 2026 연간 프로모션 간트 로드맵 & 캘린더 */}
+        {/* STEP 1: 2026 연간 프로모션 간트 로드맵 & 캘린더 */}
         {activeTab === 'ANNUAL_GANTT' && (
           <AnnualScheduleView
             onNavigateToQc={(promoId) => {
               setSelectedPromotionId(promoId);
-              setActiveTab('QC_WORKSPACE');
+              setActiveTab('QC_CENTER');
+              setQcSubTab('CAMPAIGN_QC');
             }}
           />
         )}
 
-        {/* 탭 2: 실시간 사전 QC & 부서별 정합성 워크스페이스 (기획전 중심: 배너, 쿠폰, 다부서 듀얼 메일) */}
-        {activeTab === 'QC_WORKSPACE' && (
-          <>
-            {/* 상단 브리핑 배너 */}
+        {/* STEP 2: 정합성 통합 검증 (QC 센터) */}
+        {activeTab === 'QC_CENTER' && (
+          <div className="space-y-6">
+            {/* QC 센터 통합 브리핑 배너 */}
             <div className="bg-linear-to-r from-slate-900 to-indigo-950 text-white rounded-2xl p-6 shadow-sm">
               <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                 <div>
                   <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-white/10 text-white text-[11px] font-semibold mb-2">
                     <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    E-BIZ 프로모션 자율 운영 엔진 가동 중
+                    E-BIZ 프로모션 & SKU 마스터 무결점 검증 엔진
                   </div>
-                  <h1 className="text-xl md:text-2xl font-black tracking-tight">
-                    실시간 사전 QC & 부서별 정합성 워크스페이스
+                  <h1 className="text-xl md:text-2xl font-black tracking-tight flex items-center gap-2">
+                    <ShieldCheck className="w-6 h-6 text-indigo-400" />
+                    정합성 통합 검증 (QC 센터)
                   </h1>
-                  <p className="text-xs text-slate-300 mt-1 max-w-2xl">
-                    MD팀(가격/할인율/승인여부), 디자인팀(배너 해상도), 웹개발팀(링크 오류), 마케팅팀(쿠폰 중복) 등 부서별 오류를 실시간 검출하고, 2개 이상 부서 복합 결함 시 좌/우 2분할 듀얼 메일로 즉시 동시 통보합니다.
+                  <p className="text-xs text-slate-300 mt-1 max-w-2xl leading-relaxed">
+                    기획전 전체 마일스톤 및 다부서(MD·디자인·웹개발·마케팅) 협업 조치부터 단품(SKU) 품번 전수 검사(엑셀 업로드, 80% 이상치 감지, 404 이미지)까지 한 화면에서 검증합니다.
                   </p>
                 </div>
 
@@ -138,31 +167,89 @@ export default function Home() {
               </div>
             </div>
 
-            {/* 실시간 사전 QC 워크스페이스 */}
-            {selectedPromotionId && (
-              <QcWorkspace
-                promotionId={selectedPromotionId}
-                onNavigateToSkuQc={() => setActiveTab('SKU_MASTER_QC')}
-              />
+            {/* QC 센터 서브탭 세그먼트 컨트롤러 */}
+            <div className="bg-white rounded-2xl border border-slate-200 p-2 shadow-xs flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+              <div className="flex items-center gap-1.5 bg-slate-100/80 p-1 rounded-xl">
+                {/* 서브탭 1: 기획전·부서별 사전 QC */}
+                <button
+                  onClick={() => setQcSubTab('CAMPAIGN_QC')}
+                  className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                    qcSubTab === 'CAMPAIGN_QC'
+                      ? 'bg-white text-indigo-700 shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  <LayoutDashboard className="w-3.5 h-3.5" />
+                  <span>1. 기획전·부서별 사전 QC</span>
+                  <span
+                    className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
+                      qcSubTab === 'CAMPAIGN_QC'
+                        ? 'bg-indigo-50 text-indigo-700'
+                        : 'bg-slate-200/70 text-slate-600'
+                    }`}
+                  >
+                    마일스톤 & 듀얼메일
+                  </span>
+                </button>
+
+                {/* 서브탭 2: 단품(SKU) 마스터 전수 QC */}
+                <button
+                  onClick={() => setQcSubTab('SKU_MASTER_QC')}
+                  className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                    qcSubTab === 'SKU_MASTER_QC'
+                      ? 'bg-white text-indigo-700 shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  <FileSpreadsheet className="w-3.5 h-3.5" />
+                  <span>2. 단품(SKU) 마스터 전수 QC</span>
+                  <span
+                    className={`text-[10px] px-1.5 py-0.2 rounded-full font-extrabold ${
+                      qcSubTab === 'SKU_MASTER_QC'
+                        ? 'bg-amber-400 text-slate-950'
+                        : 'bg-slate-200/70 text-slate-600'
+                    }`}
+                  >
+                    엑셀업로드 · 80%이상치 · 404
+                  </span>
+                </button>
+              </div>
+
+              <div className="flex items-center gap-2 px-3 text-xs text-slate-500">
+                <span className="font-semibold text-slate-600">선택된 기획전:</span>
+                <span className="bg-indigo-50 text-indigo-700 font-mono font-bold px-2 py-0.5 rounded text-[11px] border border-indigo-100">
+                  {selectedPromotionId || '전체'}
+                </span>
+              </div>
+            </div>
+
+            {/* 서브탭 1 본문: 기획전·부서별 사전 QC */}
+            {qcSubTab === 'CAMPAIGN_QC' && (
+              <div className="space-y-6">
+                {selectedPromotionId && (
+                  <QcWorkspace
+                    promotionId={selectedPromotionId}
+                    onNavigateToSkuQc={() => setQcSubTab('SKU_MASTER_QC')}
+                  />
+                )}
+                <MatrixFilterBar />
+                <PromotionCalendarView />
+              </div>
             )}
 
-            {/* 마일스톤 타임라인 & 필터 바 */}
-            <MatrixFilterBar />
-            <PromotionCalendarView />
-          </>
+            {/* 서브탭 2 본문: 단품(SKU) 마스터 전수 QC */}
+            {qcSubTab === 'SKU_MASTER_QC' && (
+              <SkuMasterQcView
+                onOpenDualDraftModal={() => {
+                  setSelectedDraftId('draft-multi-dept-md');
+                  setIsDraftModalOpen(true);
+                }}
+              />
+            )}
+          </div>
         )}
 
-        {/* 탭 3 (신설): 단품(SKU) 마스터 정합성 QC (품번 단위 전수 검사, 80% 트렌드 이상치 감지, 인라인 수정) */}
-        {activeTab === 'SKU_MASTER_QC' && (
-          <SkuMasterQcView
-            onOpenDualDraftModal={() => {
-              setSelectedDraftId('draft-multi-dept-md');
-              setIsDraftModalOpen(true);
-            }}
-          />
-        )}
-
-        {/* 탭 4: IDF몰 앱/웹 멀티 디바이스 라이브 프리뷰 & 배너 검수 */}
+        {/* STEP 3: IDF몰 앱/웹 멀티 디바이스 라이브 프리뷰 & 배너 검수 */}
         {activeTab === 'LIVE_PREVIEW' && (
           <div className="space-y-8">
             {selectedPromotionId && (

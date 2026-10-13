@@ -453,7 +453,7 @@ export default function QcWorkspace({ promotionId, onNavigateToSkuQc }: QcWorksp
                   </span>
                 </h4>
                 <p className="text-xs text-slate-500 mt-0.5">
-                  단품 단위의 가격·할인율 인라인 수정, 트렌드 이상치 소명, 엑셀 기획서 업로드 검수는 <strong>[단품(SKU) 마스터 정합성 QC]</strong> 전용 탭으로 완전 일원화되었습니다.
+                  단품 단위의 가격·할인율 인라인 수정, 트렌드 이상치 소명, 엑셀 기획서 업로드 검수는 <strong>[단품(SKU) 마스터 전수 QC]</strong> 전용 서브탭으로 완전 일원화되었습니다.
                 </p>
               </div>
             </div>
@@ -568,7 +568,7 @@ export default function QcWorkspace({ promotionId, onNavigateToSkuQc }: QcWorksp
               📋 편성 품번(SKU) 간이 상태 목록
             </span>
             <span className="text-[11px] text-slate-400">
-              클릭 시 [단품 마스터 QC] 탭에서 해당 품번의 가격/이미지를 즉시 인라인 수정할 수 있습니다.
+              클릭 시 [단품 마스터 전수 QC] 서브탭으로 이동하여 해당 품번을 즉시 인라인 수정할 수 있습니다.
             </span>
           </div>
 
@@ -631,7 +631,7 @@ export default function QcWorkspace({ promotionId, onNavigateToSkuQc }: QcWorksp
           </div>
         </div>
 
-        {/* 탭 전환 CTA 배너 */}
+        {/* 서브탭 전환 CTA 배너 */}
         <div className="bg-linear-to-r from-indigo-900 to-slate-900 text-white rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
           <div className="flex items-center gap-3">
             <span className="p-2 bg-indigo-500/20 text-indigo-300 rounded-lg shrink-0">
@@ -642,7 +642,7 @@ export default function QcWorkspace({ promotionId, onNavigateToSkuQc }: QcWorksp
                 단품(SKU) 단위 전수 정합성 검증 및 인라인 수정 워크스페이스
               </p>
               <p className="text-[11px] text-slate-300 mt-0.5">
-                MD 기획 엑셀 업로드, 80% 트렌드 이상치 소명 메일 발송, 404 이미지 교체 요청을 전용 탭에서 진행하세요.
+                MD 기획 엑셀 업로드, 80% 트렌드 이상치 소명 메일 발송, 404 이미지 교체 요청을 전용 서브탭에서 진행하세요.
               </p>
             </div>
           </div>
@@ -653,7 +653,7 @@ export default function QcWorkspace({ promotionId, onNavigateToSkuQc }: QcWorksp
               onClick={onNavigateToSkuQc}
               className="inline-flex items-center gap-1.5 px-4 py-2 bg-indigo-500 hover:bg-indigo-400 text-white rounded-lg text-xs font-black transition-all shadow-md shrink-0 cursor-pointer"
             >
-              <span>단품(SKU) 마스터 QC 탭으로 이동</span>
+              <span>단품(SKU) 마스터 전수 QC 서브탭으로 이동</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           )}
