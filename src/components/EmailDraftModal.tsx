@@ -513,7 +513,34 @@ E-BIZ 운영팀 배상`;
             </div>
           </div>
 
-          {/* 본문 레이아웃 (좌측 초안 목록 + 우측 단일 또는 2분할 듀얼 편집기) */}
+          {/* Gmail 연동 시 브라우저 보안 규정 및 첨부 가이드 배너 */}
+          {showGmailTip && (
+            <div className="mx-6 mt-3 p-3.5 bg-amber-50 border border-amber-300 rounded-xl text-xs text-amber-950 flex items-start justify-between gap-3 shadow-xs animate-in fade-in slide-in-from-top-1">
+              <div className="flex items-start gap-2.5">
+                <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                <div>
+                  <strong className="font-bold text-amber-900 block mb-0.5">
+                    📎 Gmail 엑셀 첨부 방법 안내 (웹 브라우저 보안 정책)
+                  </strong>
+                  <p className="text-[11px] text-amber-800 leading-relaxed">
+                    웹 브라우저 보안 규격상 외부 사이트인 Gmail 작성창으로 PC 파일이 강제로 자동 삽입되지 않습니다.<br />
+                    방금 브라우저에 <strong>자동 다운로드된 엑셀 파일</strong>을 열려 있는 <strong>Gmail 창으로 마우스 드래그 앤 드롭</strong>해 주세요!<br />
+                    <span className="text-indigo-700 font-bold">
+                      💡 엑셀 첨부까지 완전 자동화를 원하시면 우측 하단의 [시스템에서 바로 발송] 버튼을 누르시면 시스템이 100% 자동 첨부하여 전송합니다.
+                    </span>
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowGmailTip(false)}
+                className="text-amber-800 hover:text-amber-950 text-xs font-bold px-2 py-1 rounded bg-amber-200/80 hover:bg-amber-300 cursor-pointer shrink-0"
+              >
+                닫기 ✕
+              </button>
+            </div>
+          )}
+
           {/* 본문 레이아웃 (좌측 초안 목록/부서 선택 + 우측 종합 취합 표 또는 단일/듀얼 편집기) */}
           <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
             {/* 좌측 사이드바: 건별 모드일 때는 팀별 필터 + 초안 목록, 종합 요약 모드일 때는 부서별 종합 목록 */}
@@ -781,8 +808,8 @@ E-BIZ 운영팀 배상`;
                           <p className="text-xs font-bold text-rose-950">
                             📎 {currentSummary.excelFileName}
                           </p>
-                          <span className="text-[10px] bg-rose-200/80 text-rose-900 font-bold px-1.5 py-0.2 rounded">
-                            메일 자동 첨부됨
+                          <span className="text-[10px] bg-rose-100 text-rose-850 font-bold px-2 py-0.5 rounded border border-rose-300">
+                            시스템 발송 시 100% 자동 동봉 | Gmail은 다운로드 파일 드래그
                           </span>
                         </div>
                         <p className="text-[11px] text-slate-500 mt-0.5">
@@ -959,10 +986,10 @@ E-BIZ 운영팀 배상`;
                       type="button"
                       onClick={handleOpenGmailSummary}
                       className="px-3.5 py-2 bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
-                      title="엑셀 파일을 다운로드하고 Gmail 작성창을 엽니다"
+                      title="엑셀 다운로드 후 Gmail 작성창이 열립니다. 브라우저 하단에 받아진 파일을 Gmail 창으로 드래그해 주세요."
                     >
                       <ExternalLink className="w-4 h-4 text-slate-500" />
-                      <span>Gmail로 바로 연결</span>
+                      <span>엑셀 다운로드 & Gmail 열기</span>
                     </button>
                   </div>
 
@@ -1221,9 +1248,10 @@ E-BIZ 운영팀 배상`;
                       type="button"
                       onClick={() => handleOpenGmail(mdDraft)}
                       className="px-3 py-2 bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+                      title="엑셀 다운로드 후 Gmail 작성창이 열립니다. 브라우저 하단에 받아진 파일을 Gmail 창으로 드래그해 주세요."
                     >
                       <ExternalLink className="w-3.5 h-3.5 text-slate-500" />
-                      <span>Gmail로 열기</span>
+                      <span>엑셀 다운로드 & Gmail 열기</span>
                     </button>
 
                     <button
@@ -1300,8 +1328,8 @@ E-BIZ 운영팀 배상`;
                             <p className="text-xs font-bold text-indigo-950">
                               📎 {currentDraft.toDepartment}팀_오류품번리스트_2026SS.xlsx
                             </p>
-                            <span className="text-[10px] bg-indigo-200/80 text-indigo-900 font-bold px-1.5 py-0.2 rounded">
-                              메일 자동 첨부됨
+                            <span className="text-[10px] bg-indigo-100 text-indigo-900 font-bold px-2 py-0.5 rounded border border-indigo-200">
+                              시스템 발송 시 100% 자동 동봉 | Gmail은 다운로드 파일 드래그
                             </span>
                           </div>
                           <p className="text-[11px] text-slate-500 mt-0.5">
@@ -1394,10 +1422,10 @@ E-BIZ 운영팀 배상`;
                       <button
                         onClick={() => handleOpenGmail(currentDraft)}
                         className="px-3.5 py-2 bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
-                        title="엑셀 파일을 다운로드하고 Gmail 작성창을 엽니다"
+                        title="엑셀 다운로드 후 Gmail 작성창이 열립니다. 브라우저 하단에 받아진 파일을 Gmail 창으로 드래그해 주세요."
                       >
                         <ExternalLink className="w-4 h-4 text-slate-500" />
-                        <span>Gmail로 바로 연결</span>
+                        <span>엑셀 다운로드 & Gmail 열기</span>
                       </button>
                     </div>
 
@@ -1424,7 +1452,7 @@ E-BIZ 운영팀 배상`;
                         ) : (
                           <>
                             <Send className="w-4 h-4" />
-                            <span>시스템에서 바로 발송</span>
+                            <span>🚀 시스템에서 첨부파일 자동 동봉 발송</span>
                           </>
                         )}
                       </button>
