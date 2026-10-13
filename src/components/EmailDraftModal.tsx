@@ -221,39 +221,6 @@ export default function EmailDraftModal() {
     };
   }, []);
 
-  if (!isDraftModalOpen) return null;
-
-  // 팀별 필터링 옵션 목록
-  const deptFilters: { id: 'ALL' | 'MD' | 'DESIGN' | 'DEV' | 'MARKETING'; label: string; count: number }[] = [
-    { id: 'ALL', label: '전체', count: emailDrafts.length },
-    { id: 'MD', label: 'MD팀', count: emailDrafts.filter((d) => d.toDepartment === 'MD').length },
-    { id: 'DESIGN', label: '디자인팀', count: emailDrafts.filter((d) => d.toDepartment === 'DESIGN').length },
-    { id: 'DEV', label: '웹개발팀', count: emailDrafts.filter((d) => d.toDepartment === 'DEV').length },
-    { id: 'MARKETING', label: '마케팅팀', count: emailDrafts.filter((d) => d.toDepartment === 'MARKETING').length },
-  ];
-
-  // 팀별 필터링 적용된 초안 목록
-  const filteredDrafts = emailDrafts.filter((d) => {
-    if (deptFilter === 'ALL') return true;
-    return d.toDepartment === deptFilter;
-  });
-
-  const currentDraft = emailDrafts.find((d) => d.id === selectedDraftId) || emailDrafts[0];
-
-  // 짝이 되는 다부서 초안 탐색 (MD <-> DESIGN)
-  const pairedDraft = currentDraft?.pairedDraftId
-    ? emailDrafts.find((d) => d.id === currentDraft.pairedDraftId)
-    : null;
-
-  const isMultiDeptTarget = Boolean(currentDraft?.isMultiDeptSplitDraft && pairedDraft);
-  const showDualSplit = forceDualView !== null ? forceDualView : isMultiDeptTarget;
-
-  const mdDraft = currentDraft?.toDepartment === 'MD' ? currentDraft : pairedDraft;
-  const designDraft = currentDraft?.toDepartment === 'DESIGN' ? currentDraft : pairedDraft;
-
-  // 종합 요약 메일 관련 현재 선택 부서 및 기본 본문 생성
-  const currentSummary = deptSummaries[selectedSummaryDept] || deptSummaries.MD;
-
   const defaultSummaryBodies = useMemo(() => {
     const bodies: Record<string, string> = {};
     (['MD', 'DESIGN', 'DEV', 'MARKETING', 'EBIZ_OPS'] as Department[]).forEach((dept) => {
@@ -286,6 +253,37 @@ E-BIZ 운영팀 배상`;
     return bodies;
   }, [deptSummaries]);
 
+  // 팀별 필터링 옵션 목록
+  const deptFilters: { id: 'ALL' | 'MD' | 'DESIGN' | 'DEV' | 'MARKETING'; label: string; count: number }[] = [
+    { id: 'ALL', label: '전체', count: emailDrafts?.length || 0 },
+    { id: 'MD', label: 'MD팀', count: (emailDrafts || []).filter((d) => d.toDepartment === 'MD').length },
+    { id: 'DESIGN', label: '디자인팀', count: (emailDrafts || []).filter((d) => d.toDepartment === 'DESIGN').length },
+    { id: 'DEV', label: '웹개발팀', count: (emailDrafts || []).filter((d) => d.toDepartment === 'DEV').length },
+    { id: 'MARKETING', label: '마케팅팀', count: (emailDrafts || []).filter((d) => d.toDepartment === 'MARKETING').length },
+  ];
+
+  // 팀별 필터링 적용된 초안 목록
+  const filteredDrafts = (emailDrafts || []).filter((d) => {
+    if (deptFilter === 'ALL') return true;
+    return d.toDepartment === deptFilter;
+  });
+
+  const currentDraft = (emailDrafts || []).find((d) => d.id === selectedDraftId) || (emailDrafts && emailDrafts[0]) || null;
+
+  // 짝이 되는 다부서 초안 탐색 (MD <-> DESIGN)
+  const pairedDraft = currentDraft?.pairedDraftId
+    ? (emailDrafts || []).find((d) => d.id === currentDraft.pairedDraftId)
+    : null;
+
+  const isMultiDeptTarget = Boolean(currentDraft?.isMultiDeptSplitDraft && pairedDraft);
+  const showDualSplit = forceDualView !== null ? forceDualView : isMultiDeptTarget;
+
+  const mdDraft = currentDraft?.toDepartment === 'MD' ? currentDraft : pairedDraft;
+  const designDraft = currentDraft?.toDepartment === 'DESIGN' ? currentDraft : pairedDraft;
+
+  // 종합 요약 메일 관련 현재 선택 부서 및 기본 본문 생성
+  const currentSummary = deptSummaries[selectedSummaryDept] || deptSummaries.MD;
+
   const currentSummarySubject =
     summaryCustomEdits[selectedSummaryDept]?.subject ?? currentSummary.subject;
   const currentSummaryBody =
@@ -301,7 +299,13 @@ E-BIZ 운영팀 배상`;
 
   // 1. 클립보드 전체 복사
   const handleCopy = (draftText: string, id: string) => {
-    navigator.clipboard.writeText(draftText);
+    try {
+      if (typeof navigator !== 'undefined' && navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(draftText);
+      }
+    } catch (e) {
+      console.warn('Clipboard write failed', e);
+    }
     setCopiedId(id);
     setTimeout(() => setCopiedId(null), 2500);
   };
@@ -329,7 +333,7 @@ E-BIZ 운영팀 배상`;
 
   // 4. 시스템 직접 단건 원클릭 발송
   const handleDirectSystemSend = (draftId?: string) => {
-    const target = draftId ? emailDrafts.find((d) => d.id === draftId) : currentDraft;
+    const target = draftId ? (emailDrafts || []).find((d) => d.id === draftId) : currentDraft;
     if (!target) return;
     setIsSystemSending(true);
 
@@ -353,7 +357,7 @@ E-BIZ 운영팀 배상`;
       setSentSummaryDepts((prev) => ({ ...prev, [dept]: true }));
 
       // 해당 부서에 매핑된 모든 개별 초안도 완료 상태로 동기화
-      emailDrafts
+      (emailDrafts || [])
         .filter((d) => d.toDepartment === dept)
         .forEach((d) => markDraftAsSent(d.id));
 
@@ -402,6 +406,9 @@ E-BIZ 운영팀 배상`;
     window.open(gmailUrl, '_blank');
     setShowGmailTip(true);
   };
+
+  // 모달이 닫혀 있을 때는 모든 훅 실행 후 여기서 안전하게 null 반환
+  if (!isDraftModalOpen) return null;
 
   return (
     <>
