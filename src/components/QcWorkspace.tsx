@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useOpsStore } from '@/store/useOpsStore';
 import {
   ShieldAlert,
@@ -8,15 +8,14 @@ import {
   AlertTriangle,
   CheckCircle2,
   ExternalLink,
-  Edit2,
   RefreshCw,
   Rocket,
   Mail,
-  Info,
   Download,
   FileSpreadsheet,
   Layers,
   ArrowRight,
+  TrendingDown,
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { exportToExcel } from '@/utils/excelExporter';
@@ -29,7 +28,6 @@ interface QcWorkspaceProps {
 export default function QcWorkspace({ promotionId, onNavigateToSkuQc }: QcWorkspaceProps) {
   const {
     promotions,
-    updateProductAndRevalidate,
     runQcValidation,
     approveForPublish,
     setIsDraftModalOpen,
@@ -38,45 +36,15 @@ export default function QcWorkspace({ promotionId, onNavigateToSkuQc }: QcWorksp
 
   const promo = promotions.find((p) => p.id === promotionId);
 
-  // 인라인 수정 모드 상태 (productId)
-  const [editingProductId, setEditingProductId] = useState<string | null>(null);
-  const [editPriceStr, setEditPriceStr] = useState<string>('');
-  const [editDiscountRateStr, setEditDiscountRateStr] = useState<string>('');
-  const [editCouponApplicable, setEditCouponApplicable] = useState<boolean>(true);
-  const [editUrl, setEditUrl] = useState<string>('');
+  const [selectedQcDeptFilter, setSelectedQcDeptFilter] = useState<
+    'ALL' | 'MD' | 'DESIGN' | 'DEV' | 'MARKETING'
+  >('ALL');
 
   if (!promo) return null;
 
   const blockerCount = promo.qcIssues.filter((i) => i.severity === 'BLOCKER').length;
   const warningCount = promo.qcIssues.filter((i) => i.severity === 'WARNING').length;
   const isAllPassed = blockerCount === 0;
-
-  const handleStartEdit = (
-    prodId: string,
-    salePrice: number,
-    discountRate: number,
-    couponApplicable: boolean,
-    url: string
-  ) => {
-    setEditingProductId(prodId);
-    setEditPriceStr(String(salePrice));
-    setEditDiscountRateStr(String(discountRate));
-    setEditCouponApplicable(couponApplicable);
-    setEditUrl(url);
-  };
-
-  const handleSaveEdit = (prodId: string) => {
-    const finalPrice = Number(editPriceStr.replace(/[^0-9]/g, '')) || 0;
-    const finalRate = Number(editDiscountRateStr.replace(/[^0-9]/g, '')) || 0;
-
-    updateProductAndRevalidate(promo.id, prodId, {
-      salePrice: finalPrice,
-      displayDiscountRate: finalRate,
-      couponApplicable: editCouponApplicable,
-      detailUrl: editUrl,
-    });
-    setEditingProductId(null);
-  };
 
   const handlePublish = () => {
     approveForPublish(promo.id);
@@ -87,9 +55,47 @@ export default function QcWorkspace({ promotionId, onNavigateToSkuQc }: QcWorksp
     });
   };
 
-  const [selectedQcDeptFilter, setSelectedQcDeptFilter] = useState<
-    'ALL' | 'MD' | 'DESIGN' | 'DEV' | 'MARKETING'
-  >('ALL');
+  // 상품별 정합성 메트릭 계산 (단품 마스터 QC 연동용)
+  const skuMetrics = useMemo(() => {
+    return promo.products.map((prod) => {
+      const calculatedDiscount =
+        prod.originalPrice > 0
+          ? Math.round(((prod.originalPrice - prod.salePrice) / prod.originalPrice) * 100)
+          : 0;
+      const isMathMismatch = calculatedDiscount !== prod.displayDiscountRate;
+      const isTrendAnomaly = Boolean(prod.hasTrendAnomaly || prod.displayDiscountRate >= 75);
+      const isMultiDept = Boolean(
+        prod.productCode === 'SWBLPB21010' ||
+          (prod.multiDeptIssueDepartments && prod.multiDeptIssueDepartments.length >= 2)
+      );
+      const hasBrokenImage = Boolean(
+        prod.hasBrokenImage || !prod.thumbnailUrl || prod.thumbnailUrl.includes('broken')
+      );
+      const hasBlocker = Boolean(
+        isMathMismatch ||
+          !prod.isApproved ||
+          (prod.detailUrl && prod.detailUrl.includes('broken-link')) ||
+          isMultiDept ||
+          hasBrokenImage
+      );
+
+      return {
+        prod,
+        calculatedDiscount,
+        isMathMismatch,
+        isTrendAnomaly,
+        isMultiDept,
+        hasBrokenImage,
+        hasBlocker,
+      };
+    });
+  }, [promo.products]);
+
+  const totalSkuCount = promo.products.length;
+  const multiDeptSkuCount = skuMetrics.filter((m) => m.isMultiDept).length;
+  const trendAnomalySkuCount = skuMetrics.filter((m) => m.isTrendAnomaly).length;
+  const blockerSkuCount = skuMetrics.filter((m) => m.hasBlocker).length;
+  const passedSkuCount = skuMetrics.filter((m) => !m.hasBlocker && !m.isTrendAnomaly).length;
 
   // 부서별 이슈 카운트 계산
   const mdIssues = promo.qcIssues.filter((i) => (i.department || 'MD') === 'MD');
@@ -129,7 +135,7 @@ export default function QcWorkspace({ promotionId, onNavigateToSkuQc }: QcWorksp
               {isAllPassed ? <ShieldCheck className="w-5 h-5" /> : <ShieldAlert className="w-5 h-5" />}
             </span>
             <h3 className="text-base font-bold text-slate-900">
-              게시 전 사전 QC 검증 & 상품 정합성 워크스페이스
+              게시 전 사전 QC 검증 & 부서별 정합성 워크스페이스
             </h3>
           </div>
           <p className="text-xs text-slate-500 mt-1">
@@ -431,47 +437,34 @@ export default function QcWorkspace({ promotionId, onNavigateToSkuQc }: QcWorksp
         </div>
       )}
 
-      {/* 대상 상품 테이블 & 인라인 수정 인터페이스 */}
-      <div className="p-5">
-        {/* 신규: SKU 마스터 탭 분리 안내 배너 */}
-        <div className="mb-4 p-3.5 bg-indigo-50 border border-indigo-200 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div className="flex items-center gap-2 text-xs">
-            <span className="p-1.5 bg-indigo-600 text-white rounded-lg shrink-0">
-              <FileSpreadsheet className="w-4 h-4" />
-            </span>
-            <div>
-              <p className="text-indigo-950 font-bold">
-                💡 품번(SKU) 단위 전수 검수 및 트렌드 이상치(80% 등) 관리는 [단품(SKU) 마스터 정합성 QC] 전용 탭에서 독립 운영됩니다.
-              </p>
-              <p className="text-[11px] text-indigo-700 mt-0.5">
-                수백 개 품번의 가격·할인율 인라인 수정, 다부서 복합 결함 태그, 이상치 필터링을 넓은 데이터 그리드로 집중 검수하세요.
-              </p>
+      {/* 📦 행사 대상 상품(SKU) 정합성 현황 요약 및 3번째 탭 전수 검수 연결 카드 */}
+      <div className="p-6 bg-slate-50/70 border-t border-slate-200">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-5 border-b border-slate-200/80">
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="p-2 bg-indigo-100 text-indigo-700 rounded-xl">
+                <FileSpreadsheet className="w-5 h-5" />
+              </span>
+              <div>
+                <h4 className="text-sm font-black text-slate-900 tracking-tight flex items-center gap-2">
+                  행사 대상 상품(SKU) 정합성 요약 리포트
+                  <span className="text-[11px] font-bold text-indigo-700 bg-indigo-100/70 px-2 py-0.5 rounded-full">
+                    총 {totalSkuCount}종 편성
+                  </span>
+                </h4>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  단품 단위의 가격·할인율 인라인 수정, 트렌드 이상치 소명, 엑셀 기획서 업로드 검수는 <strong>[단품(SKU) 마스터 정합성 QC]</strong> 전용 탭으로 완전 일원화되었습니다.
+                </p>
+              </div>
             </div>
           </div>
-          {onNavigateToSkuQc && (
-            <button
-              type="button"
-              onClick={onNavigateToSkuQc}
-              className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-bold transition-all shadow-xs cursor-pointer flex items-center gap-1.5 shrink-0"
-            >
-              <span>SKU 전수 탭 이동</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </button>
-          )}
-        </div>
 
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-bold text-slate-800">게시 예정 대상 상품 목록</span>
-            <span className="text-xs text-slate-400">({promo.products.length}종)</span>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2">
-            {/* 엑셀 파일 다운로드 버튼군 (전체 및 담당자별) */}
-            <div className="flex items-center rounded-lg bg-slate-100 p-0.5 border border-slate-200 text-xs">
+          <div className="flex flex-wrap items-center gap-2 shrink-0">
+            {/* 엑셀 파일 다운로드 버튼군 */}
+            <div className="flex items-center rounded-lg bg-white p-0.5 border border-slate-200 shadow-2xs text-xs">
               <button
                 onClick={() => exportToExcel([promo], `${promo.id}_전체_QC리포트`)}
-                className="px-2.5 py-1 text-[11px] font-bold text-slate-700 hover:text-slate-900 hover:bg-white rounded transition-colors flex items-center gap-1 cursor-pointer"
+                className="px-2.5 py-1 text-[11px] font-bold text-slate-700 hover:text-slate-900 hover:bg-slate-50 rounded transition-colors flex items-center gap-1 cursor-pointer"
                 title="해당 기획전의 모든 상품 및 오류 내역을 엑셀로 다운로드"
               >
                 <Download className="w-3 h-3 text-indigo-600" />
@@ -479,22 +472,22 @@ export default function QcWorkspace({ promotionId, onNavigateToSkuQc }: QcWorksp
               </button>
               <button
                 onClick={() => exportToExcel([promo], `${promo.id}_MD팀_오류품번`, 'MD')}
-                className="px-2 py-1 text-[11px] font-semibold text-slate-600 hover:text-slate-900 hover:bg-white rounded transition-colors cursor-pointer"
-                title="MD팀 확인 대상(할인율 불일치, 미승인 품번) 엑셀 다운로드"
+                className="px-2 py-1 text-[11px] font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded transition-colors cursor-pointer"
+                title="MD팀 확인 대상 엑셀 다운로드"
               >
                 MD팀용
               </button>
               <button
                 onClick={() => exportToExcel([promo], `${promo.id}_디자인팀_배너오류`, 'DESIGN')}
-                className="px-2 py-1 text-[11px] font-semibold text-slate-600 hover:text-slate-900 hover:bg-white rounded transition-colors cursor-pointer"
-                title="디자인팀 확인 대상(배너 규격, 카피) 엑셀 다운로드"
+                className="px-2 py-1 text-[11px] font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded transition-colors cursor-pointer"
+                title="디자인팀 확인 대상 엑셀 다운로드"
               >
                 디자인팀용
               </button>
               <button
                 onClick={() => exportToExcel([promo], `${promo.id}_운영팀_URL쿠폰오류`, 'EBIZ_OPS')}
-                className="px-2 py-1 text-[11px] font-semibold text-slate-600 hover:text-slate-900 hover:bg-white rounded transition-colors cursor-pointer"
-                title="E-BIZ 운영팀 확인 대상(URL 404, 쿠폰 정책) 엑셀 다운로드"
+                className="px-2 py-1 text-[11px] font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded transition-colors cursor-pointer"
+                title="운영팀 확인 대상 엑셀 다운로드"
               >
                 운영팀용
               </button>
@@ -502,272 +495,168 @@ export default function QcWorkspace({ promotionId, onNavigateToSkuQc }: QcWorksp
 
             <button
               onClick={() => runQcValidation(promo.id)}
-              className="text-xs font-semibold text-slate-600 hover:text-slate-900 flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors cursor-pointer"
+              className="text-xs font-semibold text-slate-600 hover:text-slate-900 flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 transition-colors cursor-pointer shadow-2xs"
             >
               <RefreshCw className="w-3.5 h-3.5" />
-              <span>룰 엔진 강제 재검증</span>
+              <span>룰 엔진 재검증</span>
             </button>
           </div>
         </div>
 
-        <div className="overflow-x-auto rounded-xl border border-slate-200">
-          <table className="w-full text-xs text-left">
-            <thead className="bg-slate-50 text-slate-600 font-bold border-b border-slate-200">
-              <tr>
-                <th className="py-3 px-4">품번 (SKU)</th>
-                <th className="py-3 px-4">상품명</th>
-                <th className="py-3 px-4 text-right">정가</th>
-                <th className="py-3 px-4 text-right">실제 판매가</th>
-                <th className="py-3 px-4 text-center">수학적 계산치</th>
-                <th className="py-3 px-4 text-center">표기 할인율</th>
-                <th className="py-3 px-4 text-center">쿠폰 정책 및 정합성 QC</th>
-                <th className="py-3 px-4">연결 상세 URL</th>
-                <th className="py-3 px-4 text-center">액션</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {promo.products.map((prod) => {
-                const isEditing = editingProductId === prod.id;
-                const calculated = Math.round(
-                  ((prod.originalPrice - prod.salePrice) / prod.originalPrice) * 100
-                );
-                const isMismatch = calculated !== prod.displayDiscountRate;
+        {/* 4대 SKU 핵심 상태 지표 카드 그리드 */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 py-5">
+          <div className="p-3.5 rounded-xl bg-white border border-slate-200/80 shadow-2xs">
+            <span className="text-[11px] font-bold text-slate-500 uppercase">전체 편성 SKU</span>
+            <div className="flex items-baseline gap-1.5 mt-1">
+              <span className="text-2xl font-black text-slate-900 font-mono">{totalSkuCount}</span>
+              <span className="text-xs text-slate-500">종</span>
+            </div>
+            <p className="text-[10px] text-slate-400 mt-0.5">기획전 포함 상품</p>
+          </div>
 
-                return (
-                  <tr
-                    key={prod.id}
-                    className={`hover:bg-slate-50/50 transition-colors ${
-                      isMismatch ? 'bg-rose-50/30' : ''
-                    }`}
-                  >
-                    <td className="py-3 px-4 font-mono font-bold text-slate-900">{prod.productCode}</td>
-                    <td className="py-3 px-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-13 rounded-lg overflow-hidden bg-slate-100 border border-slate-200 shrink-0">
-                          <img
-                            src={prod.thumbnailUrl}
-                            alt={prod.productName}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                        <div>
-                          <p className="font-medium text-slate-800">{prod.productName}</p>
-                          {prod.isLiveWeek && (
-                            <p className="text-[10px] font-bold text-rose-600 flex items-center gap-1 mt-0.5">
-                              <span>🔥</span>
-                              <span>{prod.liveWeekBenefitText || '라이브위크 단 7일간의 특별한 혜택'}</span>
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    </td>
-                    <td className="py-3 px-4 text-right font-mono text-slate-500">
-                      {prod.originalPrice.toLocaleString()}원
-                    </td>
+          <div className="p-3.5 rounded-xl bg-purple-50/70 border border-purple-200 shadow-2xs">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-bold text-purple-800 uppercase flex items-center gap-1">
+                <Layers className="w-3.5 h-3.5 text-purple-600" />
+                다부서 복합 결함
+              </span>
+              <span className="text-[10px] font-bold bg-purple-200/80 text-purple-900 px-1.5 py-0.2 rounded-full">
+                MD+디자인
+              </span>
+            </div>
+            <div className="flex items-baseline gap-1.5 mt-1">
+              <span className="text-2xl font-black text-purple-900 font-mono">{multiDeptSkuCount}</span>
+              <span className="text-xs text-purple-700 font-bold">건</span>
+            </div>
+            <p className="text-[10px] text-purple-700 mt-0.5 font-semibold">SWBLPB21010 (할인율+저화질)</p>
+          </div>
 
-                    {/* 판매가 */}
-                    <td className="py-3 px-4 text-right font-mono font-bold">
-                      {isEditing ? (
-                        <div className="relative inline-block">
-                          <input
-                            type="text"
-                            inputMode="numeric"
-                            value={editPriceStr}
-                            onChange={(e) => {
-                              // 숫자만 입력 허용, 다 지우면 빈칸 유지
-                              const val = e.target.value.replace(/[^0-9]/g, '');
-                              setEditPriceStr(val);
-                            }}
-                            className="w-24 text-right pr-6 py-1 pl-1 border rounded bg-white font-mono text-xs focus:ring-1 focus:ring-indigo-500"
-                            placeholder="0"
-                          />
-                          <span className="absolute right-1.5 top-1/2 -translate-y-1/2 text-slate-400 text-[10px] pointer-events-none">
-                            원
-                          </span>
-                        </div>
-                      ) : (
-                        <span>{prod.salePrice.toLocaleString()}원</span>
-                      )}
-                    </td>
+          <div className="p-3.5 rounded-xl bg-amber-50/70 border border-amber-200 shadow-2xs">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-bold text-amber-800 uppercase flex items-center gap-1">
+                <TrendingDown className="w-3.5 h-3.5 text-amber-600" />
+                트렌드 이상치
+              </span>
+              <span className="text-[10px] font-bold bg-amber-200/80 text-amber-900 px-1.5 py-0.2 rounded-full">
+                80% 극단치
+              </span>
+            </div>
+            <div className="flex items-baseline gap-1.5 mt-1">
+              <span className="text-2xl font-black text-amber-900 font-mono">{trendAnomalySkuCount}</span>
+              <span className="text-xs text-amber-700 font-bold">건</span>
+            </div>
+            <p className="text-[10px] text-amber-700 mt-0.5 font-semibold">SWCTKB21030 (평균30% 대비)</p>
+          </div>
 
-                    {/* 실제 수학적 계산치 */}
-                    <td className="py-3 px-4 text-center font-mono">
-                      <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-700 font-semibold">
-                        {calculated}%
-                      </span>
-                    </td>
-
-                    {/* 표기 할인율 (숫자 지우면 0 안 남고 깔끔하게 지워지며 % 자동 부착) */}
-                    <td className="py-3 px-4 text-center font-mono font-bold">
-                      {isEditing ? (
-                        <div className="relative inline-block">
-                          <input
-                            type="text"
-                            inputMode="numeric"
-                            value={editDiscountRateStr}
-                            onChange={(e) => {
-                              // 숫자만 허용, 다 지우면 빈칸 유지
-                              const val = e.target.value.replace(/[^0-9]/g, '');
-                              setEditDiscountRateStr(val);
-                            }}
-                            className="w-16 text-center pr-4 py-1 pl-1 border rounded bg-white font-mono text-xs focus:ring-1 focus:ring-indigo-500 font-bold"
-                            placeholder="0"
-                          />
-                          <span className="absolute right-1 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-bold pointer-events-none">
-                            %
-                          </span>
-                        </div>
-                      ) : (
-                        <span
-                          className={`px-2 py-0.5 rounded ${
-                            isMismatch
-                              ? 'bg-rose-600 text-white font-black animate-pulse'
-                              : 'bg-emerald-100 text-emerald-800 font-bold'
-                          }`}
-                        >
-                          {prod.displayDiscountRate}%
-                        </span>
-                      )}
-                    </td>
-
-                    {/* 쿠폰 적용 여부 및 적용 쿠폰 상세 (다운로드 쿠폰, 등급 쿠폰) */}
-                    <td className="py-3 px-4 text-center">
-                      {isEditing ? (
-                        <button
-                          type="button"
-                          onClick={() => setEditCouponApplicable(!editCouponApplicable)}
-                          className={`px-2.5 py-1 rounded-md text-[11px] font-bold transition-colors cursor-pointer ${
-                            editCouponApplicable
-                              ? 'bg-blue-100 text-blue-800 border border-blue-300'
-                              : 'bg-slate-100 text-slate-600 border border-slate-300'
-                          }`}
-                        >
-                          {editCouponApplicable ? '쿠폰 가능 (O)' : '쿠폰 제외 (X)'}
-                        </button>
-                      ) : (
-                        <div className="flex flex-col items-center gap-1">
-                          {/* 쿠폰 정책 정합성 QC 뱃지 (사용자 요청: 정보 일치 vs 확인 필요) */}
-                          {promo.allowCoupon === prod.couponApplicable ? (
-                            <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                              ✓ 정보 일치
-                            </span>
-                          ) : !promo.allowCoupon && prod.couponApplicable ? (
-                            <span className="inline-flex items-center gap-1 text-[10px] font-bold text-rose-700 bg-rose-50 px-2 py-0.5 rounded-full border border-rose-300 animate-pulse">
-                              🚨 확인 필요 (쿠폰 불가 기획)
-                            </span>
-                          ) : (
-                            <span className="inline-flex items-center gap-1 text-[10px] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-300">
-                              ⚠️ 확인 필요 (쿠폰 미적용)
-                            </span>
-                          )}
-
-                          <span
-                            className={`px-2 py-0.5 rounded text-[10px] font-semibold ${
-                              prod.couponApplicable
-                                ? 'bg-blue-50 text-blue-700'
-                                : 'bg-slate-100 text-slate-500'
-                            }`}
-                          >
-                            {prod.couponApplicable ? '쿠폰 전체 적용 O' : '쿠폰 제외 X'}
-                          </span>
-
-                          {/* 사용자 피드백 반영: 쿠폰 종류별 Y/N 및 시작일/종료일 기간 표기 */}
-                          {prod.couponApplicable ? (
-                            <div className="text-[10px] space-y-0.5 text-left bg-slate-50/80 p-1.5 rounded-lg border border-slate-200/80 w-full min-w-[190px] font-mono mt-1">
-                              <div className="flex items-center justify-between text-slate-700">
-                                <span>신상쿠폰:</span>
-                                <span className="font-bold text-indigo-700">
-                                  Y <span className="text-[9px] text-slate-400 font-normal">10.01~11.01</span>
-                                </span>
-                              </div>
-                              <div className="flex items-center justify-between text-slate-700">
-                                <span>라이브위크:</span>
-                                <span className={`font-bold ${prod.isLiveWeek ? 'text-rose-600' : 'text-slate-400'}`}>
-                                  {prod.isLiveWeek ? 'Y' : 'N'}{' '}
-                                  <span className="text-[9px] text-slate-400 font-normal">
-                                    {prod.isLiveWeek ? '10.02~10.19' : '-'}
-                                  </span>
-                                </span>
-                              </div>
-                              <div className="flex items-center justify-between text-slate-700">
-                                <span>회원등급:</span>
-                                <span className="font-bold text-amber-700">
-                                  Y <span className="text-[9px] text-slate-400 font-normal">10.01~10.31</span>
-                                </span>
-                              </div>
-                            </div>
-                          ) : (
-                            <div className="text-[10px] text-slate-400 bg-slate-50 p-1 rounded border border-slate-100 w-full text-center">
-                              모든 쿠폰 미적용 (N)
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </td>
-
-                    {/* URL (클릭 시 가라 IDF몰 상세 페이지로 이동) */}
-                    <td className="py-3 px-4 text-slate-500 max-w-[200px] truncate">
-                      {isEditing ? (
-                        <input
-                          type="text"
-                          value={editUrl}
-                          onChange={(e) => setEditUrl(e.target.value)}
-                          className="w-full p-1 border rounded bg-white text-xs focus:ring-1 focus:ring-indigo-500"
-                        />
-                      ) : (
-                        <a
-                          href={`/product/${prod.productCode}`}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="hover:underline flex items-center gap-1 text-slate-600 hover:text-indigo-600"
-                          title="가라 IDF몰 상세 페이지 열기"
-                        >
-                          <span className="truncate">{prod.detailUrl}</span>
-                          <ExternalLink className="w-3 h-3 shrink-0" />
-                        </a>
-                      )}
-                    </td>
-
-                    {/* 액션 (수정 / 저장) */}
-                    <td className="py-3 px-4 text-center">
-                      {isEditing ? (
-                        <button
-                          onClick={() => handleSaveEdit(prod.id)}
-                          className="px-2.5 py-1 text-[11px] font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-md transition-colors"
-                        >
-                          저장 & 재검증
-                        </button>
-                      ) : (
-                        <button
-                          onClick={() =>
-                            handleStartEdit(
-                              prod.id,
-                              prod.salePrice,
-                              prod.displayDiscountRate,
-                              prod.couponApplicable,
-                              prod.detailUrl
-                            )
-                          }
-                          className="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-600 hover:text-indigo-600 p-1 hover:bg-slate-100 rounded transition-colors"
-                        >
-                          <Edit2 className="w-3 h-3" />
-                          <span>수정</span>
-                        </button>
-                      )}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+          <div className="p-3.5 rounded-xl bg-emerald-50/70 border border-emerald-200 shadow-2xs">
+            <span className="text-[11px] font-bold text-emerald-800 uppercase flex items-center gap-1">
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+              정합성 통과 완료
+            </span>
+            <div className="flex items-baseline gap-1.5 mt-1">
+              <span className="text-2xl font-black text-emerald-900 font-mono">{passedSkuCount}</span>
+              <span className="text-xs text-emerald-700 font-bold">건</span>
+            </div>
+            <p className="text-[10px] text-emerald-700 mt-0.5">게시 승인 가능 정상 품번</p>
+          </div>
         </div>
 
-        {/* 실무자 팁 안내 */}
-        <div className="mt-4 p-3 rounded-xl bg-slate-50 border border-slate-200 flex items-start gap-2.5 text-xs text-slate-600">
-          <Info className="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" />
-          <p className="leading-relaxed">
-            <strong>원클릭 수정 & 자동 재검증 시연:</strong> 위 테이블에서 오류가 있는 품번(<code>SWBLPB21010</code>)의 [수정] 버튼을 누르고 표기 할인율을 <strong>30%</strong>로 변경 후 [저장 & 재검증]을 누르면, 룰 엔진이 즉시 재검증하여 초록색 <code>PASS</code> 상태로 전환됩니다.
-          </p>
+        {/* 품번 간이 미리보기 칩 리스트 */}
+        <div className="bg-white rounded-xl border border-slate-200/90 p-4 mb-4 shadow-2xs">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-xs font-bold text-slate-700">
+              📋 편성 품번(SKU) 간이 상태 목록
+            </span>
+            <span className="text-[11px] text-slate-400">
+              클릭 시 [단품 마스터 QC] 탭에서 해당 품번의 가격/이미지를 즉시 인라인 수정할 수 있습니다.
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+            {skuMetrics.map(({ prod, isMultiDept, isTrendAnomaly, hasBrokenImage }) => (
+              <div
+                key={prod.id}
+                onClick={onNavigateToSkuQc}
+                className={`p-2.5 rounded-lg border transition-all cursor-pointer flex items-center gap-2.5 ${
+                  isMultiDept
+                    ? 'bg-purple-50/60 border-purple-200 hover:bg-purple-100/60'
+                    : hasBrokenImage
+                    ? 'bg-rose-50/60 border-rose-200 hover:bg-rose-100/60'
+                    : isTrendAnomaly
+                    ? 'bg-amber-50/60 border-amber-200 hover:bg-amber-100/60'
+                    : 'bg-slate-50/60 border-slate-200 hover:bg-slate-100/60'
+                }`}
+              >
+                <div className="w-8 h-10 rounded bg-slate-200 overflow-hidden shrink-0 relative">
+                  <img
+                    src={prod.thumbnailUrl}
+                    alt={prod.productName}
+                    className="w-full h-full object-cover"
+                  />
+                  {hasBrokenImage && (
+                    <div className="absolute inset-0 bg-rose-900/80 flex items-center justify-center text-[8px] text-white font-bold">
+                      404
+                    </div>
+                  )}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center justify-between gap-1">
+                    <span className="font-mono font-bold text-[11px] text-slate-900 truncate">
+                      {prod.productCode}
+                    </span>
+                    <span
+                      className={`text-[9px] font-bold px-1.5 py-0.2 rounded shrink-0 ${
+                        isMultiDept
+                          ? 'bg-purple-200 text-purple-900'
+                          : hasBrokenImage
+                          ? 'bg-rose-200 text-rose-900'
+                          : isTrendAnomaly
+                          ? 'bg-amber-200 text-amber-900'
+                          : 'bg-emerald-100 text-emerald-800'
+                      }`}
+                    >
+                      {isMultiDept
+                        ? '다부서'
+                        : hasBrokenImage
+                        ? '404'
+                        : isTrendAnomaly
+                        ? '80% 이상치'
+                        : '정상'}
+                    </span>
+                  </div>
+                  <p className="text-[10px] text-slate-500 truncate mt-0.5">{prod.productName}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* 탭 전환 CTA 배너 */}
+        <div className="bg-linear-to-r from-indigo-900 to-slate-900 text-white rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+          <div className="flex items-center gap-3">
+            <span className="p-2 bg-indigo-500/20 text-indigo-300 rounded-lg shrink-0">
+              <FileSpreadsheet className="w-5 h-5" />
+            </span>
+            <div>
+              <p className="text-xs font-bold text-white">
+                단품(SKU) 단위 전수 정합성 검증 및 인라인 수정 워크스페이스
+              </p>
+              <p className="text-[11px] text-slate-300 mt-0.5">
+                MD 기획 엑셀 업로드, 80% 트렌드 이상치 소명 메일 발송, 404 이미지 교체 요청을 전용 탭에서 진행하세요.
+              </p>
+            </div>
+          </div>
+
+          {onNavigateToSkuQc && (
+            <button
+              type="button"
+              onClick={onNavigateToSkuQc}
+              className="inline-flex items-center gap-1.5 px-4 py-2 bg-indigo-500 hover:bg-indigo-400 text-white rounded-lg text-xs font-black transition-all shadow-md shrink-0 cursor-pointer"
+            >
+              <span>단품(SKU) 마스터 QC 탭으로 이동</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          )}
         </div>
       </div>
     </div>
