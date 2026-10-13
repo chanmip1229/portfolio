@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Promotion, Brand, Department, PromotionStatus, EmailDraft, BannerInfo, ProductItem, QcIssue } from '@/types/promotion';
+import { Promotion, Brand, Department, PromotionStatus, EmailDraft, BannerInfo, ProductItem, QcIssue, EventLifecycle } from '@/types/promotion';
 import { INITIAL_PROMOTIONS } from '@/data/mockPromotions';
 import { runDeterministicQc } from '@/utils/qcEngine';
 
@@ -8,10 +8,12 @@ interface OpsStore {
   emailDrafts: EmailDraft[];
   selectedPromotionId: string | null;
 
-  // 3-Way 필터 상태
+  // 필터 상태
   selectedBrand: Brand | 'ALL';
   selectedDepartment: Department | 'ALL';
   selectedStatus: PromotionStatus | 'ALL';
+  selectedLifecycle: EventLifecycle;
+  selectedMonth: number | 'ALL';
 
   // 모달 제어 상태
   isDraftModalOpen: boolean;
@@ -21,6 +23,8 @@ interface OpsStore {
   setSelectedBrand: (brand: Brand | 'ALL') => void;
   setSelectedDepartment: (dept: Department | 'ALL') => void;
   setSelectedStatus: (status: PromotionStatus | 'ALL') => void;
+  setSelectedLifecycle: (lifecycle: EventLifecycle) => void;
+  setSelectedMonth: (month: number | 'ALL') => void;
   setSelectedPromotionId: (id: string | null) => void;
   setIsDraftModalOpen: (open: boolean) => void;
   setSelectedDraftId: (id: string | null) => void;
@@ -313,6 +317,8 @@ export const useOpsStore = create<OpsStore>((set, get) => ({
   selectedBrand: 'ALL',
   selectedDepartment: 'ALL',
   selectedStatus: 'ALL',
+  selectedLifecycle: 'ALL',
+  selectedMonth: 'ALL',
 
   isDraftModalOpen: false,
   selectedDraftId: null,
@@ -320,6 +326,8 @@ export const useOpsStore = create<OpsStore>((set, get) => ({
   setSelectedBrand: (brand) => set({ selectedBrand: brand }),
   setSelectedDepartment: (dept) => set({ selectedDepartment: dept }),
   setSelectedStatus: (status) => set({ selectedStatus: status }),
+  setSelectedLifecycle: (lifecycle) => set({ selectedLifecycle: lifecycle }),
+  setSelectedMonth: (month) => set({ selectedMonth: month }),
   setSelectedPromotionId: (id) => set({ selectedPromotionId: id }),
   setIsDraftModalOpen: (open) => set({ isDraftModalOpen: open }),
   setSelectedDraftId: (id) => set({ selectedDraftId: id }),
@@ -565,6 +573,8 @@ E-BIZ 운영팀 드림`,
       selectedBrand: 'ALL',
       selectedDepartment: 'ALL',
       selectedStatus: 'ALL',
+      selectedLifecycle: 'ALL',
+      selectedMonth: 'ALL',
       isDraftModalOpen: false,
       selectedDraftId: null,
     }),
