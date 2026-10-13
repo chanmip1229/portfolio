@@ -17,6 +17,7 @@ import {
   LayoutDashboard,
   FileSpreadsheet,
   ShieldCheck,
+  ChevronRight,
 } from 'lucide-react';
 
 export default function Home() {
@@ -46,76 +47,187 @@ export default function Home() {
         draftCount={activeDraftCount}
       />
 
-      {/* 상단 3단계 운영 파이프라인 메인 네비게이션 */}
-      <div className="bg-white border-b border-slate-200 sticky top-14 z-20 shadow-xs">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-          <div className="flex items-center gap-2 py-2 overflow-x-auto no-scrollbar">
-            {/* STEP 1: 프로모션 기획 & 연간 로드맵 */}
-            <button
-              onClick={() => setActiveTab('ANNUAL_GANTT')}
-              className={`flex items-center gap-2.5 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 ${
-                activeTab === 'ANNUAL_GANTT'
-                  ? 'bg-indigo-600 text-white shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-              }`}
-            >
-              <span
-                className={`text-[10px] px-1.5 py-0.2 rounded font-extrabold ${
-                  activeTab === 'ANNUAL_GANTT' ? 'bg-indigo-500 text-white' : 'bg-slate-200 text-slate-700'
-                }`}
-              >
-                STEP 1
+      {/* 상단 3단계 운영 파이프라인 메인 네비게이션 (시인성 극대화 워크플로우 탭) */}
+      <div className="bg-white/95 backdrop-blur-md border-b border-slate-200 sticky top-14 z-20 shadow-xs py-2.5">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-2.5">
+            {/* 좌측 안내 라벨 (사용자 가이드용) */}
+            <div className="hidden xl:flex items-center gap-2 shrink-0 pr-2 border-r border-slate-200">
+              <span className="text-[11px] font-black tracking-wider uppercase text-indigo-700 bg-indigo-50 border border-indigo-200 px-2.5 py-1 rounded-lg flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse"></span>
+                운영 파이프라인
               </span>
-              <Calendar className="w-4 h-4" />
-              <span>프로모션 기획 & 연간 로드맵</span>
-            </button>
+              <span className="text-[11px] text-slate-500 font-medium">3단계 업무 이동</span>
+            </div>
 
-            {/* STEP 2: 정합성 통합 검증 (QC 센터) — 기획전 사전 QC + 단품(SKU) 전수 검수 통합 */}
-            <button
-              onClick={() => setActiveTab('QC_CENTER')}
-              className={`flex items-center gap-2.5 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 ${
-                activeTab === 'QC_CENTER'
-                  ? 'bg-indigo-600 text-white shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-              }`}
-            >
-              <span
-                className={`text-[10px] px-1.5 py-0.2 rounded font-extrabold ${
-                  activeTab === 'QC_CENTER' ? 'bg-indigo-500 text-white' : 'bg-slate-200 text-slate-700'
+            {/* 3단계 인터랙티브 스텝 탭 컨테이너 */}
+            <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-2 sm:gap-3">
+              {/* STEP 1: 프로모션 기획 & 연간 로드맵 */}
+              <button
+                type="button"
+                onClick={() => setActiveTab('ANNUAL_GANTT')}
+                className={`group flex items-center justify-between p-2.5 sm:px-3.5 sm:py-2.5 rounded-xl border transition-all cursor-pointer text-left relative ${
+                  activeTab === 'ANNUAL_GANTT'
+                    ? 'bg-indigo-600 text-white border-indigo-600 shadow-md ring-2 ring-indigo-200'
+                    : 'bg-white hover:bg-slate-50 text-slate-800 border-slate-200 hover:border-indigo-300 hover:shadow-xs'
                 }`}
               >
-                STEP 2
-              </span>
-              <ShieldCheck className="w-4 h-4" />
-              <span>정합성 통합 검증 (QC 센터)</span>
-              <span
-                className={`text-[10px] px-1.5 py-0.2 rounded font-extrabold ${
-                  activeTab === 'QC_CENTER' ? 'bg-amber-400 text-slate-950' : 'bg-slate-100 text-slate-600'
-                }`}
-              >
-                기획전 + SKU 전수
-              </span>
-            </button>
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div
+                    className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-all ${
+                      activeTab === 'ANNUAL_GANTT'
+                        ? 'bg-white/20 text-white'
+                        : 'bg-indigo-50 text-indigo-600 group-hover:bg-indigo-100'
+                    }`}
+                  >
+                    <Calendar className="w-4 h-4" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-1.5">
+                      <span
+                        className={`text-[9px] font-black tracking-wider uppercase px-1.5 py-0.2 rounded ${
+                          activeTab === 'ANNUAL_GANTT'
+                            ? 'bg-white/20 text-white font-extrabold'
+                            : 'bg-slate-100 text-slate-500'
+                        }`}
+                      >
+                        STEP 01
+                      </span>
+                      {activeTab === 'ANNUAL_GANTT' && (
+                        <span className="text-[9px] bg-amber-400 text-slate-950 font-black px-1.5 py-0.2 rounded-full">
+                          현재 화면
+                        </span>
+                      )}
+                    </div>
+                    <p className={`text-xs font-bold truncate mt-0.5 ${
+                      activeTab === 'ANNUAL_GANTT' ? 'text-white' : 'text-slate-900 group-hover:text-indigo-600'
+                    }`}>
+                      프로모션 기획 & 연간 로드맵
+                    </p>
+                    <p className={`text-[10px] truncate ${
+                      activeTab === 'ANNUAL_GANTT' ? 'text-indigo-100' : 'text-slate-500'
+                    }`}>
+                      2026 연간 캘린더 · 간트 일정
+                    </p>
+                  </div>
+                </div>
+                <ChevronRight className={`w-4 h-4 shrink-0 transition-transform ${
+                  activeTab === 'ANNUAL_GANTT' ? 'text-white/70' : 'text-slate-300 group-hover:text-indigo-500 group-hover:translate-x-0.5'
+                }`} />
+              </button>
 
-            {/* STEP 3: 최종 전시 프리뷰 & 배너 검수 */}
-            <button
-              onClick={() => setActiveTab('LIVE_PREVIEW')}
-              className={`flex items-center gap-2.5 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 ${
-                activeTab === 'LIVE_PREVIEW'
-                  ? 'bg-indigo-600 text-white shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-              }`}
-            >
-              <span
-                className={`text-[10px] px-1.5 py-0.2 rounded font-extrabold ${
-                  activeTab === 'LIVE_PREVIEW' ? 'bg-indigo-500 text-white' : 'bg-slate-200 text-slate-700'
+              {/* STEP 2: 정합성 통합 검증 (QC 센터) */}
+              <button
+                type="button"
+                onClick={() => setActiveTab('QC_CENTER')}
+                className={`group flex items-center justify-between p-2.5 sm:px-3.5 sm:py-2.5 rounded-xl border transition-all cursor-pointer text-left relative ${
+                  activeTab === 'QC_CENTER'
+                    ? 'bg-indigo-600 text-white border-indigo-600 shadow-md ring-2 ring-indigo-200'
+                    : 'bg-white hover:bg-slate-50 text-slate-800 border-slate-200 hover:border-indigo-300 hover:shadow-xs'
                 }`}
               >
-                STEP 3
-              </span>
-              <Sparkles className="w-4 h-4" />
-              <span>최종 전시 프리뷰 & 배너 검수</span>
-            </button>
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div
+                    className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-all ${
+                      activeTab === 'QC_CENTER'
+                        ? 'bg-white/20 text-white'
+                        : 'bg-indigo-50 text-indigo-600 group-hover:bg-indigo-100'
+                    }`}
+                  >
+                    <ShieldCheck className="w-4 h-4" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-1.5">
+                      <span
+                        className={`text-[9px] font-black tracking-wider uppercase px-1.5 py-0.2 rounded ${
+                          activeTab === 'QC_CENTER'
+                            ? 'bg-white/20 text-white font-extrabold'
+                            : 'bg-slate-100 text-slate-500'
+                        }`}
+                      >
+                        STEP 02
+                      </span>
+                      {activeTab === 'QC_CENTER' ? (
+                        <span className="text-[9px] bg-amber-400 text-slate-950 font-black px-1.5 py-0.2 rounded-full">
+                          현재 화면
+                        </span>
+                      ) : (
+                        <span className="text-[9px] bg-rose-50 text-rose-600 font-extrabold px-1.5 py-0.2 rounded border border-rose-200">
+                          QC 통합
+                        </span>
+                      )}
+                    </div>
+                    <p className={`text-xs font-bold truncate mt-0.5 ${
+                      activeTab === 'QC_CENTER' ? 'text-white' : 'text-slate-900 group-hover:text-indigo-600'
+                    }`}>
+                      정합성 통합 검증 (QC 센터)
+                    </p>
+                    <p className={`text-[10px] truncate ${
+                      activeTab === 'QC_CENTER' ? 'text-indigo-100' : 'text-slate-500'
+                    }`}>
+                      기획전 마일스톤 + 단품 SKU 전수
+                    </p>
+                  </div>
+                </div>
+                <ChevronRight className={`w-4 h-4 shrink-0 transition-transform ${
+                  activeTab === 'QC_CENTER' ? 'text-white/70' : 'text-slate-300 group-hover:text-indigo-500 group-hover:translate-x-0.5'
+                }`} />
+              </button>
+
+              {/* STEP 3: 최종 전시 프리뷰 & 배너 검수 */}
+              <button
+                type="button"
+                onClick={() => setActiveTab('LIVE_PREVIEW')}
+                className={`group flex items-center justify-between p-2.5 sm:px-3.5 sm:py-2.5 rounded-xl border transition-all cursor-pointer text-left relative ${
+                  activeTab === 'LIVE_PREVIEW'
+                    ? 'bg-indigo-600 text-white border-indigo-600 shadow-md ring-2 ring-indigo-200'
+                    : 'bg-white hover:bg-slate-50 text-slate-800 border-slate-200 hover:border-indigo-300 hover:shadow-xs'
+                }`}
+              >
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div
+                    className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-all ${
+                      activeTab === 'LIVE_PREVIEW'
+                        ? 'bg-white/20 text-white'
+                        : 'bg-indigo-50 text-indigo-600 group-hover:bg-indigo-100'
+                    }`}
+                  >
+                    <Sparkles className="w-4 h-4" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-1.5">
+                      <span
+                        className={`text-[9px] font-black tracking-wider uppercase px-1.5 py-0.2 rounded ${
+                          activeTab === 'LIVE_PREVIEW'
+                            ? 'bg-white/20 text-white font-extrabold'
+                            : 'bg-slate-100 text-slate-500'
+                        }`}
+                      >
+                        STEP 03
+                      </span>
+                      {activeTab === 'LIVE_PREVIEW' && (
+                        <span className="text-[9px] bg-amber-400 text-slate-950 font-black px-1.5 py-0.2 rounded-full">
+                          현재 화면
+                        </span>
+                      )}
+                    </div>
+                    <p className={`text-xs font-bold truncate mt-0.5 ${
+                      activeTab === 'LIVE_PREVIEW' ? 'text-white' : 'text-slate-900 group-hover:text-indigo-600'
+                    }`}>
+                      최종 전시 프리뷰 & 배너 검수
+                    </p>
+                    <p className={`text-[10px] truncate ${
+                      activeTab === 'LIVE_PREVIEW' ? 'text-indigo-100' : 'text-slate-500'
+                    }`}>
+                      모바일/PC 실시간 자사몰 화면
+                    </p>
+                  </div>
+                </div>
+                <ChevronRight className={`w-4 h-4 shrink-0 transition-transform ${
+                  activeTab === 'LIVE_PREVIEW' ? 'text-white/70' : 'text-slate-300 group-hover:text-indigo-500 group-hover:translate-x-0.5'
+                }`} />
+              </button>
+            </div>
           </div>
         </div>
       </div>
