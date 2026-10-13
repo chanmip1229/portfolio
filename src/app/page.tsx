@@ -117,10 +117,6 @@ export default function Home() {
               <span>최종 전시 프리뷰 & 배너 검수</span>
             </button>
           </div>
-
-          <div className="hidden lg:flex items-center gap-2 text-xs text-slate-400">
-            <span>인동FN (SHESMISS · LIST · SISTINA) E-BIZ 자율 운영 시스템</span>
-          </div>
         </div>
       </div>
 
