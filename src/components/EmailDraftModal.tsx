@@ -247,8 +247,11 @@ ${s.issues
 ※ 상세 로데이터 및 SKU별 전수 정보는 첨부된 [${s.excelFileName}] 파일을 확인하여 주시기 바랍니다.
 오류 수정 완료 후 회신 또는 QC 시스템에서 [조치 완료] 승인 부탁드립니다.
 
+
 감사합니다.
-E-BIZ 운영팀 배상`;
+
+Best regards,
+E-BIZ 자사몰 운영팀 박찬미 드림`;
     });
     return bodies;
   }, [deptSummaries]);
