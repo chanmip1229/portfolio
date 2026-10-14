@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useOpsStore } from '@/store/useOpsStore';
 import {
@@ -9,9 +9,12 @@ import {
   ShoppingBag,
   ExternalLink,
   ChevronRight,
+  ChevronLeft,
   ShieldCheck,
   CheckCircle2,
   Tag,
+  Play,
+  Pause,
 } from 'lucide-react';
 
 interface MobileLivePreviewProps {
@@ -23,6 +26,17 @@ export default function MobileLivePreview({ promotionId }: MobileLivePreviewProp
   const promo = promotions.find((p) => p.id === promotionId);
 
   const [deviceType, setDeviceType] = useState<'IPHONE' | 'GALAXY' | 'DESKTOP'>('IPHONE');
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [isAutoRolling, setIsAutoRolling] = useState(true);
+
+  // 3.5초 자동 롤링 타이머
+  useEffect(() => {
+    if (!isAutoRolling) return;
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % 3);
+    }, 3500);
+    return () => clearInterval(interval);
+  }, [isAutoRolling]);
 
   if (!promo) return null;
 
@@ -118,25 +132,95 @@ export default function MobileLivePreview({ promotionId }: MobileLivePreviewProp
                 <ShoppingBag className="w-5 h-5 text-slate-700" />
               </div>
 
-              {/* PC 와이드 메인 배너 (1920x600 규격) */}
-              <div className="w-full relative aspect-16/5 bg-slate-900 overflow-hidden shrink-0">
-                {promo.banner.pcBannerUrl ? (
-                  <img
-                    src={promo.banner.pcBannerUrl}
-                    alt="PC 배너"
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full flex flex-col items-center justify-center text-white bg-slate-900">
-                    <Sparkles className="w-8 h-8 text-indigo-400 mb-2 animate-bounce" />
-                    <p className="text-sm font-bold">{promo.title}</p>
-                    <p className="text-xs text-slate-400 mt-1">PC 메인 배너 (1920 x 600 px) 실시간 노출</p>
+              {/* PC 와이드 메인 롤링 배너 (1920x600 규격) */}
+              <div className="w-full relative aspect-16/5 bg-slate-900 overflow-hidden shrink-0 group">
+                <div
+                  className="w-full h-full flex transition-transform duration-700 ease-in-out"
+                  style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+                >
+                  {/* 슬라이드 1 */}
+                  <div className="w-full h-full shrink-0 relative">
+                    <img
+                      src={promo.banner.pcBannerUrl || '/images/products/SWBLPB21010_main.jpg'}
+                      alt="PC 배너 슬라이드 1"
+                      className="w-full h-full object-cover"
+                    />
                   </div>
-                )}
-                <div className="absolute top-3 right-4">
+                  {/* 슬라이드 2 */}
+                  <div className="w-full h-full shrink-0 relative bg-slate-800">
+                    <img
+                      src="/images/products/SWBLPB21010_detail_profile.jpg"
+                      alt="PC 배너 슬라이드 2"
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center text-white">
+                      <span className="text-xs tracking-widest uppercase text-amber-400 font-bold mb-1">2026 SPRING COLLECTION</span>
+                      <h3 className="text-2xl font-black">{promo.brand} SIGNATURE OUTER WEEK</h3>
+                      <p className="text-xs text-white/80 mt-1">단 7일간 전 상품 10% 추가 쿠폰팩 제공</p>
+                    </div>
+                  </div>
+                  {/* 슬라이드 3 */}
+                  <div className="w-full h-full shrink-0 relative bg-slate-800">
+                    <img
+                      src="/images/products/SWBLPB21010_detail_fabric.jpg"
+                      alt="PC 배너 슬라이드 3"
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center text-white">
+                      <span className="text-xs tracking-widest uppercase text-indigo-400 font-bold mb-1">PREMIUM TAILORED</span>
+                      <h3 className="text-2xl font-black">HIGH-END FABRIC & TAILORING</h3>
+                      <p className="text-xs text-white/80 mt-1">인동FN 독점 수입 원단 & 프리미엄 아우터 라인업</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 슬라이드 좌우 수동 이동 화살표 */}
+                <button
+                  type="button"
+                  onClick={() => setCurrentSlide((prev) => (prev === 0 ? 2 : prev - 1))}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/50 hover:bg-black/80 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer z-20"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setCurrentSlide((prev) => (prev + 1) % 3)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/50 hover:bg-black/80 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer z-20"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+
+                {/* 우측 상단 컨펌 뱃지 */}
+                <div className="absolute top-3 right-4 z-20">
                   <span className={`text-xs font-bold px-3 py-1 rounded-full backdrop-blur-md text-white ${promo.banner.isConfirmed ? 'bg-emerald-600/90' : 'bg-amber-600/90'}`}>
                     {promo.banner.isConfirmed ? '✓ PC 배너 컨펌 완료' : '시안 검토 중'}
                   </span>
+                </div>
+
+                {/* 하단 우측 롤링 인디케이터 (01 / 03 ❚❚) */}
+                <div className="absolute bottom-3 right-4 z-20">
+                  <div
+                    onClick={() => setIsAutoRolling(!isAutoRolling)}
+                    className="bg-black/75 hover:bg-black/90 backdrop-blur-md text-white text-[11px] font-mono font-bold px-2.5 py-0.5 rounded-full border border-white/20 flex items-center gap-1.5 shadow-md cursor-pointer select-none"
+                  >
+                    <span>0{currentSlide + 1} / 03</span>
+                    <span className="text-slate-400">|</span>
+                    {isAutoRolling ? <Pause className="w-2.5 h-2.5 text-amber-400" /> : <Play className="w-2.5 h-2.5 text-emerald-400" />}
+                  </div>
+                </div>
+
+                {/* 하단 중앙 점 인디케이터 */}
+                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-20">
+                  {[0, 1, 2].map((idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => setCurrentSlide(idx)}
+                      className={`h-1.5 rounded-full transition-all cursor-pointer ${
+                        currentSlide === idx ? 'w-6 bg-white' : 'w-1.5 bg-white/50 hover:bg-white/80'
+                      }`}
+                    />
+                  ))}
                 </div>
               </div>
 
@@ -247,24 +331,66 @@ export default function MobileLivePreview({ promotionId }: MobileLivePreviewProp
                 <span>원피스</span>
               </div>
 
-              {/* 3. 모바일 메인 룩북 배너 영역 */}
-              <div className="w-full relative aspect-4/5 bg-slate-900 overflow-hidden shrink-0">
-                {promo.banner.moBannerUrl ? (
-                  <img
-                    src={promo.banner.moBannerUrl}
-                    alt="모바일 배너"
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center text-white bg-slate-900">
-                    <Sparkles className="w-6 h-6 text-indigo-400 mb-2 animate-bounce" />
-                    <p className="text-xs font-bold">{promo.title}</p>
-                    <p className="text-[10px] text-slate-400 mt-1">배너 스튜디오에서 합성된 배너가 이곳에 노출됩니다.</p>
+              {/* 3. 모바일 메인 룩북 롤링 배너 영역 */}
+              <div className="w-full relative aspect-4/5 bg-slate-900 overflow-hidden shrink-0 group">
+                <div
+                  className="w-full h-full flex transition-transform duration-700 ease-in-out"
+                  style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+                >
+                  {/* 모바일 슬라이드 1 */}
+                  <div className="w-full h-full shrink-0 relative">
+                    <img
+                      src={promo.banner.moBannerUrl || '/images/products/SWBLPB21010_main.jpg'}
+                      alt="모바일 배너 슬라이드 1"
+                      className="w-full h-full object-cover"
+                    />
                   </div>
-                )}
+                  {/* 모바일 슬라이드 2 */}
+                  <div className="w-full h-full shrink-0 relative bg-slate-800">
+                    <img
+                      src="/images/products/SWBLPB21010_detail_profile.jpg"
+                      alt="모바일 배너 슬라이드 2"
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center p-4 text-center text-white">
+                      <span className="text-[10px] tracking-widest uppercase text-amber-400 font-bold mb-1">LOOKBOOK #2</span>
+                      <h4 className="text-sm font-black">{promo.brand} SIGNATURE OUTER</h4>
+                      <p className="text-[10px] text-white/80 mt-1">10% 추가 쿠폰팩 혜택</p>
+                    </div>
+                  </div>
+                  {/* 모바일 슬라이드 3 */}
+                  <div className="w-full h-full shrink-0 relative bg-slate-800">
+                    <img
+                      src="/images/products/SWBLPB21010_detail_fabric.jpg"
+                      alt="모바일 배너 슬라이드 3"
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center p-4 text-center text-white">
+                      <span className="text-[10px] tracking-widest uppercase text-indigo-400 font-bold mb-1">LOOKBOOK #3</span>
+                      <h4 className="text-sm font-black">HIGH-END TAILORED</h4>
+                      <p className="text-[10px] text-white/80 mt-1">프리미엄 원단 단독 라인업</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 슬라이드 좌우 수동 이동 화살표 */}
+                <button
+                  type="button"
+                  onClick={() => setCurrentSlide((prev) => (prev === 0 ? 2 : prev - 1))}
+                  className="absolute left-2 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-black/40 hover:bg-black/70 text-white flex items-center justify-center cursor-pointer z-20"
+                >
+                  <ChevronLeft className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setCurrentSlide((prev) => (prev + 1) % 3)}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-black/40 hover:bg-black/70 text-white flex items-center justify-center cursor-pointer z-20"
+                >
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </button>
 
                 {/* 배너 컨펌 상태 뱃지 */}
-                <div className="absolute top-2 right-2">
+                <div className="absolute top-2 right-2 z-20">
                   <span
                     className={`text-[9px] font-bold px-2 py-0.5 rounded-full backdrop-blur-md shadow-xs ${
                       promo.banner.isConfirmed
@@ -272,8 +398,34 @@ export default function MobileLivePreview({ promotionId }: MobileLivePreviewProp
                         : 'bg-amber-500/90 text-white'
                     }`}
                   >
-                    {promo.banner.isConfirmed ? '✓ 컨펌 완료 배너' : '시안 검토 중'}
+                    {promo.banner.isConfirmed ? '✓ 컨펌 배너' : '시안 검토'}
                   </span>
+                </div>
+
+                {/* 하단 우측 롤링 인디케이터 (01 / 03 ❚❚) */}
+                <div className="absolute bottom-2 right-2 z-20">
+                  <div
+                    onClick={() => setIsAutoRolling(!isAutoRolling)}
+                    className="bg-black/75 hover:bg-black/90 backdrop-blur-md text-white text-[9px] font-mono font-bold px-2 py-0.5 rounded-full border border-white/20 flex items-center gap-1 shadow-md cursor-pointer select-none"
+                  >
+                    <span>0{currentSlide + 1} / 03</span>
+                    <span className="text-slate-400">|</span>
+                    {isAutoRolling ? <Pause className="w-2 h-2 text-amber-400" /> : <Play className="w-2 h-2 text-emerald-400" />}
+                  </div>
+                </div>
+
+                {/* 하단 중앙 점 인디케이터 */}
+                <div className="absolute bottom-2.5 left-1/2 -translate-x-1/2 flex items-center gap-1 z-20">
+                  {[0, 1, 2].map((idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => setCurrentSlide(idx)}
+                      className={`h-1 rounded-full transition-all cursor-pointer ${
+                        currentSlide === idx ? 'w-4 bg-white' : 'w-1 bg-white/50 hover:bg-white/80'
+                      }`}
+                    />
+                  ))}
                 </div>
               </div>
 

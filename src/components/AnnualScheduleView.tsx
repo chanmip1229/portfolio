@@ -64,6 +64,18 @@ export default function AnnualScheduleView({ onNavigateToQc }: AnnualScheduleVie
     }, 60);
   };
 
+  // 뷰 모드(간트차트 뷰 / 월별 카드 뷰 / 통합 뷰) 전환 시 해당 영역으로 자동 부드러운 화면 이동
+  const handleViewModeChange = (mode: 'BOTH' | 'GANTT' | 'CARDS') => {
+    setViewMode(mode);
+    setTimeout(() => {
+      const targetId = mode === 'CARDS' ? 'cards-section' : 'gantt-chart-section';
+      const el = document.getElementById(targetId) || document.getElementById('gantt-chart-section') || document.getElementById('cards-section');
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 70);
+  };
+
   // 분기 판정 헬퍼
   const getQuarter = (dateStr: string): 'Q1' | 'Q2' | 'Q3' | 'Q4' => {
     const month = parseInt(dateStr.slice(5, 7), 10);
@@ -264,28 +276,31 @@ export default function AnnualScheduleView({ onNavigateToQc }: AnnualScheduleVie
             <div className="flex items-center bg-slate-100 p-1 rounded-xl text-xs font-bold text-slate-600">
               <button
                 type="button"
-                onClick={() => setViewMode('BOTH')}
+                onClick={() => handleViewModeChange('BOTH')}
                 className={`px-3 py-1.5 rounded-lg transition-colors cursor-pointer ${
-                  viewMode === 'BOTH' ? 'bg-white text-slate-900 shadow-2xs' : 'hover:text-slate-900'
+                  viewMode === 'BOTH' ? 'bg-white text-slate-900 shadow-2xs font-extrabold' : 'hover:text-slate-900'
                 }`}
+                title="간트차트와 월별 카드를 함께 보고 타임라인으로 이동"
               >
                 통합 뷰
               </button>
               <button
                 type="button"
-                onClick={() => setViewMode('GANTT')}
+                onClick={() => handleViewModeChange('GANTT')}
                 className={`px-3 py-1.5 rounded-lg transition-colors cursor-pointer ${
-                  viewMode === 'GANTT' ? 'bg-white text-slate-900 shadow-2xs' : 'hover:text-slate-900'
+                  viewMode === 'GANTT' ? 'bg-white text-slate-900 shadow-2xs font-extrabold' : 'hover:text-slate-900'
                 }`}
+                title="간트차트 전용 뷰로 전환 및 해당 위치로 자동 스크롤"
               >
                 📊 간트차트 뷰
               </button>
               <button
                 type="button"
-                onClick={() => setViewMode('CARDS')}
+                onClick={() => handleViewModeChange('CARDS')}
                 className={`px-3 py-1.5 rounded-lg transition-colors cursor-pointer ${
-                  viewMode === 'CARDS' ? 'bg-white text-slate-900 shadow-2xs' : 'hover:text-slate-900'
+                  viewMode === 'CARDS' ? 'bg-white text-slate-900 shadow-2xs font-extrabold' : 'hover:text-slate-900'
                 }`}
+                title="월별 카드 전용 뷰로 전환 및 해당 위치로 자동 스크롤"
               >
                 📋 월별 카드 뷰
               </button>
@@ -750,7 +765,7 @@ export default function AnnualScheduleView({ onNavigateToQc }: AnnualScheduleVie
 
       {/* 5. 실제 일정 연동 정밀 간트차트 뷰 (글자 잘림 현상 완벽 해결 & 클릭 시 QC 워크스페이스 연동) */}
       {(viewMode === 'GANTT' || viewMode === 'BOTH') && (
-        <div id="gantt-chart-section" className="bg-white rounded-2xl border border-slate-200 shadow-xs p-6 overflow-hidden scroll-mt-6">
+        <div id="gantt-chart-section" className="bg-white rounded-2xl border border-slate-200 shadow-xs p-6 overflow-hidden scroll-mt-28">
           {/* 상단 카드 필터 적용 시 안내 배너 */}
           {activeLifecycleFilter !== 'ALL' && (
             <div className="mb-5 p-3.5 bg-indigo-50/90 border border-indigo-200 rounded-xl flex items-center justify-between text-xs animate-in fade-in slide-in-from-top-1">
@@ -1067,7 +1082,7 @@ export default function AnnualScheduleView({ onNavigateToQc }: AnnualScheduleVie
 
       {/* 6. 12개월 월별 카드 그리드 뷰 (12-Month Card Grid) */}
       {(viewMode === 'CARDS' || viewMode === 'BOTH') && (
-        <div id="cards-section" className="space-y-4 scroll-mt-6">
+        <div id="cards-section" className="space-y-4 scroll-mt-28">
           {/* 간트차트 숨김 모드(CARDS 단독)일 때도 필터 배너 표시 */}
           {viewMode === 'CARDS' && activeLifecycleFilter !== 'ALL' && (
             <div className="p-3.5 bg-indigo-50/90 border border-indigo-200 rounded-xl flex items-center justify-between text-xs animate-in fade-in">

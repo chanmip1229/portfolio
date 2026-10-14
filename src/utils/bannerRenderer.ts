@@ -11,6 +11,8 @@ export interface BannerRenderOptions {
   bgImageUrl?: string;
   bgGradientStart?: string;
   bgGradientEnd?: string;
+  verticalPosition?: 'top' | 'middle' | 'bottom';
+  horizontalAlign?: 'left' | 'center' | 'right';
 }
 
 const BRAND_THEMES: Record<
@@ -80,30 +82,50 @@ export async function renderBannerToDataUrl(options: BannerRenderOptions): Promi
   ctx.fillStyle = gradient;
   ctx.fillRect(0, 0, options.width, options.height);
 
+  // 상/하 위치 옵션 계산
+  const vPos = options.verticalPosition || 'middle';
+  let centerY = isMobile ? options.height * 0.42 : options.height * 0.48;
+  if (vPos === 'top') {
+    centerY = isMobile ? options.height * 0.30 : options.height * 0.34;
+  } else if (vPos === 'bottom') {
+    centerY = isMobile ? options.height * 0.56 : options.height * 0.60;
+  }
+
+  // 좌/우 정렬 옵션 계산
+  const hAlign = options.horizontalAlign || 'center';
+  let centerX = options.width / 2;
+  let canvasTextAlign: CanvasTextAlign = 'center';
+  if (hAlign === 'left') {
+    centerX = options.width * 0.12;
+    canvasTextAlign = 'left';
+  } else if (hAlign === 'right') {
+    centerX = options.width * 0.88;
+    canvasTextAlign = 'right';
+  }
+
   // 3. 상단 브랜드 로고
   ctx.save();
   ctx.fillStyle = '#ffffff';
   ctx.font = `bold ${isMobile ? 24 : 20}px ${theme.fontFamily}`;
   ctx.letterSpacing = '4px';
-  ctx.textAlign = 'center';
+  ctx.textAlign = canvasTextAlign;
   ctx.textBaseline = 'top';
   ctx.shadowColor = 'rgba(0,0,0,0.5)';
   ctx.shadowBlur = 8;
-  ctx.fillText(theme.logoText, options.width / 2, isMobile ? 60 : 40);
+  ctx.fillText(theme.logoText, centerX, isMobile ? 60 : 40);
   ctx.restore();
 
-  // 4. 중앙 메인 카피 타이틀
+  // 4. 메인 카피 타이틀
   ctx.save();
   ctx.fillStyle = '#ffffff';
   const titleFontSize = isMobile ? 48 : 52;
   ctx.font = `900 ${titleFontSize}px "Pretendard", -apple-system, sans-serif`;
-  ctx.textAlign = 'center';
+  ctx.textAlign = canvasTextAlign;
   ctx.textBaseline = 'middle';
   ctx.shadowColor = 'rgba(0,0,0,0.6)';
   ctx.shadowBlur = 12;
 
-  const centerY = isMobile ? options.height * 0.42 : options.height * 0.48;
-  wrapText(ctx, options.copyTitle, options.width / 2, centerY, options.width * 0.85, titleFontSize * 1.25);
+  wrapText(ctx, options.copyTitle, centerX, centerY, options.width * 0.82, titleFontSize * 1.25);
   ctx.restore();
 
   // 5. 서브 카피
@@ -111,10 +133,10 @@ export async function renderBannerToDataUrl(options: BannerRenderOptions): Promi
   ctx.fillStyle = 'rgba(255, 255, 255, 0.88)';
   const subFontSize = isMobile ? 22 : 20;
   ctx.font = `500 ${subFontSize}px "Pretendard", sans-serif`;
-  ctx.textAlign = 'center';
+  ctx.textAlign = canvasTextAlign;
   ctx.textBaseline = 'middle';
   const subY = centerY + (isMobile ? 70 : 60);
-  ctx.fillText(options.copySubtitle, options.width / 2, subY);
+  ctx.fillText(options.copySubtitle, centerX, subY);
   ctx.restore();
 
   // 6. 할인율 뱃지 (Highlight Badge)
@@ -126,7 +148,15 @@ export async function renderBannerToDataUrl(options: BannerRenderOptions): Promi
     const badgePadX = 24;
     const badgeH = isMobile ? 52 : 46;
     const badgeW = textWidth + badgePadX * 2;
-    const badgeX = (options.width - badgeW) / 2;
+    let badgeX = (options.width - badgeW) / 2;
+    let badgeTextX = options.width / 2;
+    if (hAlign === 'left') {
+      badgeX = centerX;
+      badgeTextX = centerX + badgeW / 2;
+    } else if (hAlign === 'right') {
+      badgeX = centerX - badgeW;
+      badgeTextX = centerX - badgeW / 2;
+    }
     const badgeY = subY + (isMobile ? 50 : 45);
 
     // 뱃지 배경 (원형 모서리)
@@ -139,7 +169,7 @@ export async function renderBannerToDataUrl(options: BannerRenderOptions): Promi
     ctx.fillStyle = '#0f172a'; // slate-900
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(badgeText, options.width / 2, badgeY + badgeH / 2);
+    ctx.fillText(badgeText, badgeTextX, badgeY + badgeH / 2);
     ctx.restore();
   }
 
@@ -148,9 +178,9 @@ export async function renderBannerToDataUrl(options: BannerRenderOptions): Promi
     ctx.save();
     ctx.fillStyle = 'rgba(255, 255, 255, 0.65)';
     ctx.font = `400 ${isMobile ? 18 : 16}px "Pretendard", sans-serif`;
-    ctx.textAlign = 'center';
+    ctx.textAlign = canvasTextAlign;
     ctx.textBaseline = 'bottom';
-    ctx.fillText(options.periodText, options.width / 2, options.height - (isMobile ? 50 : 30));
+    ctx.fillText(options.periodText, centerX, options.height - (isMobile ? 50 : 30));
     ctx.restore();
   }
 
