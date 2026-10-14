@@ -22,6 +22,7 @@ import {
   Users,
   ShieldAlert,
   ArrowRight,
+  FileText,
 } from 'lucide-react';
 import { exportToExcel } from '@/utils/excelExporter';
 
@@ -83,6 +84,9 @@ export default function EmailDraftModal() {
 
   // 듀얼 뷰(좌우 분할 2화면) 모드 토글
   const [forceDualView, setForceDualView] = useState<boolean | null>(null);
+
+  // 6. 종합 요약 메일 본문 포맷: 'RICH_TABLE' (실제 메일 서식 - 표 삽입) vs 'RAW_TEXT' (텍스트 직접 수정)
+  const [summaryViewFormat, setSummaryViewFormat] = useState<'RICH_TABLE' | 'RAW_TEXT'>('RICH_TABLE');
 
   // =========================================================================
   // 부서별 전수 이슈 취합 데이터 (Total Issue Summary Mail Data with Table)
@@ -309,14 +313,97 @@ E-BIZ 자사몰 운영팀
       ? 'design_shesmiss@indongfn.co.kr'
       : 'ops@indongfn.co.kr';
 
-  // 1. 클립보드 전체 복사
-  const handleCopy = (draftText: string, id: string) => {
+  // 1. 요약 메일 본문용 리치 HTML 테이블 생성 함수 (Gmail / Outlook 붙여넣기 시 표 서식 완벽 보존)
+  const generateSummaryRichHtml = (s: DeptSummaryData) => {
+    const tableRows = s.issues
+      .map(
+        (issue) => `
+      <tr style="border-bottom: 1px solid #e2e8f0;">
+        <td style="padding: 10px 12px; text-align: center; color: #64748b; font-weight: bold; border: 1px solid #cbd5e1;">${issue.no}</td>
+        <td style="padding: 10px 12px; text-align: center; border: 1px solid #cbd5e1;">
+          <span style="display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; ${
+            issue.severity === 'BLOCKER'
+              ? 'background-color: #ffe4e6; color: #9f1239; border: 1px solid #fecdd3;'
+              : 'background-color: #fef3c7; color: #92400e; border: 1px solid #fde68a;'
+          }">${issue.severity}</span>
+        </td>
+        <td style="padding: 10px 12px; border: 1px solid #cbd5e1;">
+          <strong style="color: #4338ca; font-family: monospace;">${issue.targetCode}</strong><br/>
+          <span style="font-size: 11px; color: #475569;">${issue.targetName}</span>
+        </td>
+        <td style="padding: 10px 12px; font-weight: 600; color: #1e293b; border: 1px solid #cbd5e1;">${issue.issueType}</td>
+        <td style="padding: 10px 12px; color: #334155; border: 1px solid #cbd5e1;">
+          <div style="font-weight: 500; margin-bottom: 4px;">${issue.description}</div>
+          <div style="font-size: 11px; color: #4338ca; font-weight: 600; background-color: #eef2ff; padding: 3px 8px; border-radius: 4px; display: inline-block;">➔ ${issue.requestAction}</div>
+        </td>
+      </tr>
+    `
+      )
+      .join('');
+
+    return `
+      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Apple SD Gothic Neo', sans-serif; font-size: 13px; line-height: 1.6; color: #1e293b;">
+        <p style="margin: 0 0 12px 0;">안녕하세요, <strong>${s.recipientName}</strong>님.<br/>E-BIZ 운영본부 QC 시스템 자동 발송 메일입니다.</p>
+        <p style="margin: 0 0 16px 0; color: #334155;">
+          2026 S/S 프로모션 오픈 전 사전 검증 과정에서 [<strong>${s.deptName}</strong>] 담당 영역의 정합성 오류 및 검토 필요 항목 총 <strong>${s.issues.length}건</strong>이 감지되었습니다.<br/>
+          실무 담당자 분들의 메일 피로도를 줄이고 전체 결함 현황을 한눈에 파악하실 수 있도록, 개별 메일 대신 <strong>[종합 요약표]</strong>로 취합하여 송부드립니다.
+        </p>
+        <h4 style="margin: 20px 0 10px 0; font-size: 13px; font-weight: bold; color: #0f172a;">■ ${s.deptName} 조치 필요 결함 요약 (총 ${s.issues.length}건)</h4>
+        <table style="width: 100%; border-collapse: collapse; font-size: 12px; border: 1px solid #cbd5e1; margin-bottom: 20px; background-color: #ffffff;">
+          <thead>
+            <tr style="background-color: #f1f5f9; border-bottom: 2px solid #cbd5e1; text-align: left; font-weight: bold; color: #334155;">
+              <th style="padding: 10px 12px; width: 44px; text-align: center; border: 1px solid #cbd5e1;">No</th>
+              <th style="padding: 10px 12px; width: 90px; text-align: center; border: 1px solid #cbd5e1;">심각도</th>
+              <th style="padding: 10px 12px; width: 180px; border: 1px solid #cbd5e1;">대상 품번 / 상품명</th>
+              <th style="padding: 10px 12px; width: 140px; border: 1px solid #cbd5e1;">결함 유형</th>
+              <th style="padding: 10px 12px; border: 1px solid #cbd5e1;">감지된 오류 내용 및 조치 요청</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${tableRows}
+          </tbody>
+        </table>
+        <p style="color: #475569; margin: 0 0 20px 0; font-size: 12px;">
+          ※ 상세 로데이터 및 SKU별 전수 정보는 첨부된 [<strong>${s.excelFileName}</strong>] 파일을 확인하여 주시기 바랍니다.<br/>
+          오류 수정 완료 후 회신 또는 QC 시스템에서 [조치 완료] 승인 부탁드립니다.
+        </p>
+        <br/><br/>
+        <p style="margin: 0; color: #1e293b; line-height: 1.6;">
+          감사합니다.<br/><br/>
+          <strong>Best regards,</strong><br/>
+          <strong>E-BIZ 자사몰 운영팀</strong><br/>
+          <strong>박찬미 드림</strong>
+        </p>
+      </div>
+    `;
+  };
+
+  // 2. 클립보드 전체 복사 (HTML 리치 텍스트 + 플레인 텍스트 지원)
+  const handleCopy = async (draftText: string, id: string, richHtml?: string) => {
     try {
-      if (typeof navigator !== 'undefined' && navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(draftText);
+      if (typeof navigator !== 'undefined' && navigator.clipboard) {
+        if (richHtml && typeof window !== 'undefined' && 'ClipboardItem' in window) {
+          const textBlob = new Blob([draftText], { type: 'text/plain' });
+          const htmlBlob = new Blob([richHtml], { type: 'text/html' });
+          await navigator.clipboard.write([
+            new ClipboardItem({
+              'text/plain': textBlob,
+              'text/html': htmlBlob,
+            }),
+          ]);
+        } else if (navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(draftText);
+        }
       }
     } catch (e) {
-      console.warn('Clipboard write failed', e);
+      console.warn('Clipboard write failed, fallback to plain text', e);
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(draftText);
+        }
+      } catch (err) {
+        console.error('Clipboard fallback also failed', err);
+      }
     }
     setCopiedId(id);
     setTimeout(() => setCopiedId(null), 2500);
@@ -846,74 +933,17 @@ E-BIZ 자사몰 운영팀
                     </button>
                   </div>
 
-                  {/* 핵심 요구사항: 하나의 메일에 케이스 별 표로 요약된 결함 현황 테이블 */}
-                  <div className="mb-4">
-                    <div className="flex items-center justify-between mb-1.5">
-                      <label className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
-                        <Table className="w-4 h-4 text-indigo-600" />
-                        <span>{currentSummary.deptName} 케이스별 결함 요약표 (Total Issues Table)</span>
-                      </label>
-                      <span className="text-[11px] text-slate-400">
-                        메일 본문 표 자동 렌더링
-                      </span>
-                    </div>
-
-                    <div className="border border-slate-200 rounded-xl overflow-hidden shadow-2xs">
-                      <table className="w-full text-left text-xs border-collapse">
-                        <thead>
-                          <tr className="bg-slate-100/80 border-b border-slate-200 text-slate-700 text-[11px] font-bold">
-                            <th className="py-2.5 px-3 w-10 text-center">No</th>
-                            <th className="py-2.5 px-3 w-24 text-center">심각도</th>
-                            <th className="py-2.5 px-3 w-44">대상 품번 / 상품명</th>
-                            <th className="py-2.5 px-3 w-36">결함 유형</th>
-                            <th className="py-2.5 px-3">감지된 오류 내용 및 조치 요청</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-100">
-                          {currentSummary.issues.map((issue) => (
-                            <tr key={issue.no} className="hover:bg-slate-50/60 transition-colors">
-                              <td className="py-2.5 px-3 text-center font-bold text-slate-400">
-                                {issue.no}
-                              </td>
-                              <td className="py-2.5 px-3 text-center">
-                                <span
-                                  className={`inline-block px-2 py-0.5 rounded text-[10px] font-extrabold ${
-                                    issue.severity === 'BLOCKER'
-                                      ? 'bg-rose-100 text-rose-800 border border-rose-200'
-                                      : 'bg-amber-100 text-amber-800 border border-amber-200'
-                                  }`}
-                                >
-                                  {issue.severity}
-                                </span>
-                              </td>
-                              <td className="py-2.5 px-3">
-                                <span className="font-mono font-bold text-indigo-700 block">
-                                  {issue.targetCode}
-                                </span>
-                                <span className="text-[11px] text-slate-600 block truncate max-w-[170px]">
-                                  {issue.targetName}
-                                </span>
-                              </td>
-                              <td className="py-2.5 px-3 font-semibold text-slate-800">
-                                {issue.issueType}
-                              </td>
-                              <td className="py-2.5 px-3 space-y-1">
-                                <p className="text-slate-800 font-medium">{issue.description}</p>
-                                <p className="text-[11px] text-indigo-700 font-semibold flex items-center gap-1 bg-indigo-50/70 px-2 py-0.5 rounded w-fit">
-                                  <ArrowRight className="w-3 h-3 shrink-0 text-indigo-500" />
-                                  <span>{issue.requestAction}</span>
-                                </p>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-
                   {/* 메일 제목 편집 */}
                   <div className="mb-4">
-                    <label className="text-xs font-bold text-slate-600 mb-1 block">메일 제목</label>
+                    <label className="text-xs font-bold text-slate-700 mb-1.5 flex items-center justify-between">
+                      <span className="flex items-center gap-1.5">
+                        <Mail className="w-3.5 h-3.5 text-rose-600" />
+                        메일 제목
+                      </span>
+                      <span className="text-[11px] text-slate-400 font-normal">
+                        수신자에게 전달될 메일 제목입니다
+                      </span>
+                    </label>
                     <input
                       type="text"
                       value={currentSummarySubject}
@@ -926,33 +956,190 @@ E-BIZ 자사몰 운영팀
                           },
                         }))
                       }
-                      className="w-full text-xs font-semibold p-2.5 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500"
+                      className="w-full text-xs font-semibold p-2.5 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 shadow-2xs"
                     />
                   </div>
 
-                  {/* 메일 본문 편집 (마크다운 표 포함) */}
+                  {/* 메일 본문 (표 요약 자동 삽입 서식 / 텍스트 직접 수정) */}
                   <div className="mb-4">
-                    <label className="text-xs font-bold text-slate-600 mb-1 block flex items-center justify-between">
-                      <span>메일 본문 (표 요약 텍스트 포함)</span>
-                      <span className="text-[11px] text-rose-600 font-normal flex items-center gap-1">
-                        <Sparkles className="w-3 h-3" />
-                        전체 결함 케이스 표 자동 통합 완료
-                      </span>
-                    </label>
-                    <textarea
-                      rows={9}
-                      value={currentSummaryBody}
-                      onChange={(e) =>
-                        setSummaryCustomEdits((prev) => ({
-                          ...prev,
-                          [selectedSummaryDept]: {
-                            ...prev[selectedSummaryDept],
-                            body: e.target.value,
-                          },
-                        }))
-                      }
-                      className="w-full text-xs font-mono p-3 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 leading-relaxed"
-                    />
+                    <div className="flex items-center justify-between mb-2">
+                      <label className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+                        <Table className="w-4 h-4 text-rose-600" />
+                        <span>메일 본문 (표 서식 자동 삽입)</span>
+                      </label>
+                      <div className="flex items-center gap-1 bg-slate-100 p-0.5 rounded-lg border border-slate-200 text-xs">
+                        <button
+                          type="button"
+                          onClick={() => setSummaryViewFormat('RICH_TABLE')}
+                          className={`px-3 py-1 rounded-md text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                            summaryViewFormat === 'RICH_TABLE'
+                              ? 'bg-white text-rose-600 shadow-2xs'
+                              : 'text-slate-500 hover:text-slate-700'
+                          }`}
+                        >
+                          <Table className="w-3.5 h-3.5" />
+                          <span>실제 메일 서식 (표 삽입)</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setSummaryViewFormat('RAW_TEXT')}
+                          className={`px-3 py-1 rounded-md text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                            summaryViewFormat === 'RAW_TEXT'
+                              ? 'bg-white text-slate-800 shadow-2xs'
+                              : 'text-slate-500 hover:text-slate-700'
+                          }`}
+                        >
+                          <FileText className="w-3.5 h-3.5" />
+                          <span>텍스트 직접 수정</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    {summaryViewFormat === 'RICH_TABLE' ? (
+                      <div className="bg-white border border-slate-300 rounded-2xl p-5 shadow-xs text-xs text-slate-800 space-y-4 font-sans leading-relaxed">
+                        {/* 이메일 발송 헤더 메타 (수신, 발신, 첨부) */}
+                        <div className="bg-slate-50/90 rounded-xl p-3.5 border border-slate-200 space-y-1.5 text-[11px]">
+                          <div className="flex items-center">
+                            <span className="text-slate-400 font-bold w-12 shrink-0">수신:</span>
+                            <span className="font-bold text-slate-800">
+                              {currentSummary.recipientName}
+                            </span>
+                            <span className="text-slate-500 font-mono ml-1.5 text-[10px]">
+                              &lt;{currentSummary.recipientEmail}&gt;
+                            </span>
+                          </div>
+                          <div className="flex items-center">
+                            <span className="text-slate-400 font-bold w-12 shrink-0">발신:</span>
+                            <span className="font-semibold text-slate-700">
+                              E-BIZ 자사몰 운영팀 박찬미
+                            </span>
+                            <span className="text-slate-500 font-mono ml-1.5 text-[10px]">
+                              &lt;ops@indongfn.co.kr&gt;
+                            </span>
+                          </div>
+                          <div className="flex items-center pt-1 border-t border-slate-200/60">
+                            <span className="text-slate-400 font-bold w-12 shrink-0">첨부:</span>
+                            <span className="font-bold text-rose-700 flex items-center gap-1">
+                              📎 {currentSummary.excelFileName}
+                            </span>
+                            <span className="text-[10px] text-slate-400 ml-2">
+                              (전수 결함 시트 첨부 완료)
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* 본문 서두 인사말 */}
+                        <div className="space-y-2 text-slate-800 text-xs">
+                          <p>안녕하세요, <strong>{currentSummary.recipientName}</strong>님.</p>
+                          <p>E-BIZ 운영본부 QC 시스템 자동 발송 메일입니다.</p>
+                          <p className="text-slate-700">
+                            2026 S/S 프로모션 오픈 전 사전 검증 과정에서 [<strong>{currentSummary.deptName}</strong>] 담당 영역의 정합성 오류 및 검토 필요 항목 총 <strong>{currentSummary.issues.length}건</strong>이 감지되었습니다.<br />
+                            실무 담당자 분들의 메일 피로도를 줄이고 전체 결함 현황을 한눈에 파악하실 수 있도록, 개별 메일 대신 <strong>[종합 요약표]</strong>로 취합하여 송부드립니다.
+                          </p>
+                        </div>
+
+                        {/* 삽입된 깔끔한 표 */}
+                        <div className="pt-2">
+                          <div className="flex items-center justify-between mb-2">
+                            <h4 className="font-bold text-slate-900 text-xs flex items-center gap-1.5">
+                              <span className="w-1.5 h-3.5 bg-rose-600 rounded-full inline-block"></span>
+                              <span>■ {currentSummary.deptName} 조치 필요 결함 요약 (총 {currentSummary.issues.length}건)</span>
+                            </h4>
+                            <span className="text-[10px] text-slate-400 font-medium">심각도 우선순위 정렬</span>
+                          </div>
+
+                          <div className="border border-slate-200 rounded-xl overflow-hidden shadow-2xs">
+                            <table className="w-full text-left text-xs border-collapse">
+                              <thead>
+                                <tr className="bg-slate-100/90 border-b border-slate-200 text-slate-700 text-[11px] font-bold">
+                                  <th className="py-2.5 px-3 w-10 text-center">No</th>
+                                  <th className="py-2.5 px-3 w-24 text-center">심각도</th>
+                                  <th className="py-2.5 px-3 w-48">대상 품번 / 상품명</th>
+                                  <th className="py-2.5 px-3 w-36">결함 유형</th>
+                                  <th className="py-2.5 px-3">감지된 오류 내용 및 조치 요청</th>
+                                </tr>
+                              </thead>
+                              <tbody className="divide-y divide-slate-100 bg-white">
+                                {currentSummary.issues.map((issue) => (
+                                  <tr key={issue.no} className="hover:bg-slate-50/70 transition-colors">
+                                    <td className="py-2.5 px-3 text-center font-bold text-slate-400">
+                                      {issue.no}
+                                    </td>
+                                    <td className="py-2.5 px-3 text-center">
+                                      <span
+                                        className={`inline-block px-2 py-0.5 rounded text-[10px] font-extrabold ${
+                                          issue.severity === 'BLOCKER'
+                                            ? 'bg-rose-100 text-rose-800 border border-rose-200'
+                                            : 'bg-amber-100 text-amber-800 border border-amber-200'
+                                        }`}
+                                      >
+                                        {issue.severity}
+                                      </span>
+                                    </td>
+                                    <td className="py-2.5 px-3">
+                                      <span className="font-mono font-bold text-indigo-700 block">
+                                        {issue.targetCode}
+                                      </span>
+                                      <span className="text-[11px] text-slate-600 block truncate max-w-[200px]">
+                                        {issue.targetName}
+                                      </span>
+                                    </td>
+                                    <td className="py-2.5 px-3 font-semibold text-slate-800">
+                                      {issue.issueType}
+                                    </td>
+                                    <td className="py-2.5 px-3 space-y-1">
+                                      <p className="text-slate-800 font-medium">{issue.description}</p>
+                                      <p className="text-[11px] text-indigo-700 font-semibold flex items-center gap-1 bg-indigo-50/70 px-2 py-0.5 rounded w-fit">
+                                        <ArrowRight className="w-3 h-3 shrink-0 text-indigo-500" />
+                                        <span>{issue.requestAction}</span>
+                                      </p>
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+
+                        {/* 안내 문구 & 서명 */}
+                        <div className="space-y-4 pt-1 text-slate-700 text-xs border-t border-slate-100">
+                          <p className="text-[11px] text-slate-600">
+                            ※ 상세 로데이터 및 SKU별 전수 정보는 첨부된 [<strong>{currentSummary.excelFileName}</strong>] 파일을 확인하여 주시기 바랍니다.<br />
+                            오류 수정 완료 후 회신 또는 QC 시스템에서 [조치 완료] 승인 부탁드립니다.
+                          </p>
+
+                          {/* 2칸 띄운 서명 (사용자 요청 반영: Best regards, E-BIZ 자사몰 운영팀 박찬미 드림) */}
+                          <div className="pt-4 text-slate-800 leading-relaxed border-t border-dashed border-slate-200">
+                            <p>감사합니다.</p>
+                            <div className="mt-3">
+                              <p className="font-medium text-slate-600">Best regards,</p>
+                              <p className="font-bold text-slate-900">E-BIZ 자사몰 운영팀</p>
+                              <p className="font-bold text-slate-900">박찬미 드림</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="space-y-1.5">
+                        <textarea
+                          rows={12}
+                          value={currentSummaryBody}
+                          onChange={(e) =>
+                            setSummaryCustomEdits((prev) => ({
+                              ...prev,
+                              [selectedSummaryDept]: {
+                                ...prev[selectedSummaryDept],
+                                body: e.target.value,
+                              },
+                            }))
+                          }
+                          className="w-full text-xs font-mono p-3 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-500 leading-relaxed shadow-2xs"
+                        />
+                        <span className="text-[11px] text-slate-400 block text-right">
+                          텍스트를 수정한 뒤 상단의 [실제 메일 서식] 버튼을 눌러 서식을 확인할 수 있습니다.
+                        </span>
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -974,13 +1161,19 @@ E-BIZ 자사몰 운영팀
                   <div className="flex items-center gap-2">
                     <button
                       type="button"
-                      onClick={() => handleCopy(currentSummaryBody, `summary-${selectedSummaryDept}`)}
+                      onClick={() =>
+                        handleCopy(
+                          currentSummaryBody,
+                          `summary-${selectedSummaryDept}`,
+                          generateSummaryRichHtml(currentSummary)
+                        )
+                      }
                       className="px-3.5 py-2 border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
                     >
                       {copiedId === `summary-${selectedSummaryDept}` ? (
                         <>
                           <Check className="w-4 h-4 text-emerald-600" />
-                          <span className="text-emerald-700">본문 및 표 복사 완료!</span>
+                          <span className="text-emerald-700">본문 및 표 서식 복사 완료!</span>
                         </>
                       ) : (
                         <>
