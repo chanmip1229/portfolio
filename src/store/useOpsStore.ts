@@ -18,6 +18,8 @@ interface OpsStore {
   // 모달 제어 상태
   isDraftModalOpen: boolean;
   selectedDraftId: string | null;
+  isSlackModalOpen: boolean;
+  slackWebhookUrl: string;
 
   // 필터 및 모달 액션
   setSelectedBrand: (brand: Brand | 'ALL') => void;
@@ -28,6 +30,8 @@ interface OpsStore {
   setSelectedPromotionId: (id: string | null) => void;
   setIsDraftModalOpen: (open: boolean) => void;
   setSelectedDraftId: (id: string | null) => void;
+  setIsSlackModalOpen: (open: boolean) => void;
+  setSlackWebhookUrl: (url: string) => void;
 
   // 프로모션 일괄 추가 (엑셀 업로드 시)
   addPromotions: (newPromos: Promotion[]) => void;
@@ -366,6 +370,8 @@ export const useOpsStore = create<OpsStore>((set, get) => ({
 
   isDraftModalOpen: false,
   selectedDraftId: null,
+  isSlackModalOpen: false,
+  slackWebhookUrl: typeof window !== 'undefined' ? localStorage.getItem('ops_slack_webhook_url') || '' : '',
 
   setSelectedBrand: (brand) => set({ selectedBrand: brand }),
   setSelectedDepartment: (dept) => set({ selectedDepartment: dept }),
@@ -375,6 +381,13 @@ export const useOpsStore = create<OpsStore>((set, get) => ({
   setSelectedPromotionId: (id) => set({ selectedPromotionId: id }),
   setIsDraftModalOpen: (open) => set({ isDraftModalOpen: open }),
   setSelectedDraftId: (id) => set({ selectedDraftId: id }),
+  setIsSlackModalOpen: (open) => set({ isSlackModalOpen: open }),
+  setSlackWebhookUrl: (url) => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('ops_slack_webhook_url', url);
+    }
+    set({ slackWebhookUrl: url });
+  },
 
   addPromotions: (newPromos) =>
     set((state) => ({

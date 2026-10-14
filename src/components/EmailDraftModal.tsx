@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo } from 'react';
 import { useOpsStore } from '@/store/useOpsStore';
-import { Department } from '@/types/promotion';
+import { Department, EmailDraft } from '@/types/promotion';
 import {
   X,
   Mail,
@@ -25,6 +25,11 @@ import {
   FileText,
 } from 'lucide-react';
 import { exportToExcel } from '@/utils/excelExporter';
+import {
+  sendSlackMessage,
+  buildQcSummarySlackBlocks,
+  buildSingleDraftSlackBlocks,
+} from '@/utils/slackNotifier';
 
 interface DeptSummaryIssue {
   no: number;
@@ -57,6 +62,8 @@ export default function EmailDraftModal() {
     selectedDraftId,
     setSelectedDraftId,
     promotions,
+    setIsSlackModalOpen,
+    slackWebhookUrl,
   } = useOpsStore();
 
   // 1. 발송 모드: 'INDIVIDUAL' (건별 개별 초안) vs 'SUMMARY' (부서별 종합 취합 발송 - 표 요약)
@@ -76,6 +83,10 @@ export default function EmailDraftModal() {
   const [summarySendSuccess, setSummarySendSuccess] = useState<string | null>(null);
   const [sentSummaryDepts, setSentSummaryDepts] = useState<Record<string, boolean>>({});
   const [showGmailTip, setShowGmailTip] = useState(false);
+
+  // Slack 실시간 발송 상태
+  const [isSlackSending, setIsSlackSending] = useState(false);
+  const [slackSendResult, setSlackSendResult] = useState<{ id: string; success: boolean; message: string } | null>(null);
 
   // 5. 종합 요약 메일 본문/제목 사용자 편집 상태
   const [summaryCustomEdits, setSummaryCustomEdits] = useState<
@@ -504,6 +515,69 @@ E-BIZ 자사몰 운영팀
     )}`;
     window.open(gmailUrl, '_blank');
     setShowGmailTip(true);
+  };
+
+  // 8. Slack 실시간 요약 알림 발송 (부서별 전수 취합)
+  const handleSendSummarySlack = async (dept: Department) => {
+    if (!slackWebhookUrl || !slackWebhookUrl.startsWith('https://hooks.slack.com/')) {
+      setIsSlackModalOpen(true);
+      return;
+    }
+
+    const summary = deptSummaries[dept];
+    if (!summary) return;
+
+    setIsSlackSending(true);
+    setSlackSendResult(null);
+
+    const res = await sendSlackMessage({
+      webhookUrl: slackWebhookUrl,
+      text: `🚨 [긴급 QC] ${summary.deptName} 결함 전수 요약 리포트 (총 ${summary.issues.length}건)`,
+      blocks: buildQcSummarySlackBlocks(summary),
+    });
+
+    setIsSlackSending(false);
+    setSlackSendResult({
+      id: `summary-${dept}`,
+      success: res.success,
+      message: res.success
+        ? `🎉 [${summary.deptName}] 결함 요약이 실제 Slack 채널로 성공적으로 전송되었습니다!`
+        : res.error || 'Slack 발송에 실패했습니다.',
+    });
+
+    setTimeout(() => {
+      setSlackSendResult((prev) => (prev?.id === `summary-${dept}` ? null : prev));
+    }, 4500);
+  };
+
+  // 9. Slack 단건 초안 알림 발송
+  const handleSendSingleSlack = async (draft: EmailDraft) => {
+    if (!slackWebhookUrl || !slackWebhookUrl.startsWith('https://hooks.slack.com/')) {
+      setIsSlackModalOpen(true);
+      return;
+    }
+
+    setIsSlackSending(true);
+    setSlackSendResult(null);
+
+    const res = await sendSlackMessage({
+      webhookUrl: slackWebhookUrl,
+      text: `⚠️ [QC 알림] [${draft.toDepartment}팀] ${draft.relatedProductCode || '프로모션'} 정합성 확인 요청`,
+      blocks: buildSingleDraftSlackBlocks(draft),
+    });
+
+    setIsSlackSending(false);
+    setSlackSendResult({
+      id: draft.id,
+      success: res.success,
+      message: res.success
+        ? `🎉 [${draft.toDepartment}팀] 결함 알림이 실제 Slack 채널로 성공적으로 전송되었습니다!`
+        : res.error || 'Slack 발송에 실패했습니다.',
+    });
+
+    setTimeout(() => {
+      setSlackSendResult((prev) => (prev?.id === draft.id ? null : prev));
+    }, 4500);
   };
 
   // 모달이 닫혀 있을 때는 모든 훅 실행 후 여기서 안전하게 null 반환
@@ -1156,9 +1230,28 @@ E-BIZ 자사몰 운영팀
                   </div>
                 )}
 
+                {/* Slack 발송 결과 배너 */}
+                {slackSendResult?.id === `summary-${selectedSummaryDept}` && (
+                  <div
+                    className={`mb-3 p-3 rounded-xl border text-xs font-bold flex items-center justify-between animate-in fade-in ${
+                      slackSendResult.success
+                        ? 'bg-purple-50 border-purple-300 text-purple-900'
+                        : 'bg-rose-50 border-rose-300 text-rose-900'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2">
+                      <span className="w-5 h-5 rounded bg-[#4A154B] text-white flex items-center justify-center text-xs font-black shrink-0">
+                        #
+                      </span>
+                      <span>{slackSendResult.message}</span>
+                    </div>
+                    <span className="text-[11px] font-normal text-purple-700">Slack Live 전송</span>
+                  </div>
+                )}
+
                 {/* 하단 액션 버튼 바 */}
                 <div className="pt-4 border-t border-slate-200 flex flex-wrap items-center justify-between gap-3">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <button
                       type="button"
                       onClick={() =>
@@ -1191,6 +1284,33 @@ E-BIZ 자사몰 운영팀
                     >
                       <ExternalLink className="w-4 h-4 text-slate-500" />
                       <span>엑셀 다운로드 & Gmail 열기</span>
+                    </button>
+
+                    {/* 실시간 Slack 긴급 요약 발송 버튼 */}
+                    <button
+                      type="button"
+                      onClick={() => handleSendSummarySlack(selectedSummaryDept)}
+                      disabled={isSlackSending}
+                      className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-2xs border ${
+                        slackWebhookUrl
+                          ? 'bg-purple-50 hover:bg-purple-100 text-purple-900 border-purple-300'
+                          : 'bg-white hover:bg-slate-50 text-slate-700 border-slate-300'
+                      }`}
+                      title={
+                        slackWebhookUrl
+                          ? '내 실제 Slack 채널로 결함 요약 리포트를 실시간 전송합니다'
+                          : 'Slack Webhook URL을 설정하여 실제 채널로 알림을 보냅니다'
+                      }
+                    >
+                      <span className="w-3.5 h-3.5 rounded bg-[#4A154B] text-white flex items-center justify-center text-[10px] font-black shrink-0">
+                        #
+                      </span>
+                      <span>{isSlackSending ? 'Slack 전송 중...' : 'Slack 긴급 요약 발송'}</span>
+                      {!slackWebhookUrl && (
+                        <span className="text-[10px] bg-purple-100 text-purple-800 font-semibold px-1.5 py-0.2 rounded border border-purple-200">
+                          연동 필요
+                        </span>
+                      )}
                     </button>
                   </div>
 
@@ -1600,9 +1720,28 @@ E-BIZ 자사몰 운영팀
                     </div>
                   )}
 
+                  {/* Slack 단건 발송 결과 배너 */}
+                  {slackSendResult?.id === currentDraft.id && (
+                    <div
+                      className={`mb-3 p-3 rounded-xl border text-xs font-bold flex items-center justify-between animate-in fade-in ${
+                        slackSendResult.success
+                          ? 'bg-purple-50 border-purple-300 text-purple-900'
+                          : 'bg-rose-50 border-rose-300 text-rose-900'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="w-5 h-5 rounded bg-[#4A154B] text-white flex items-center justify-center text-xs font-black shrink-0">
+                          #
+                        </span>
+                        <span>{slackSendResult.message}</span>
+                      </div>
+                      <span className="text-[11px] font-normal text-purple-700">Slack Live 전송</span>
+                    </div>
+                  )}
+
                   {/* 하단 액션 버튼 바 */}
                   <div className="pt-4 border-t border-slate-200 flex flex-wrap items-center justify-between gap-3">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap">
                       <button
                         onClick={() => handleCopy(currentDraft.body, currentDraft.id)}
                         className="px-3.5 py-2 border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
@@ -1627,6 +1766,33 @@ E-BIZ 자사몰 운영팀
                       >
                         <ExternalLink className="w-4 h-4 text-slate-500" />
                         <span>엑셀 다운로드 & Gmail 열기</span>
+                      </button>
+
+                      {/* Slack 단건 알림 발송 버튼 */}
+                      <button
+                        type="button"
+                        onClick={() => handleSendSingleSlack(currentDraft)}
+                        disabled={isSlackSending}
+                        className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-2xs border ${
+                          slackWebhookUrl
+                            ? 'bg-purple-50 hover:bg-purple-100 text-purple-900 border-purple-300'
+                            : 'bg-white hover:bg-slate-50 text-slate-700 border-slate-300'
+                        }`}
+                        title={
+                          slackWebhookUrl
+                            ? '내 실제 Slack 채널로 이 결함 알림을 실시간 전송합니다'
+                            : 'Slack Webhook URL을 설정하여 실제 채널로 알림을 보냅니다'
+                        }
+                      >
+                        <span className="w-3.5 h-3.5 rounded bg-[#4A154B] text-white flex items-center justify-center text-[10px] font-black shrink-0">
+                          #
+                        </span>
+                        <span>{isSlackSending ? 'Slack 전송 중...' : 'Slack 알림 발송'}</span>
+                        {!slackWebhookUrl && (
+                          <span className="text-[10px] bg-purple-100 text-purple-800 font-semibold px-1.5 py-0.2 rounded border border-purple-200">
+                            연동 필요
+                          </span>
+                        )}
                       </button>
                     </div>
 

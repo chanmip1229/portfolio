@@ -8,6 +8,7 @@ import BannerStudio from '@/components/BannerStudio';
 import QcWorkspace from '@/components/QcWorkspace';
 import MobileLivePreview from '@/components/MobileLivePreview';
 import EmailDraftModal from '@/components/EmailDraftModal';
+import SlackSettingsModal from '@/components/SlackSettingsModal';
 import AnnualScheduleView from '@/components/AnnualScheduleView';
 import SkuMasterQcView from '@/components/SkuMasterQcView';
 import { useOpsStore } from '@/store/useOpsStore';
@@ -372,6 +373,9 @@ export default function Home() {
 
       {/* 메일 임시보관함 모달 (Human-in-the-Loop 검토 & 다부서 2분할 듀얼 뷰) */}
       <EmailDraftModal />
+
+      {/* 실제 Slack 실시간 연동 및 테스트 모달 */}
+      <SlackSettingsModal />
 
       <footer className="border-t border-slate-200 bg-white py-6 text-center text-xs text-slate-400">
         AI Commerce Ops Copilot (OpsPilot) — Fashion E-Commerce Operations & Automated QC Platform
