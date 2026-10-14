@@ -35,7 +35,10 @@ export default function SlackSettingsModal() {
 
   if (!isSlackModalOpen) return null;
 
-  const isConfigured = Boolean(slackWebhookUrl && slackWebhookUrl.startsWith('https://hooks.slack.com/'));
+  const isConfigured = Boolean(
+    (slackWebhookUrl && slackWebhookUrl.startsWith('https://hooks.slack.com/')) ||
+      process.env.NEXT_PUBLIC_SLACK_CONFIGURED === 'true'
+  );
 
   const handleSave = () => {
     const trimmed = inputUrl.trim();
@@ -63,10 +66,10 @@ export default function SlackSettingsModal() {
 
   const handleSendTest = async () => {
     const targetUrl = inputUrl.trim() || slackWebhookUrl;
-    if (!targetUrl || !targetUrl.startsWith('https://hooks.slack.com/services/')) {
+    if (!targetUrl && process.env.NEXT_PUBLIC_SLACK_CONFIGURED !== 'true') {
       setTestResult({
         success: false,
-        message: '올바른 Slack Webhook URL(https://hooks.slack.com/services/...)을 먼저 입력해 주세요.',
+        message: 'Slack Webhook URL을 먼저 입력해 주세요.',
       });
       return;
     }
@@ -75,15 +78,16 @@ export default function SlackSettingsModal() {
     setTestResult(null);
 
     const res = await sendSlackMessage({
-      webhookUrl: targetUrl,
+      webhookUrl: targetUrl || undefined,
       text: '🎉 [연동 성공] OpsPilot & Slack 실시간 알림 연결 완료',
       blocks: buildTestSlackBlocks(),
     });
 
     setIsSendingTest(false);
     if (res.success) {
-      // 입력된 URL이 아직 저장 안 되어 있다면 자동 저장
-      setSlackWebhookUrl(targetUrl);
+      if (targetUrl) {
+        setSlackWebhookUrl(targetUrl);
+      }
       setTestResult({
         success: true,
         message: '🎉 실제 Slack 채널로 테스트 메시지가 성공적으로 전송되었습니다! 슬랙을 확인해 보세요!',
@@ -200,7 +204,7 @@ export default function SlackSettingsModal() {
               <button
                 type="button"
                 onClick={handleSendTest}
-                disabled={isSendingTest || !inputUrl.trim()}
+                disabled={isSendingTest || (!inputUrl.trim() && !isConfigured)}
                 className="px-4 py-2 bg-[#4A154B] hover:bg-[#3d113e] disabled:bg-slate-200 disabled:text-slate-400 text-white rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer shadow-xs"
               >
                 {isSendingTest ? (

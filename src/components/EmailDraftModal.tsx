@@ -99,6 +99,12 @@ export default function EmailDraftModal() {
   // 6. 종합 요약 메일 본문 포맷: 'RICH_TABLE' (실제 메일 서식 - 표 삽입) vs 'RAW_TEXT' (텍스트 직접 수정)
   const [summaryViewFormat, setSummaryViewFormat] = useState<'RICH_TABLE' | 'RAW_TEXT'>('RICH_TABLE');
 
+  // 슬랙 연동 여부 (브라우저 등록 또는 서버 env 등록)
+  const isSlackConfigured = Boolean(
+    (slackWebhookUrl && slackWebhookUrl.startsWith('https://hooks.slack.com/')) ||
+      process.env.NEXT_PUBLIC_SLACK_CONFIGURED === 'true'
+  );
+
   // =========================================================================
   // 부서별 전수 이슈 취합 데이터 (Total Issue Summary Mail Data with Table)
   // - 심각도 우선순위 정렬 (BLOCKER -> WARNING)
@@ -519,7 +525,12 @@ E-BIZ 자사몰 운영팀
 
   // 8. Slack 실시간 요약 알림 발송 (부서별 전수 취합)
   const handleSendSummarySlack = async (dept: Department) => {
-    if (!slackWebhookUrl || !slackWebhookUrl.startsWith('https://hooks.slack.com/')) {
+    const isConfigured = Boolean(
+      (slackWebhookUrl && slackWebhookUrl.startsWith('https://hooks.slack.com/')) ||
+        process.env.NEXT_PUBLIC_SLACK_CONFIGURED === 'true'
+    );
+
+    if (!isConfigured) {
       setIsSlackModalOpen(true);
       return;
     }
@@ -531,7 +542,7 @@ E-BIZ 자사몰 운영팀
     setSlackSendResult(null);
 
     const res = await sendSlackMessage({
-      webhookUrl: slackWebhookUrl,
+      webhookUrl: slackWebhookUrl || undefined,
       text: `🚨 [긴급 QC] ${summary.deptName} 결함 전수 요약 리포트 (총 ${summary.issues.length}건)`,
       blocks: buildQcSummarySlackBlocks(summary),
     });
@@ -552,7 +563,12 @@ E-BIZ 자사몰 운영팀
 
   // 9. Slack 단건 초안 알림 발송
   const handleSendSingleSlack = async (draft: EmailDraft) => {
-    if (!slackWebhookUrl || !slackWebhookUrl.startsWith('https://hooks.slack.com/')) {
+    const isConfigured = Boolean(
+      (slackWebhookUrl && slackWebhookUrl.startsWith('https://hooks.slack.com/')) ||
+        process.env.NEXT_PUBLIC_SLACK_CONFIGURED === 'true'
+    );
+
+    if (!isConfigured) {
       setIsSlackModalOpen(true);
       return;
     }
@@ -561,7 +577,7 @@ E-BIZ 자사몰 운영팀
     setSlackSendResult(null);
 
     const res = await sendSlackMessage({
-      webhookUrl: slackWebhookUrl,
+      webhookUrl: slackWebhookUrl || undefined,
       text: `⚠️ [QC 알림] [${draft.toDepartment}팀] ${draft.relatedProductCode || '프로모션'} 정합성 확인 요청`,
       blocks: buildSingleDraftSlackBlocks(draft),
     });
@@ -1292,12 +1308,12 @@ E-BIZ 자사몰 운영팀
                       onClick={() => handleSendSummarySlack(selectedSummaryDept)}
                       disabled={isSlackSending}
                       className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-2xs border ${
-                        slackWebhookUrl
+                        isSlackConfigured
                           ? 'bg-purple-50 hover:bg-purple-100 text-purple-900 border-purple-300'
                           : 'bg-white hover:bg-slate-50 text-slate-700 border-slate-300'
                       }`}
                       title={
-                        slackWebhookUrl
+                        isSlackConfigured
                           ? '내 실제 Slack 채널로 결함 요약 리포트를 실시간 전송합니다'
                           : 'Slack Webhook URL을 설정하여 실제 채널로 알림을 보냅니다'
                       }
@@ -1306,7 +1322,7 @@ E-BIZ 자사몰 운영팀
                         #
                       </span>
                       <span>{isSlackSending ? 'Slack 전송 중...' : 'Slack 긴급 요약 발송'}</span>
-                      {!slackWebhookUrl && (
+                      {!isSlackConfigured && (
                         <span className="text-[10px] bg-purple-100 text-purple-800 font-semibold px-1.5 py-0.2 rounded border border-purple-200">
                           연동 필요
                         </span>
@@ -1774,12 +1790,12 @@ E-BIZ 자사몰 운영팀
                         onClick={() => handleSendSingleSlack(currentDraft)}
                         disabled={isSlackSending}
                         className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-2xs border ${
-                          slackWebhookUrl
+                          isSlackConfigured
                             ? 'bg-purple-50 hover:bg-purple-100 text-purple-900 border-purple-300'
                             : 'bg-white hover:bg-slate-50 text-slate-700 border-slate-300'
                         }`}
                         title={
-                          slackWebhookUrl
+                          isSlackConfigured
                             ? '내 실제 Slack 채널로 이 결함 알림을 실시간 전송합니다'
                             : 'Slack Webhook URL을 설정하여 실제 채널로 알림을 보냅니다'
                         }
@@ -1788,7 +1804,7 @@ E-BIZ 자사몰 운영팀
                           #
                         </span>
                         <span>{isSlackSending ? 'Slack 전송 중...' : 'Slack 알림 발송'}</span>
-                        {!slackWebhookUrl && (
+                        {!isSlackConfigured && (
                           <span className="text-[10px] bg-purple-100 text-purple-800 font-semibold px-1.5 py-0.2 rounded border border-purple-200">
                             연동 필요
                           </span>

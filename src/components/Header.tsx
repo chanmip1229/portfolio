@@ -10,7 +10,10 @@ interface HeaderProps {
 
 export default function Header({ onLoadDemo, onOpenDrafts, draftCount }: HeaderProps) {
   const { setIsSlackModalOpen, slackWebhookUrl } = useOpsStore();
-  const isSlackConnected = Boolean(slackWebhookUrl && slackWebhookUrl.startsWith('https://hooks.slack.com/'));
+  const isSlackConnected = Boolean(
+    (slackWebhookUrl && slackWebhookUrl.startsWith('https://hooks.slack.com/')) ||
+      process.env.NEXT_PUBLIC_SLACK_CONFIGURED === 'true'
+  );
 
   return (
     <header className="bg-white border-b border-slate-200 sticky top-0 z-30">
