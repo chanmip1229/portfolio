@@ -47,6 +47,23 @@ export default function AnnualScheduleView({ onNavigateToQc }: AnnualScheduleVie
   const [showUploader, setShowUploader] = useState(false);
   const [showCriteriaGuide, setShowCriteriaGuide] = useState(true);
 
+  // 실무 기준 라이프사이클 카드 필터 (D-30 오픈 집중 준비 vs 실시간 라이브 vs 연간 편성 vs 마감 종료)
+  const [activeLifecycleFilter, setActiveLifecycleFilter] = useState<
+    'ALL' | 'ACTIVE_PREP' | 'RUNNING' | 'PLANNED' | 'ENDED'
+  >('ALL');
+
+  // 상단 카드 클릭 시 해당 행사 기간/타임라인으로 부드러운 스크롤 이동
+  const handleCardClick = (type: 'ACTIVE_PREP' | 'RUNNING' | 'PLANNED' | 'ENDED') => {
+    const next = activeLifecycleFilter === type ? 'ALL' : type;
+    setActiveLifecycleFilter(next);
+    setTimeout(() => {
+      const section = document.getElementById('gantt-chart-section') || document.getElementById('cards-section');
+      if (section) {
+        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 60);
+  };
+
   // 분기 판정 헬퍼
   const getQuarter = (dateStr: string): 'Q1' | 'Q2' | 'Q3' | 'Q4' => {
     const month = parseInt(dateStr.slice(5, 7), 10);
@@ -57,6 +74,7 @@ export default function AnnualScheduleView({ onNavigateToQc }: AnnualScheduleVie
   };
 
   // 행사 기간, 오늘 진행 일차, 마감 D-Day 계산 헬퍼 (기준일: 2026-03-08)
+  // 오픈 1달 전(D-30 이내)은 '실제 집중 준비 대상'으로 분류, 30일 초과는 '연간 기획 편성'으로 분리
   const getPromoTiming = (startDate: string, endDate: string) => {
     const start = new Date(startDate);
     const end = new Date(endDate);
@@ -72,6 +90,7 @@ export default function AnnualScheduleView({ onNavigateToQc }: AnnualScheduleVie
         badgeText: '행사 종료',
         subText: `${totalDays}일간 진행 완료 (${endDate.slice(5)} 마감)`,
         isEnded: true,
+        isD30Active: false,
       };
     } else if (start <= today && today <= end) {
       const elapsedDays = Math.floor((today.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
@@ -84,15 +103,20 @@ export default function AnnualScheduleView({ onNavigateToQc }: AnnualScheduleVie
         badgeText: `진행 ${elapsedDays}일차 (D-${daysLeft})`,
         subText: `총 ${totalDays}일 중 오늘 ${elapsedDays}일째 (마감까지 ${daysLeft}일 남음)`,
         isEnded: false,
+        isD30Active: false,
       };
     } else {
       const daysUntil = Math.floor((start.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+      const isD30Active = daysUntil <= 30;
       return {
-        statusType: 'UPCOMING' as const,
+        statusType: isD30Active ? ('UPCOMING_ACTIVE' as const) : ('UPCOMING_PLANNED' as const),
         totalDays,
         daysUntil,
-        badgeText: `오픈 D-${daysUntil}`,
-        subText: `총 ${totalDays}일간 예정 (오픈까지 ${daysUntil}일 남음)`,
+        isD30Active,
+        badgeText: isD30Active ? `오픈 D-${daysUntil}` : `D-${daysUntil} (편성)`,
+        subText: isD30Active
+          ? `오픈 1달 이내 집중 준비 (오픈까지 ${daysUntil}일)`
+          : `연간 기획 편성 대기 (오픈까지 ${daysUntil}일)`,
         isEnded: false,
       };
     }
@@ -130,13 +154,19 @@ export default function AnnualScheduleView({ onNavigateToQc }: AnnualScheduleVie
     }
   };
 
-  // 필터링된 프로모션 목록
+  // 필터링된 프로모션 목록 (라이프사이클 4단계 필터 포함)
   const filteredPromos = useMemo(() => {
     return promotions.filter((promo) => {
       const timing = getPromoTiming(promo.startDate, promo.endDate);
 
-      // 종료된 행사 숨기기
+      // 종료된 행사 숨기기 토글
       if (hideEndedEvents && timing.isEnded) return false;
+
+      // 상단 카드 클릭에 따른 라이프사이클 4단계 필터
+      if (activeLifecycleFilter === 'ACTIVE_PREP' && timing.statusType !== 'UPCOMING_ACTIVE') return false;
+      if (activeLifecycleFilter === 'RUNNING' && timing.statusType !== 'RUNNING') return false;
+      if (activeLifecycleFilter === 'PLANNED' && timing.statusType !== 'UPCOMING_PLANNED') return false;
+      if (activeLifecycleFilter === 'ENDED' && !timing.isEnded) return false;
 
       // 브랜드 필터
       if (selectedBrand !== 'ALL' && promo.brand !== selectedBrand) return false;
@@ -149,7 +179,7 @@ export default function AnnualScheduleView({ onNavigateToQc }: AnnualScheduleVie
 
       return true;
     }).sort((a, b) => a.startDate.localeCompare(b.startDate));
-  }, [promotions, selectedBrand, selectedQuarter, selectedEventType, hideEndedEvents]);
+  }, [promotions, selectedBrand, selectedQuarter, selectedEventType, hideEndedEvents, activeLifecycleFilter]);
 
   // 브랜드별 통계
   const totalCount = promotions.length;
@@ -157,9 +187,10 @@ export default function AnnualScheduleView({ onNavigateToQc }: AnnualScheduleVie
   const listCount = promotions.filter((p) => p.brand === 'LIST').length;
   const sistinaCount = promotions.filter((p) => p.brand === 'SISTINA').length;
 
-  // 상태별 통계 (상호 배타적 실무 기준)
+  // 상태별 통계 (실무 기준 4단계 분리)
   const runningCount = promotions.filter((p) => getPromoTiming(p.startDate, p.endDate).statusType === 'RUNNING').length;
-  const upcomingCount = promotions.filter((p) => getPromoTiming(p.startDate, p.endDate).statusType === 'UPCOMING').length;
+  const activePrepCount = promotions.filter((p) => getPromoTiming(p.startDate, p.endDate).statusType === 'UPCOMING_ACTIVE').length;
+  const plannedCount = promotions.filter((p) => getPromoTiming(p.startDate, p.endDate).statusType === 'UPCOMING_PLANNED').length;
   const endedCount = promotions.filter((p) => getPromoTiming(p.startDate, p.endDate).isEnded).length;
   const blockerPromoCount = promotions.filter((p) => p.qcIssues.some((i) => i.severity === 'BLOCKER') && !getPromoTiming(p.startDate, p.endDate).isEnded).length;
 
@@ -290,119 +321,209 @@ export default function AnnualScheduleView({ onNavigateToQc }: AnnualScheduleVie
           </div>
         )}
 
-        {/* 2. 4대 실무 KPI 요약 게이지 (브랜드별 상세 카운트 & 액션 가능한 운영 상태로 재정의) */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-6">
-          {/* 카드 1: 연간 총 기획전 + 브랜드별 카운트 클릭 필터 */}
-          <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold text-slate-500 uppercase">연간 총 기획전</span>
-              <span className="text-[10px] font-semibold text-slate-400">인동FN 3대 브랜드</span>
+        {/* 2. 브랜드 요약 바 & 실무 4단계 운영 라이프사이클 카드 (클릭 시 해당 기간 타임라인으로 부드럽게 이동) */}
+        <div className="pt-6 space-y-4">
+          {/* 브랜드별 등록 현황 & 인터랙션 안내 툴팁 바 */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 px-4 py-2.5 bg-slate-50 rounded-xl border border-slate-200/80 text-xs">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="font-bold text-slate-700 flex items-center gap-1.5">
+                <span>🏷️</span>
+                <span>연간 등록 기획전 <strong className="text-slate-900 font-mono">{totalCount}</strong>건</span>
+              </span>
+              <span className="text-slate-300">|</span>
+              <div className="flex items-center gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => setSelectedBrand(selectedBrand === 'SHESMISS' ? 'ALL' : 'SHESMISS')}
+                  className={`px-2 py-0.5 rounded-md font-bold transition-all cursor-pointer ${
+                    selectedBrand === 'SHESMISS'
+                      ? 'bg-purple-600 text-white shadow-2xs'
+                      : 'bg-white text-purple-700 border border-purple-200 hover:bg-purple-50'
+                  }`}
+                  title="쉬즈미스 행사만 필터링"
+                >
+                  SHESMISS <span className="font-mono">{shesmissCount}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSelectedBrand(selectedBrand === 'LIST' ? 'ALL' : 'LIST')}
+                  className={`px-2 py-0.5 rounded-md font-bold transition-all cursor-pointer ${
+                    selectedBrand === 'LIST'
+                      ? 'bg-blue-600 text-white shadow-2xs'
+                      : 'bg-white text-blue-700 border border-blue-200 hover:bg-blue-50'
+                  }`}
+                  title="리스트 행사만 필터링"
+                >
+                  LIST <span className="font-mono">{listCount}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSelectedBrand(selectedBrand === 'SISTINA' ? 'ALL' : 'SISTINA')}
+                  className={`px-2 py-0.5 rounded-md font-bold transition-all cursor-pointer ${
+                    selectedBrand === 'SISTINA'
+                      ? 'bg-emerald-600 text-white shadow-2xs'
+                      : 'bg-white text-emerald-700 border border-emerald-200 hover:bg-emerald-50'
+                  }`}
+                  title="시스티나 행사만 필터링"
+                >
+                  SISTINA <span className="font-mono">{sistinaCount}</span>
+                </button>
+              </div>
             </div>
-            <div className="flex items-baseline gap-2 mt-1">
-              <span className="text-2xl font-black text-slate-900 font-mono">{totalCount}</span>
-              <span className="text-xs text-slate-500 font-bold">개 행사</span>
-            </div>
-            {/* 브랜드별 카운트 뱃지 (클릭 시 브랜드 필터링 연동) */}
-            <div className="flex items-center gap-1.5 mt-2.5 pt-2.5 border-t border-slate-200/60 text-[11px]">
-              <button
-                type="button"
-                onClick={() => setSelectedBrand(selectedBrand === 'SHESMISS' ? 'ALL' : 'SHESMISS')}
-                className={`px-1.5 py-0.5 rounded font-bold transition-all cursor-pointer ${
-                  selectedBrand === 'SHESMISS'
-                    ? 'bg-purple-600 text-white shadow-2xs'
-                    : 'bg-purple-100/80 text-purple-800 hover:bg-purple-200'
-                }`}
-                title="쉬즈미스 행사만 보기"
-              >
-                SHESMISS <span className="font-mono">{shesmissCount}</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setSelectedBrand(selectedBrand === 'LIST' ? 'ALL' : 'LIST')}
-                className={`px-1.5 py-0.5 rounded font-bold transition-all cursor-pointer ${
-                  selectedBrand === 'LIST'
-                    ? 'bg-blue-600 text-white shadow-2xs'
-                    : 'bg-blue-100/80 text-blue-800 hover:bg-blue-200'
-                }`}
-                title="리스트 행사만 보기"
-              >
-                LIST <span className="font-mono">{listCount}</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setSelectedBrand(selectedBrand === 'SISTINA' ? 'ALL' : 'SISTINA')}
-                className={`px-1.5 py-0.5 rounded font-bold transition-all cursor-pointer ${
-                  selectedBrand === 'SISTINA'
-                    ? 'bg-emerald-600 text-white shadow-2xs'
-                    : 'bg-emerald-100/80 text-emerald-800 hover:bg-emerald-200'
-                }`}
-                title="시스티나 행사만 보기"
-              >
-                SISTINA <span className="font-mono">{sistinaCount}</span>
-              </button>
+
+            <div className="text-[11px] text-indigo-700 font-medium flex items-center gap-1">
+              <span>💡</span>
+              <span>아래 상태 카드를 클릭하면 해당 행사 기간 타임라인으로 바로 이동합니다.</span>
             </div>
           </div>
 
-          {/* 카드 2: 실시간 라이브 운영 중 */}
-          <div className="p-4 rounded-xl bg-amber-50/70 border border-amber-200">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold text-amber-700 uppercase flex items-center gap-1">
-                <Flame className="w-3.5 h-3.5 text-amber-600" />
-                실시간 라이브 운영 중
-              </span>
-              <span className="text-[10px] font-bold text-amber-600 bg-amber-100/80 px-1.5 py-0.2 rounded-full">
-                사이트 노출
-              </span>
-            </div>
-            <div className="flex items-baseline gap-2 mt-1">
-              <span className="text-2xl font-black text-amber-900 font-mono">{runningCount}</span>
-              <span className="text-xs text-amber-700 font-bold">개 행사</span>
-            </div>
-            <p className="text-[11px] text-amber-700/80 mt-2.5 pt-2.5 border-t border-amber-200/60 truncate">
-              시작일 ≤ 오늘 ≤ 종료일 · 현재 정상 판매 중
-            </p>
-          </div>
-
-          {/* 카드 3: 오픈 준비 & 검수 예정 (기존 '연간 종합 완료도' 대체 -> 실무 액션형 지표) */}
-          <div className="p-4 rounded-xl bg-indigo-50/70 border border-indigo-200">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold text-indigo-700 uppercase flex items-center gap-1">
-                <Clock className="w-3.5 h-3.5 text-indigo-600" />
-                오픈 준비 & 예정
-              </span>
-              {blockerPromoCount > 0 && (
-                <span className="text-[10px] font-bold text-rose-700 bg-rose-100 px-1.5 py-0.2 rounded-full">
-                  QC 이슈 {blockerPromoCount}건
+          {/* 4대 운영 라이프사이클 카드 그리드 */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {/* 카드 1: 🔥 오픈 집중 준비 (D-30 이내) - 실무 최우선순위 */}
+            <div
+              onClick={() => handleCardClick('ACTIVE_PREP')}
+              className={`p-4 rounded-xl border transition-all duration-200 cursor-pointer text-left relative overflow-hidden group ${
+                activeLifecycleFilter === 'ACTIVE_PREP'
+                  ? 'bg-rose-50/90 border-rose-400 ring-2 ring-rose-500/80 shadow-md -translate-y-0.5'
+                  : 'bg-rose-50/40 border-rose-200 hover:border-rose-300 hover:shadow-xs hover:bg-rose-50/70'
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold text-rose-800 uppercase flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+                  🔥 오픈 집중 준비 (D-30)
                 </span>
-              )}
+                {blockerPromoCount > 0 ? (
+                  <span className="text-[10px] font-extrabold text-white bg-rose-600 px-2 py-0.5 rounded-full shadow-2xs">
+                    QC 이슈 {blockerPromoCount}건
+                  </span>
+                ) : (
+                  <span className="text-[10px] font-bold text-rose-700 bg-rose-100 px-1.5 py-0.2 rounded-full">
+                    집중 검수
+                  </span>
+                )}
+              </div>
+              <div className="flex items-baseline gap-2 mt-1.5">
+                <span className="text-2xl font-black text-rose-900 font-mono">{activePrepCount}</span>
+                <span className="text-xs text-rose-700 font-bold">개 행사</span>
+                {activeLifecycleFilter === 'ACTIVE_PREP' && (
+                  <span className="text-[10px] font-bold text-rose-600 bg-white px-1.5 py-0.2 rounded border border-rose-300 ml-auto">
+                    ✓ 필터 적용 중
+                  </span>
+                )}
+              </div>
+              <p className="text-[11px] text-rose-800/80 mt-2.5 pt-2.5 border-t border-rose-200/60 leading-tight">
+                오픈 30일 이내 · 가격/배너/쿠폰 집중 QC 대상
+              </p>
+              <div className="mt-2 text-[10px] font-bold text-rose-600 group-hover:text-rose-700 flex items-center gap-1">
+                <span>👉 3~4월 타임라인 바로가기</span>
+              </div>
             </div>
-            <div className="flex items-baseline gap-2 mt-1">
-              <span className="text-2xl font-black text-indigo-900 font-mono">{upcomingCount}</span>
-              <span className="text-xs text-indigo-700 font-bold">개 행사</span>
-            </div>
-            <p className="text-[11px] text-indigo-700/80 mt-2.5 pt-2.5 border-t border-indigo-200/60 truncate">
-              오늘 &lt; 시작일 · 마일스톤 D-Day 사전 검수 대상
-            </p>
-          </div>
 
-          {/* 카드 4: 게시 완료 및 행사 종료 */}
-          <div className="p-4 rounded-xl bg-emerald-50/70 border border-emerald-200">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold text-emerald-700 uppercase flex items-center gap-1">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                게시 완료 & 행사 종료
-              </span>
-              <span className="text-[10px] font-semibold text-emerald-600">
-                100% 마감
-              </span>
+            {/* 카드 2: 🟢 실시간 라이브 운영 중 */}
+            <div
+              onClick={() => handleCardClick('RUNNING')}
+              className={`p-4 rounded-xl border transition-all duration-200 cursor-pointer text-left relative overflow-hidden group ${
+                activeLifecycleFilter === 'RUNNING'
+                  ? 'bg-amber-50/90 border-amber-400 ring-2 ring-amber-500/80 shadow-md -translate-y-0.5'
+                  : 'bg-amber-50/40 border-amber-200 hover:border-amber-300 hover:shadow-xs hover:bg-amber-50/70'
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold text-amber-800 uppercase flex items-center gap-1.5">
+                  <Flame className="w-3.5 h-3.5 text-amber-600" />
+                  실시간 라이브 운영
+                </span>
+                <span className="text-[10px] font-bold text-amber-700 bg-amber-100/90 px-1.5 py-0.2 rounded-full">
+                  사이트 노출
+                </span>
+              </div>
+              <div className="flex items-baseline gap-2 mt-1.5">
+                <span className="text-2xl font-black text-amber-900 font-mono">{runningCount}</span>
+                <span className="text-xs text-amber-700 font-bold">개 행사</span>
+                {activeLifecycleFilter === 'RUNNING' && (
+                  <span className="text-[10px] font-bold text-amber-700 bg-white px-1.5 py-0.2 rounded border border-amber-300 ml-auto">
+                    ✓ 필터 적용 중
+                  </span>
+                )}
+              </div>
+              <p className="text-[11px] text-amber-800/80 mt-2.5 pt-2.5 border-t border-amber-200/60 leading-tight">
+                시작일 ≤ 오늘 ≤ 종료일 · 현재 정상 판매 중
+              </p>
+              <div className="mt-2 text-[10px] font-bold text-amber-700 group-hover:text-amber-800 flex items-center gap-1">
+                <span>👉 라이브 행사 타임라인 바로가기</span>
+              </div>
             </div>
-            <div className="flex items-baseline gap-2 mt-1">
-              <span className="text-2xl font-black text-emerald-900 font-mono">{endedCount}</span>
-              <span className="text-xs text-emerald-700 font-bold">개 행사</span>
+
+            {/* 카드 3: 📅 연간 기획 편성 (D-30 초과) */}
+            <div
+              onClick={() => handleCardClick('PLANNED')}
+              className={`p-4 rounded-xl border transition-all duration-200 cursor-pointer text-left relative overflow-hidden group ${
+                activeLifecycleFilter === 'PLANNED'
+                  ? 'bg-indigo-50/90 border-indigo-400 ring-2 ring-indigo-500/80 shadow-md -translate-y-0.5'
+                  : 'bg-indigo-50/40 border-indigo-200 hover:border-indigo-300 hover:shadow-xs hover:bg-indigo-50/70'
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold text-indigo-800 uppercase flex items-center gap-1.5">
+                  <Clock className="w-3.5 h-3.5 text-indigo-600" />
+                  연간 기획 편성 (D-30 초과)
+                </span>
+                <span className="text-[10px] font-semibold text-indigo-700 bg-indigo-100/90 px-1.5 py-0.2 rounded-full">
+                  편성 대기
+                </span>
+              </div>
+              <div className="flex items-baseline gap-2 mt-1.5">
+                <span className="text-2xl font-black text-indigo-900 font-mono">{plannedCount}</span>
+                <span className="text-xs text-indigo-700 font-bold">개 행사</span>
+                {activeLifecycleFilter === 'PLANNED' && (
+                  <span className="text-[10px] font-bold text-indigo-700 bg-white px-1.5 py-0.2 rounded border border-indigo-300 ml-auto">
+                    ✓ 필터 적용 중
+                  </span>
+                )}
+              </div>
+              <p className="text-[11px] text-indigo-800/80 mt-2.5 pt-2.5 border-t border-indigo-200/60 leading-tight">
+                5~12월 편성 대기 · 오픈 30일 전 집중 준비 자동 전환
+              </p>
+              <div className="mt-2 text-[10px] font-bold text-indigo-700 group-hover:text-indigo-800 flex items-center gap-1">
+                <span>👉 5~12월 연간 로드맵 바로가기</span>
+              </div>
             </div>
-            <p className="text-[11px] text-emerald-700/80 mt-2.5 pt-2.5 border-t border-emerald-200/60 truncate">
-              종료일 &lt; 오늘 · 판매 마감 후 정산/리뷰 이관
-            </p>
+
+            {/* 카드 4: 🏁 게시 완료 & 행사 종료 */}
+            <div
+              onClick={() => handleCardClick('ENDED')}
+              className={`p-4 rounded-xl border transition-all duration-200 cursor-pointer text-left relative overflow-hidden group ${
+                activeLifecycleFilter === 'ENDED'
+                  ? 'bg-emerald-50/90 border-emerald-400 ring-2 ring-emerald-500/80 shadow-md -translate-y-0.5'
+                  : 'bg-emerald-50/40 border-emerald-200 hover:border-emerald-300 hover:shadow-xs hover:bg-emerald-50/70'
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold text-emerald-800 uppercase flex items-center gap-1.5">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                  게시 완료 & 행사 종료
+                </span>
+                <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-100/90 px-1.5 py-0.2 rounded-full">
+                  100% 마감
+                </span>
+              </div>
+              <div className="flex items-baseline gap-2 mt-1.5">
+                <span className="text-2xl font-black text-emerald-900 font-mono">{endedCount}</span>
+                <span className="text-xs text-emerald-700 font-bold">개 행사</span>
+                {activeLifecycleFilter === 'ENDED' && (
+                  <span className="text-[10px] font-bold text-emerald-700 bg-white px-1.5 py-0.2 rounded border border-emerald-300 ml-auto">
+                    ✓ 필터 적용 중
+                  </span>
+                )}
+              </div>
+              <p className="text-[11px] text-emerald-800/80 mt-2.5 pt-2.5 border-t border-emerald-200/60 leading-tight">
+                종료일 &lt; 오늘 · 1~2월 정상 종료 및 정산/리뷰 이관
+              </p>
+              <div className="mt-2 text-[10px] font-bold text-emerald-700 group-hover:text-emerald-800 flex items-center gap-1">
+                <span>👉 1~2월 종료 행사 바로가기</span>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -421,47 +542,47 @@ export default function AnnualScheduleView({ onNavigateToQc }: AnnualScheduleVie
 
           {showCriteriaGuide && (
             <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mt-3 pt-3 border-t border-slate-200 text-[11px] leading-relaxed text-slate-600">
-              <div className="p-2.5 bg-white rounded-lg border border-slate-200/70">
+              <div className="p-2.5 bg-white rounded-lg border border-rose-200/70">
+                <div className="font-bold text-rose-700 flex items-center gap-1 mb-1">
+                  <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+                  🔥 오픈 집중 준비 (D-30 이내)
+                </div>
+                <p className="text-slate-500">
+                  <strong className="text-slate-700">오늘 &lt; 시작일 ≤ 30일</strong><br />
+                  실무 작업이 착수되는 D-30 진입 행사입니다. MD 가격 승인, 배너 디자인 검수, 개발 링크 확인, 쿠폰 매트릭스 점검 등 집중 QC 대상입니다.
+                </p>
+              </div>
+
+              <div className="p-2.5 bg-white rounded-lg border border-amber-200/70">
                 <div className="font-bold text-amber-700 flex items-center gap-1 mb-1">
                   <span className="w-2 h-2 rounded-full bg-amber-500"></span>
-                  실시간 라이브 운영 중
+                  🟢 실시간 라이브 운영 중
                 </div>
                 <p className="text-slate-500">
                   <strong className="text-slate-700">시작일 ≤ 오늘 ≤ 종료일</strong><br />
-                  현재 IDF몰 공식몰 및 앱에 배너가 노출되고 할인가 및 쿠폰이 적용되어 고객 주문이 발생하는 실시간 행사입니다.
+                  현재 IDF몰 공식몰 및 앱에 배너가 노출되고 할인가 및 쿠폰이 적용되어 고객 주문이 발생하는 실시간 모니터링 대상 행사입니다.
                 </p>
               </div>
 
-              <div className="p-2.5 bg-white rounded-lg border border-slate-200/70">
+              <div className="p-2.5 bg-white rounded-lg border border-indigo-200/70">
                 <div className="font-bold text-indigo-700 flex items-center gap-1 mb-1">
                   <span className="w-2 h-2 rounded-full bg-indigo-500"></span>
-                  오픈 준비 & 예정
+                  📅 연간 기획 편성 (D-30 초과)
                 </div>
                 <p className="text-slate-500">
-                  <strong className="text-slate-700">오늘 &lt; 시작일 (D-Day 대기)</strong><br />
-                  오픈 전 D-7~D-1 스케줄에 따라 MD 가격 승인, 배너 디자인 검수, 개발 링크 확인, 쿠폰 매트릭스 점검 등 사전 QC 진행 대상입니다.
+                  <strong className="text-slate-700">시작일 - 오늘 &gt; 30일 (편성 대기)</strong><br />
+                  연간 캘린더에 일정만 편성된 사전 기획전으로, 불필요한 차트 혼잡을 방지하며 오픈 30일 전 도달 시 자동으로 집중 준비로 전환됩니다.
                 </p>
               </div>
 
-              <div className="p-2.5 bg-white rounded-lg border border-slate-200/70">
+              <div className="p-2.5 bg-white rounded-lg border border-emerald-200/70">
                 <div className="font-bold text-emerald-700 flex items-center gap-1 mb-1">
                   <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-                  게시 완료 & 행사 종료
+                  🏁 게시 완료 & 행사 종료
                 </div>
                 <p className="text-slate-500">
                   <strong className="text-slate-700">종료일 &lt; 오늘 (진행률 100%)</strong><br />
                   행사 기간이 만료되어 정상 마감 처리된 프로모션입니다. 불필요한 차트 혼선을 방지하기 위해 '종료된 행사 숨기기' 필터가 제공됩니다.
-                </p>
-              </div>
-
-              <div className="p-2.5 bg-white rounded-lg border border-slate-200/70">
-                <div className="font-bold text-rose-700 flex items-center gap-1 mb-1">
-                  <span className="w-2 h-2 rounded-full bg-rose-500"></span>
-                  사전 QC 결함 (BLOCKER)
-                </div>
-                <p className="text-slate-500">
-                  <strong className="text-slate-700">가격 역전 / 쿠폰 오류 / 링크 누락</strong><br />
-                  고객 사고나 매출 손실을 초래할 수 있는 심각 결함으로, 즉시 담당 부서(MD/디자인/개발)에 재확인 요청이 발송됩니다.
                 </p>
               </div>
             </div>
@@ -629,7 +750,40 @@ export default function AnnualScheduleView({ onNavigateToQc }: AnnualScheduleVie
 
       {/* 5. 실제 일정 연동 정밀 간트차트 뷰 (글자 잘림 현상 완벽 해결 & 클릭 시 QC 워크스페이스 연동) */}
       {(viewMode === 'GANTT' || viewMode === 'BOTH') && (
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-xs p-6 overflow-hidden">
+        <div id="gantt-chart-section" className="bg-white rounded-2xl border border-slate-200 shadow-xs p-6 overflow-hidden scroll-mt-6">
+          {/* 상단 카드 필터 적용 시 안내 배너 */}
+          {activeLifecycleFilter !== 'ALL' && (
+            <div className="mb-5 p-3.5 bg-indigo-50/90 border border-indigo-200 rounded-xl flex items-center justify-between text-xs animate-in fade-in slide-in-from-top-1">
+              <div className="flex items-center gap-2">
+                <span className="text-base">
+                  {activeLifecycleFilter === 'ACTIVE_PREP' && '🔥'}
+                  {activeLifecycleFilter === 'RUNNING' && '🟢'}
+                  {activeLifecycleFilter === 'PLANNED' && '📅'}
+                  {activeLifecycleFilter === 'ENDED' && '🏁'}
+                </span>
+                <div>
+                  <span className="font-bold text-indigo-950">
+                    {activeLifecycleFilter === 'ACTIVE_PREP' && '오픈 집중 준비 (D-30 이내) 행사만 필터링되어 타임라인에 표시 중입니다.'}
+                    {activeLifecycleFilter === 'RUNNING' && '실시간 라이브 운영 중인 행사만 타임라인에 표시 중입니다.'}
+                    {activeLifecycleFilter === 'PLANNED' && '연간 기획 편성 (D-30 초과) 대기 행사만 타임라인에 표시 중입니다.'}
+                    {activeLifecycleFilter === 'ENDED' && '게시 완료 및 행사 종료된 프로모션만 표시 중입니다.'}
+                  </span>
+                  <span className="text-indigo-600 font-semibold font-mono ml-1.5">
+                    ({filteredPromos.length}건)
+                  </span>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setActiveLifecycleFilter('ALL')}
+                className="px-3 py-1.5 bg-white hover:bg-indigo-100 text-indigo-700 font-bold rounded-lg border border-indigo-200 text-xs shadow-2xs transition-all cursor-pointer flex items-center gap-1.5"
+              >
+                <span>전체 연간 로드맵 보기</span>
+                <span className="text-indigo-400 font-normal">✕</span>
+              </button>
+            </div>
+          )}
+
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
             <div>
               <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
@@ -644,6 +798,14 @@ export default function AnnualScheduleView({ onNavigateToQc }: AnnualScheduleVie
             {/* 범례 */}
             <div className="flex flex-wrap items-center gap-3 text-[11px] font-semibold text-slate-600 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200">
               <span className="flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-sm bg-rose-500 animate-pulse"></span>
+                🔥 D-30 집중준비
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-sm bg-indigo-500"></span>
+                📅 D-30 초과(편성)
+              </span>
+              <span className="flex items-center gap-1.5">
                 <span className="w-2.5 h-2.5 rounded-sm bg-emerald-500"></span>
                 완료/승인(100%)
               </span>
@@ -651,17 +813,9 @@ export default function AnnualScheduleView({ onNavigateToQc }: AnnualScheduleVie
                 <span className="w-2.5 h-2.5 rounded-sm bg-slate-400"></span>
                 행사 종료
               </span>
-              <span className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded-sm bg-rose-500"></span>
-                오류 적발(조치대기)
-              </span>
-              <span className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded-sm bg-indigo-600"></span>
-                오픈 준비 중
-              </span>
               <span className="flex items-center gap-1.5 text-rose-600 font-bold">
                 <span className="w-2 h-2 rounded-full bg-rose-500 ring-2 ring-rose-200"></span>
-                오늘 기준선 (3월 8일)
+                오늘 (3월 8일)
               </span>
             </div>
           </div>
@@ -780,13 +934,18 @@ export default function AnnualScheduleView({ onNavigateToQc }: AnnualScheduleVie
                               ✓ 행사 종료
                             </span>
                           ) : timing.statusType === 'RUNNING' ? (
-                            <span className="bg-rose-100 text-rose-800 font-bold px-1.5 py-0.2 rounded flex items-center gap-1 animate-pulse">
-                              <Flame className="w-3 h-3 text-rose-600" />
+                            <span className="bg-amber-100 text-amber-800 font-bold px-1.5 py-0.2 rounded flex items-center gap-1 animate-pulse">
+                              <Flame className="w-3 h-3 text-amber-600" />
                               진행 {timing.elapsedDays}일차 (D-{timing.daysLeft})
                             </span>
+                          ) : timing.isD30Active ? (
+                            <span className="bg-rose-50 text-rose-700 border border-rose-200 font-bold px-1.5 py-0.2 rounded flex items-center gap-1 shadow-2xs">
+                              <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse"></span>
+                              🔥 오픈 D-{timing.daysUntil} (집중준비)
+                            </span>
                           ) : (
-                            <span className="bg-indigo-100 text-indigo-800 font-bold px-1.5 py-0.2 rounded">
-                              오픈 D-{timing.daysUntil}
+                            <span className="bg-slate-100 text-slate-500 font-medium px-1.5 py-0.2 rounded">
+                              D-{timing.daysUntil} (편성)
                             </span>
                           )}
 
@@ -809,7 +968,7 @@ export default function AnnualScheduleView({ onNavigateToQc }: AnnualScheduleVie
                         <div
                           className={`absolute h-8 rounded-lg shadow-xs transition-all duration-300 group-hover:shadow-md flex items-center justify-center px-2 border cursor-pointer ${
                             timing.isEnded ? 'grayscale-[35%]' : ''
-                          }`}
+                          } ${timing.isD30Active ? 'ring-1 ring-rose-200' : ''}`}
                           style={{
                             left: coords.left,
                             width: coords.width,
@@ -822,7 +981,9 @@ export default function AnnualScheduleView({ onNavigateToQc }: AnnualScheduleVie
                               ? '#fff1f2'
                               : timing.statusType === 'RUNNING'
                               ? '#fff7ed'
-                              : '#eef2ff',
+                              : timing.isD30Active
+                              ? '#fff1f2'
+                              : '#f8fafc',
                             borderColor: timing.isEnded
                               ? '#cbd5e1'
                               : isCompleted
@@ -831,7 +992,9 @@ export default function AnnualScheduleView({ onNavigateToQc }: AnnualScheduleVie
                               ? '#fecdd3'
                               : timing.statusType === 'RUNNING'
                               ? '#fdba74'
-                              : '#c7d2fe',
+                              : timing.isD30Active
+                              ? '#fda4af'
+                              : '#e2e8f0',
                           }}
                           title={`${promo.title} (${promo.startDate} ~ ${promo.endDate}) - 클릭하여 QC 열기`}
                         >
@@ -846,7 +1009,9 @@ export default function AnnualScheduleView({ onNavigateToQc }: AnnualScheduleVie
                                 ? 'bg-rose-600'
                                 : timing.statusType === 'RUNNING'
                                 ? 'bg-amber-600'
-                                : 'bg-indigo-600'
+                                : timing.isD30Active
+                                ? 'bg-rose-500'
+                                : 'bg-slate-400'
                             }`}
                             style={{ width: `${progress}%` }}
                           />
@@ -862,8 +1027,12 @@ export default function AnnualScheduleView({ onNavigateToQc }: AnnualScheduleVie
                               </span>
                             ) : blockerCount > 0 ? (
                               <span className="text-rose-700">🚨 {blockerCount}건</span>
+                            ) : timing.isD30Active ? (
+                              <span className="text-rose-700 font-extrabold flex items-center gap-0.5">
+                                🔥 D-{timing.daysUntil}
+                              </span>
                             ) : (
-                              <span className="text-indigo-800">D-{timing.daysUntil}</span>
+                              <span className="text-slate-500 font-medium">D-{timing.daysUntil}</span>
                             )}
                           </div>
 
@@ -898,7 +1067,40 @@ export default function AnnualScheduleView({ onNavigateToQc }: AnnualScheduleVie
 
       {/* 6. 12개월 월별 카드 그리드 뷰 (12-Month Card Grid) */}
       {(viewMode === 'CARDS' || viewMode === 'BOTH') && (
-        <div className="space-y-4">
+        <div id="cards-section" className="space-y-4 scroll-mt-6">
+          {/* 간트차트 숨김 모드(CARDS 단독)일 때도 필터 배너 표시 */}
+          {viewMode === 'CARDS' && activeLifecycleFilter !== 'ALL' && (
+            <div className="p-3.5 bg-indigo-50/90 border border-indigo-200 rounded-xl flex items-center justify-between text-xs animate-in fade-in">
+              <div className="flex items-center gap-2">
+                <span className="text-base">
+                  {activeLifecycleFilter === 'ACTIVE_PREP' && '🔥'}
+                  {activeLifecycleFilter === 'RUNNING' && '🟢'}
+                  {activeLifecycleFilter === 'PLANNED' && '📅'}
+                  {activeLifecycleFilter === 'ENDED' && '🏁'}
+                </span>
+                <div>
+                  <span className="font-bold text-indigo-950">
+                    {activeLifecycleFilter === 'ACTIVE_PREP' && '오픈 집중 준비 (D-30 이내) 행사만 필터링되어 표시 중입니다.'}
+                    {activeLifecycleFilter === 'RUNNING' && '실시간 라이브 운영 중인 행사만 표시 중입니다.'}
+                    {activeLifecycleFilter === 'PLANNED' && '연간 기획 편성 (D-30 초과) 대기 행사만 표시 중입니다.'}
+                    {activeLifecycleFilter === 'ENDED' && '게시 완료 및 행사 종료된 프로모션만 표시 중입니다.'}
+                  </span>
+                  <span className="text-indigo-600 font-semibold font-mono ml-1.5">
+                    ({filteredPromos.length}건)
+                  </span>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setActiveLifecycleFilter('ALL')}
+                className="px-3 py-1.5 bg-white hover:bg-indigo-100 text-indigo-700 font-bold rounded-lg border border-indigo-200 text-xs shadow-2xs transition-all cursor-pointer flex items-center gap-1.5"
+              >
+                <span>전체 연간 로드맵 보기</span>
+                <span className="text-indigo-400 font-normal">✕</span>
+              </button>
+            </div>
+          )}
+
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
               <span>📋</span>
@@ -919,8 +1121,12 @@ export default function AnnualScheduleView({ onNavigateToQc }: AnnualScheduleVie
               return (
                 <div
                   key={promo.id}
-                  className={`bg-white rounded-2xl border border-slate-200 hover:border-slate-300 shadow-xs hover:shadow-md transition-all p-5 flex flex-col justify-between ${
-                    timing.isEnded ? 'opacity-80' : ''
+                  className={`bg-white rounded-2xl border transition-all p-5 flex flex-col justify-between ${
+                    timing.isEnded
+                      ? 'border-slate-200 opacity-80'
+                      : timing.isD30Active
+                      ? 'border-rose-300 ring-1 ring-rose-200/80 shadow-xs hover:border-rose-400 hover:shadow-md'
+                      : 'border-slate-200 hover:border-slate-300 shadow-xs hover:shadow-md'
                   }`}
                 >
                   <div>
@@ -951,11 +1157,13 @@ export default function AnnualScheduleView({ onNavigateToQc }: AnnualScheduleVie
                           timing.isEnded
                             ? 'bg-slate-200 text-slate-700'
                             : timing.statusType === 'RUNNING'
-                            ? 'bg-rose-100 text-rose-800 animate-pulse'
-                            : 'bg-indigo-100 text-indigo-800'
+                            ? 'bg-amber-100 text-amber-800 animate-pulse'
+                            : timing.isD30Active
+                            ? 'bg-rose-100 text-rose-800 border border-rose-300 shadow-2xs'
+                            : 'bg-slate-100 text-slate-600 border border-slate-200'
                         }`}
                       >
-                        {timing.badgeText}
+                        {timing.isD30Active ? `🔥 ${timing.badgeText}` : timing.badgeText}
                       </span>
                     </div>
 
