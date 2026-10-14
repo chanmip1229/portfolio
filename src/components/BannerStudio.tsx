@@ -22,6 +22,8 @@ import {
   AlignLeft,
   AlignCenter,
   AlignRight,
+  Upload,
+  RotateCcw,
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -42,10 +44,10 @@ export default function BannerStudio({ promotionId }: BannerStudioProps) {
   const [verticalPosition, setVerticalPosition] = useState<'top' | 'middle' | 'bottom'>('middle');
   const [horizontalAlign, setHorizontalAlign] = useState<'left' | 'center' | 'right'>('center');
 
-  // 움직이는 롤링 배너 및 모션 상태
-  const [isAutoRolling, setIsAutoRolling] = useState(true);
+  // 슬라이드 선택 및 정적 편집 상태 (자동 롤링 제거하여 작업 집중도 향상)
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [enableMotion, setEnableMotion] = useState(true);
+  const [enableMotion, setEnableMotion] = useState(false);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   // 렌더링된 Data URL (PC 1920x600, MO 750x900)
   const [slideUrls, setSlideUrls] = useState<{
@@ -215,14 +217,77 @@ export default function BannerStudio({ promotionId }: BannerStudioProps) {
     triggerRender();
   }, [promo?.banner.sourceImageUrl, copyTitle, copySubtitle, discountBadge, verticalPosition, horizontalAlign]);
 
-  // 움직이는 롤링 슬라이드 타이머 (3.5초마다 자동 전환)
-  useEffect(() => {
-    if (!isAutoRolling) return;
-    const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % 3);
-    }, 3500);
-    return () => clearInterval(interval);
-  }, [isAutoRolling]);
+  // 직접 배너 사진 업로드 처리 (FileReader)
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !promo) return;
+
+    if (!file.type.startsWith('image/')) {
+      alert('이미지 파일(JPG, PNG, WebP 등)만 업로드할 수 있습니다.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const dataUrl = event.target?.result as string;
+      if (dataUrl) {
+        updatePromotion(promo.id, {
+          banner: {
+            ...promo.banner,
+            sourceImageUrl: dataUrl,
+            sourceImageName: file.name,
+          },
+        });
+        setCurrentSlide(0);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // 드래그 앤 드롭 파일 업로드 처리
+  const handleFileDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files?.[0];
+    if (!file || !promo || !file.type.startsWith('image/')) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const dataUrl = event.target?.result as string;
+      if (dataUrl) {
+        updatePromotion(promo.id, {
+          banner: {
+            ...promo.banner,
+            sourceImageUrl: dataUrl,
+            sourceImageName: file.name,
+          },
+        });
+        setCurrentSlide(0);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // 기본 룩북 이미지로 복구
+  const handleResetToDefaultImage = () => {
+    if (!promo) return;
+    updatePromotion(promo.id, {
+      banner: {
+        ...promo.banner,
+        sourceImageUrl: '/images/products/SWBLPB21010_main.jpg',
+        sourceImageName: 'LIST_26SS_lookbook_trench_main.jpg',
+      },
+    });
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+    setCurrentSlide(0);
+  };
+
+  const isCustomImage = Boolean(
+    promo?.banner.sourceImageUrl &&
+    promo?.banner.sourceImageUrl !== '/images/products/SWBLPB21010_main.jpg' &&
+    !promo?.banner.sourceImageUrl.startsWith('/images/products/')
+  );
 
   if (!promo) return null;
 
@@ -269,11 +334,11 @@ export default function BannerStudio({ promotionId }: BannerStudioProps) {
               <Sparkles className="w-4 h-4" />
             </span>
             <h3 className="text-base font-bold text-slate-900">
-              배너 스튜디오 (실시간 자동 롤링 & 모션 합성 엔진)
+              배너 스튜디오 (실시간 카피 합성 & 이미지 직접 업로드)
             </h3>
           </div>
           <p className="text-xs text-slate-500 mt-1">
-            디자인팀 룩북 사진 위에 브랜드 규격의 타이틀·할인율이 자동 합성되며, 실제 자사몰처럼 3.5초 자동 롤링 슬라이드와 모션 애니메이션이 작동합니다.
+            원하는 화보 사진을 직접 업로드하거나 공식 룩북 위에 브랜드 타이틀·할인율을 실시간으로 합성하고 검수합니다.
           </p>
         </div>
 
@@ -299,30 +364,93 @@ export default function BannerStudio({ promotionId }: BannerStudioProps) {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-0 divide-y lg:divide-y-0 lg:divide-x divide-slate-200">
         {/* 좌측: 실시간 텍스트 및 속성 컨트롤러 (4 cols) */}
         <div className="lg:col-span-4 p-5 space-y-4 bg-slate-50/30">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-xs font-bold text-slate-700 flex items-center gap-1.5 truncate">
               <Sliders className="w-3.5 h-3.5 text-indigo-600" />
-              배너 카피 인라인 수정 (실시간 반영)
+              배너 카피 수정
             </span>
-            <button
-              onClick={triggerRender}
-              disabled={isRendering}
-              className="text-[11px] text-slate-500 hover:text-slate-800 flex items-center gap-1 cursor-pointer"
-            >
-              <RefreshCw className={`w-3 h-3 ${isRendering ? 'animate-spin' : ''}`} />
-              재렌더링
-            </button>
+
+            {/* 랜더링 옆 직접 배너 넣을 사진 업로드 및 재렌더링 버튼 */}
+            <div className="flex items-center gap-1.5 shrink-0">
+              <input
+                type="file"
+                ref={fileInputRef}
+                accept="image/*"
+                onChange={handleFileUpload}
+                className="hidden"
+              />
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="text-[11px] font-bold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 px-2.5 py-1 rounded-lg flex items-center gap-1 cursor-pointer transition-all shadow-2xs"
+                title="내 PC에서 새로운 배너 사진 직접 업로드 (긴급 화보 교체)"
+              >
+                <Upload className="w-3 h-3 text-indigo-600" />
+                <span>사진 직접 업로드</span>
+              </button>
+              <button
+                type="button"
+                onClick={triggerRender}
+                disabled={isRendering}
+                className="text-[11px] text-slate-500 hover:text-slate-800 flex items-center gap-1 cursor-pointer px-1.5 py-1"
+                title="배너 캔버스 강제 재합성"
+              >
+                <RefreshCw className={`w-3 h-3 ${isRendering ? 'animate-spin' : ''}`} />
+                <span>재렌더링</span>
+              </button>
+            </div>
           </div>
 
-          {/* 소스 화보 정보 */}
-          <div className="p-3 bg-white rounded-xl border border-slate-200 text-xs space-y-1">
-            <div className="flex items-center justify-between text-slate-500">
-              <span>수신된 룩북 화보:</span>
-              <span className="font-semibold text-slate-800">{promo.brand} 공식 룩북 (3컷 연계)</span>
+          {/* 소스 화보 정보 및 드롭존 */}
+          <div
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={handleFileDrop}
+            className={`p-3 rounded-xl border text-xs space-y-1.5 transition-all ${
+              isCustomImage
+                ? 'bg-amber-50/80 border-amber-300 ring-1 ring-amber-200/80 shadow-2xs'
+                : 'bg-white border-slate-200 hover:border-slate-300'
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-1.5">
+                <span className="text-slate-500">배너 적용 화보:</span>
+                {isCustomImage ? (
+                  <span className="font-extrabold text-amber-900 flex items-center gap-1 text-[11px]">
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-ping"></span>
+                    직접 업로드 사진 적용 중
+                  </span>
+                ) : (
+                  <span className="font-semibold text-slate-800">{promo.brand} 공식 룩북</span>
+                )}
+              </div>
+
+              {isCustomImage ? (
+                <button
+                  type="button"
+                  onClick={handleResetToDefaultImage}
+                  className="text-[10px] text-rose-600 hover:text-rose-800 font-bold underline cursor-pointer flex items-center gap-0.5"
+                  title="원래 공식 룩북 이미지로 되돌리기"
+                >
+                  <RotateCcw className="w-3 h-3" />
+                  기본 복구
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="text-[10px] text-indigo-600 hover:text-indigo-800 font-semibold cursor-pointer underline"
+                >
+                  사진 변경
+                </button>
+              )}
             </div>
-            <p className="text-[11px] text-slate-400 truncate">
-              파일명: {promo.banner.sourceImageName || 'LIST_26SS_lookbook_trench_main.jpg'}
-            </p>
+
+            <div className="flex items-center justify-between text-[11px]">
+              <p className="text-slate-500 truncate max-w-[210px]" title={promo.banner.sourceImageName || '기본 화보'}>
+                파일명: <span className="font-mono font-semibold text-slate-700">{promo.banner.sourceImageName || 'LIST_26SS_lookbook_trench_main.jpg'}</span>
+              </p>
+              <span className="text-[10px] text-slate-400">드래그&드롭 지원</span>
+            </div>
           </div>
 
           {/* 메인 타이틀 카피 */}
@@ -503,21 +631,12 @@ export default function BannerStudio({ promotionId }: BannerStudioProps) {
                 </button>
               </div>
 
-              {/* 움직이는 롤링 제어 버튼 & 다운로드 */}
+              {/* 정적 편집 안내 & 다운로드 */}
               <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => setIsAutoRolling(!isAutoRolling)}
-                  className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-xs font-bold transition-all cursor-pointer ${
-                    isAutoRolling
-                      ? 'bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100'
-                      : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
-                  }`}
-                  title="3.5초마다 자동으로 슬라이드가 전환됩니다"
-                >
-                  {isAutoRolling ? <Pause className="w-3.5 h-3.5 text-rose-600" /> : <Play className="w-3.5 h-3.5 text-slate-600" />}
-                  <span>{isAutoRolling ? '자동 롤링 중 (3.5초)' : '롤링 정지됨'}</span>
-                </button>
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-xs font-semibold bg-slate-50 text-slate-600 border-slate-200">
+                  <Eye className="w-3.5 h-3.5 text-slate-400" />
+                  <span>정적 편집 모드</span>
+                </span>
 
                 <a
                   href={currentImage}
@@ -530,8 +649,13 @@ export default function BannerStudio({ promotionId }: BannerStudioProps) {
               </div>
             </div>
 
-            {/* 실제 움직이는 배너 렌더링 프리뷰 뷰어 */}
-            <div className="relative rounded-2xl border border-slate-300 overflow-hidden bg-slate-950 flex items-center justify-center p-2 min-h-[280px] max-h-[420px] group">
+            {/* 실제 배너 렌더링 프리뷰 뷰어 (드래그 앤 드롭 파일 업로드 지원) */}
+            <div
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={handleFileDrop}
+              className="relative rounded-2xl border border-slate-300 overflow-hidden bg-slate-950 flex items-center justify-center p-2 min-h-[280px] max-h-[420px] group"
+              title="사진 파일을 직접 드래그해서 올려놓으면 배너 배경으로 즉시 교체됩니다"
+            >
               {currentImage ? (
                 <div className="relative w-full h-full flex items-center justify-center overflow-hidden rounded-xl">
                   <img
@@ -560,23 +684,24 @@ export default function BannerStudio({ promotionId }: BannerStudioProps) {
                     <ChevronRight className="w-5 h-5" />
                   </button>
 
-                  {/* 상단 좌측: 롤링 배너 상태 인디케이터 */}
+                  {/* 상단 좌측: 배너 상태 인디케이터 */}
                   <div className="absolute top-4 left-4 z-20 flex items-center gap-2">
                     <span className="bg-slate-900/80 backdrop-blur-md text-white text-[11px] font-bold px-2.5 py-1 rounded-full border border-white/20 flex items-center gap-1.5 shadow-sm">
-                      <span className={`w-2 h-2 rounded-full ${isAutoRolling ? 'bg-rose-500 animate-ping' : 'bg-slate-400'}`}></span>
+                      <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
                       <span>{slidesMeta[currentSlide].badgeName}</span>
                     </span>
+                    {isCustomImage && currentSlide === 0 && (
+                      <span className="bg-amber-500/90 backdrop-blur-md text-white text-[10px] font-bold px-2.5 py-1 rounded-full border border-amber-300/40 shadow-sm flex items-center gap-1">
+                        📷 직접 업로드 사진 적용됨
+                      </span>
+                    )}
                   </div>
 
-                  {/* 하단 우측: 자사몰 스타일 롤링 인디케이터 뱃지 (01 / 03 ❚❚) */}
+                  {/* 하단 우측: 슬라이드 번호 뱃지 */}
                   <div className="absolute bottom-4 right-4 z-20 flex items-center gap-2">
-                    <div
-                      onClick={() => setIsAutoRolling(!isAutoRolling)}
-                      className="bg-black/75 hover:bg-black/90 backdrop-blur-md text-white text-xs font-mono font-bold px-3 py-1 rounded-full border border-white/20 flex items-center gap-2 shadow-md cursor-pointer select-none transition-all"
-                    >
+                    <div className="bg-black/75 backdrop-blur-md text-white text-xs font-mono font-bold px-3 py-1 rounded-full border border-white/20 flex items-center gap-1.5 shadow-md select-none">
                       <span>0{currentSlide + 1} / 03</span>
-                      <span className="text-slate-400">|</span>
-                      {isAutoRolling ? <Pause className="w-3 h-3 text-amber-400" /> : <Play className="w-3 h-3 text-emerald-400" />}
+                      <span className="text-slate-400 text-[10px] font-sans font-normal">(수동 선택)</span>
                     </div>
                   </div>
                 </div>
@@ -617,13 +742,6 @@ export default function BannerStudio({ promotionId }: BannerStudioProps) {
                     )}
                   </div>
                   <p className="text-[10px] text-slate-500 truncate">{slide.subDesc}</p>
-
-                  {/* 활성 슬라이드 자동 롤링 프로그레스 바 */}
-                  {currentSlide === idx && isAutoRolling && (
-                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-indigo-200 overflow-hidden">
-                      <div className="h-full bg-indigo-600 animate-[progress_3.5s_linear_infinite]" />
-                    </div>
-                  )}
                 </button>
               ))}
             </div>

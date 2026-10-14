@@ -27,7 +27,7 @@ export default function MobileLivePreview({ promotionId }: MobileLivePreviewProp
 
   const [deviceType, setDeviceType] = useState<'IPHONE' | 'GALAXY' | 'DESKTOP'>('IPHONE');
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [isAutoRolling, setIsAutoRolling] = useState(true);
+  const [isAutoRolling, setIsAutoRolling] = useState(false);
 
   // 3.5초 자동 롤링 타이머
   useEffect(() => {
