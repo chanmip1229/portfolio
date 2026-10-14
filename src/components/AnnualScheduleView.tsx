@@ -885,7 +885,7 @@ export default function AnnualScheduleView({ onNavigateToQc }: AnnualScheduleVie
                   />
                 </div>
 
-                {filteredPromos.map((promo) => {
+                {filteredPromos.map((promo, index) => {
                   const timing = getPromoTiming(promo.startDate, promo.endDate);
                   const progress = calculateProgress(promo);
                   const blockerCount = promo.qcIssues.filter((i) => i.severity === 'BLOCKER').length;
@@ -896,182 +896,257 @@ export default function AnnualScheduleView({ onNavigateToQc }: AnnualScheduleVie
                   // 텍스트를 막대 우측에 둘지 좌측에 둘지 결정 (연말 행사는 좌측으로 배치하여 잘림 방지)
                   const isLateYear = coords.leftRatio > 0.65;
 
+                  // 섹션 구분 판정 (종료 행사 vs D-30 집중 준비 구간 vs D-30 초과 연간 편성 구간)
+                  const prevTiming = index > 0 ? getPromoTiming(filteredPromos[index - 1].startDate, filteredPromos[index - 1].endDate) : null;
+                  const nextTiming = index < filteredPromos.length - 1 ? getPromoTiming(filteredPromos[index + 1].startDate, filteredPromos[index + 1].endDate) : null;
+
+                  const isFirstActivePrep = timing.statusType === 'UPCOMING_ACTIVE' && (!prevTiming || prevTiming.statusType !== 'UPCOMING_ACTIVE');
+                  const isLastActivePrep = timing.statusType === 'UPCOMING_ACTIVE' && (!nextTiming || nextTiming.statusType !== 'UPCOMING_ACTIVE');
+                  const isFirstPlanned = timing.statusType === 'UPCOMING_PLANNED' && (!prevTiming || prevTiming.statusType !== 'UPCOMING_PLANNED');
+
                   return (
-                    <div
-                      key={promo.id}
-                      onClick={() => handleSelectPromotion(promo.id)}
-                      className={`flex items-center py-3.5 hover:bg-slate-50/90 transition-colors group cursor-pointer relative z-10 ${
-                        timing.isEnded ? 'opacity-75' : ''
-                      }`}
-                      title="클릭 시 해당 행사의 사전 QC 워크스페이스로 이동합니다"
-                    >
-                      {/* 좌측 정보 컬럼 (너비 320px) */}
-                      <div className="w-80 shrink-0 pr-4">
-                        <div className="flex items-center justify-between mb-1">
-                          <div className="flex items-center gap-1.5">
-                            <span
-                              className={`px-1.5 py-0.2 rounded text-[10px] font-bold ${
-                                promo.brand === 'SHESMISS'
-                                  ? 'bg-purple-100 text-purple-800'
-                                  : promo.brand === 'LIST'
-                                  ? 'bg-blue-100 text-blue-800'
-                                  : 'bg-emerald-100 text-emerald-800'
+                    <React.Fragment key={promo.id}>
+                      {/* 1. 🔥 D-30 집중 준비 구간 시작 강조 배너 (강렬한 시각적 박스 헤더) */}
+                      {isFirstActivePrep && (
+                        <div className="bg-gradient-to-r from-rose-500 via-rose-600 to-amber-600 text-white px-4 py-2.5 my-2 flex items-center justify-between z-20 relative rounded-xl shadow-md">
+                          <div className="flex items-center gap-2">
+                            <span className="w-2.5 h-2.5 rounded-full bg-white animate-ping"></span>
+                            <span className="font-black text-white flex items-center gap-1.5 text-xs sm:text-sm tracking-tight">
+                              🔥 오픈 집중 준비 구간 (D-30 이내) — 실무 최우선 조치 대상 ({activePrepCount}건)
+                            </span>
+                            <span className="bg-white/20 text-white font-mono text-[10px] font-extrabold px-2.5 py-0.5 rounded-full border border-white/30 backdrop-blur-xs">
+                              우선 점검 대상
+                            </span>
+                          </div>
+                          <span className="text-[11px] font-medium text-rose-100 hidden lg:inline">
+                            시작일 30일 전 도달 · MD 가격/할인율 확정 · 배너 검수 · 쿠폰 매트릭스 사전 검증 필수
+                          </span>
+                        </div>
+                      )}
+
+                      {/* 2. 📅 5~12월 연간 기획 편성 구간 시작 구분 헤더 */}
+                      {isFirstPlanned && (
+                        <div className="bg-slate-100/90 border-y border-slate-200/90 px-4 py-2 my-2 flex items-center justify-between text-xs z-20 relative rounded-l-xl text-slate-700">
+                          <div className="flex items-center gap-2">
+                            <span className="w-2.5 h-2.5 rounded-sm bg-indigo-500"></span>
+                            <span className="font-bold text-slate-800 flex items-center gap-1.5">
+                              📅 연간 기획 편성 (D-30 초과) — 5~12월 스케줄 사전 편성
+                            </span>
+                            <span className="bg-slate-200 text-slate-700 font-mono text-[10px] font-bold px-2 py-0.5 rounded-full">
+                              {plannedCount}건
+                            </span>
+                          </div>
+                          <span className="text-[11px] text-slate-500 hidden lg:inline">
+                            연간 캘린더 편성 대기 상태이며, 오픈 30일 전 도달 시 자동으로 위 집중 준비 구간으로 전환됩니다.
+                          </span>
+                        </div>
+                      )}
+
+                      {/* 간트 차트 행 (D-30 집중 준비 행은 로즈 틴트 박스 + 볼드 강조 스타일링) */}
+                      <div
+                        onClick={() => handleSelectPromotion(promo.id)}
+                        className={`flex items-center py-3.5 transition-all group cursor-pointer relative z-10 ${
+                          timing.statusType === 'UPCOMING_ACTIVE'
+                            ? `bg-rose-50/70 hover:bg-rose-100/80 border-l-4 border-l-rose-500 border-r-2 border-r-rose-400 pl-3 pr-2 ${
+                                isFirstActivePrep ? 'border-t-2 border-t-rose-400 rounded-t-xl' : ''
+                              } ${
+                                isLastActivePrep ? 'border-b-2 border-b-rose-400 rounded-b-xl shadow-xs' : ''
+                              }`
+                            : timing.isEnded
+                            ? 'opacity-70 bg-slate-50/40 hover:bg-slate-100/60 border-l-4 border-transparent pl-3'
+                            : 'hover:bg-slate-50/90 border-l-4 border-transparent pl-3'
+                        }`}
+                        title="클릭 시 해당 행사의 사전 QC 워크스페이스로 이동합니다"
+                      >
+                        {/* 좌측 정보 컬럼 (너비 320px) */}
+                        <div className="w-80 shrink-0 pr-4">
+                          <div className="flex items-center justify-between mb-1">
+                            <div className="flex items-center gap-1.5">
+                              <span
+                                className={`px-1.5 py-0.2 rounded text-[10px] font-bold ${
+                                  promo.brand === 'SHESMISS'
+                                    ? 'bg-purple-100 text-purple-800'
+                                    : promo.brand === 'LIST'
+                                    ? 'bg-blue-100 text-blue-800'
+                                    : 'bg-emerald-100 text-emerald-800'
+                                }`}
+                              >
+                                {promo.brand}
+                              </span>
+                              <span className="font-mono text-[11px] text-slate-400">
+                                {promo.startDate.slice(5)} ~ {promo.endDate.slice(5)}
+                              </span>
+                            </div>
+
+                            {/* 행사 총 일수 뱃지 */}
+                            <span className="text-[10px] font-bold bg-slate-100 text-slate-600 px-1.5 py-0.2 rounded">
+                              총 {timing.totalDays}일간
+                            </span>
+                          </div>
+
+                          <div className="flex items-center justify-between gap-1 mb-1">
+                            <h4
+                              className={`text-xs font-bold truncate ${
+                                timing.statusType === 'UPCOMING_ACTIVE'
+                                  ? 'text-rose-950 font-black group-hover:text-rose-600'
+                                  : 'text-slate-900 group-hover:text-indigo-600'
                               }`}
                             >
-                              {promo.brand}
-                            </span>
-                            <span className="font-mono text-[11px] text-slate-400">
-                              {promo.startDate.slice(5)} ~ {promo.endDate.slice(5)}
-                            </span>
+                              {promo.title}
+                            </h4>
                           </div>
 
-                          {/* 행사 총 일수 뱃지 */}
-                          <span className="text-[10px] font-bold bg-slate-100 text-slate-600 px-1.5 py-0.2 rounded">
-                            총 {timing.totalDays}일간
-                          </span>
-                        </div>
-
-                        <div className="flex items-center justify-between gap-1 mb-1">
-                          <h4 className="text-xs font-bold text-slate-900 group-hover:text-indigo-600 truncate">
-                            {promo.title}
-                          </h4>
-                        </div>
-
-                        <div className="flex items-center gap-1.5 text-[10px] flex-wrap">
-                          {/* 행사 성격 태그 */}
-                          <span className={`px-1.5 py-0.2 rounded border font-semibold ${eventTypeInfo.color}`}>
-                            {eventTypeInfo.label}
-                          </span>
-
-                          {/* 오늘 기준 상태 태그 */}
-                          {timing.isEnded ? (
-                            <span className="bg-slate-200 text-slate-600 font-bold px-1.5 py-0.2 rounded">
-                              ✓ 행사 종료
+                          <div className="flex items-center gap-1.5 text-[10px] flex-wrap">
+                            {/* 행사 성격 태그 */}
+                            <span className={`px-1.5 py-0.2 rounded border font-semibold ${eventTypeInfo.color}`}>
+                              {eventTypeInfo.label}
                             </span>
-                          ) : timing.statusType === 'RUNNING' ? (
-                            <span className="bg-amber-100 text-amber-800 font-bold px-1.5 py-0.2 rounded flex items-center gap-1 animate-pulse">
-                              <Flame className="w-3 h-3 text-amber-600" />
-                              진행 {timing.elapsedDays}일차 (D-{timing.daysLeft})
-                            </span>
-                          ) : timing.isD30Active ? (
-                            <span className="bg-rose-50 text-rose-700 border border-rose-200 font-bold px-1.5 py-0.2 rounded flex items-center gap-1 shadow-2xs">
-                              <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse"></span>
-                              🔥 오픈 D-{timing.daysUntil} (집중준비)
-                            </span>
-                          ) : (
-                            <span className="bg-slate-100 text-slate-500 font-medium px-1.5 py-0.2 rounded">
-                              D-{timing.daysUntil} (편성)
-                            </span>
-                          )}
 
-                          {blockerCount > 0 && !timing.isEnded ? (
-                            <span className="bg-rose-100 text-rose-800 font-bold px-1.5 py-0.2 rounded flex items-center gap-0.5">
-                              <AlertTriangle className="w-3 h-3 text-rose-600" />
-                              오류 {blockerCount}건
-                            </span>
-                          ) : null}
-
-                          <span className="text-slate-400 font-mono">
-                            {promo.targetDiscountRate}% / {promo.allowCoupon ? '쿠폰O' : '쿠폰X'}
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* 우측 간트 트랙 & 날짜 비례 바 (글자 잘림 현상 완벽 해결) */}
-                      <div className="flex-1 relative h-10 flex items-center">
-                        {/* 간트 바 (최소 너비 56px 확보 + 콤팩트 상태 뱃지만 내부에 배치) */}
-                        <div
-                          className={`absolute h-8 rounded-lg shadow-xs transition-all duration-300 group-hover:shadow-md flex items-center justify-center px-2 border cursor-pointer ${
-                            timing.isEnded ? 'grayscale-[35%]' : ''
-                          } ${timing.isD30Active ? 'ring-1 ring-rose-200' : ''}`}
-                          style={{
-                            left: coords.left,
-                            width: coords.width,
-                            minWidth: '56px',
-                            backgroundColor: timing.isEnded
-                              ? '#f1f5f9'
-                              : isCompleted
-                              ? '#ecfdf5'
-                              : blockerCount > 0
-                              ? '#fff1f2'
-                              : timing.statusType === 'RUNNING'
-                              ? '#fff7ed'
-                              : timing.isD30Active
-                              ? '#fff1f2'
-                              : '#f8fafc',
-                            borderColor: timing.isEnded
-                              ? '#cbd5e1'
-                              : isCompleted
-                              ? '#a7f3d0'
-                              : blockerCount > 0
-                              ? '#fecdd3'
-                              : timing.statusType === 'RUNNING'
-                              ? '#fdba74'
-                              : timing.isD30Active
-                              ? '#fda4af'
-                              : '#e2e8f0',
-                          }}
-                          title={`${promo.title} (${promo.startDate} ~ ${promo.endDate}) - 클릭하여 QC 열기`}
-                        >
-                          {/* 내부 진행률 충전 게이지 (Progress fill bar) */}
-                          <div
-                            className={`absolute left-0 top-0 bottom-0 opacity-25 rounded-l-lg transition-all duration-500 ${
-                              timing.isEnded
-                                ? 'bg-slate-500'
-                                : isCompleted
-                                ? 'bg-emerald-600'
-                                : blockerCount > 0
-                                ? 'bg-rose-600'
-                                : timing.statusType === 'RUNNING'
-                                ? 'bg-amber-600'
-                                : timing.isD30Active
-                                ? 'bg-rose-500'
-                                : 'bg-slate-400'
-                            }`}
-                            style={{ width: `${progress}%` }}
-                          />
-
-                          {/* 바 내부에는 핵심 상태 뱃지만 간결하게 표기 (좁은 막대 내부 텍스트 뭉개짐/잘림 원천 방지) */}
-                          <div className="relative z-10 flex items-center justify-center gap-1 text-[10px] font-bold font-mono">
+                            {/* 오늘 기준 상태 태그 */}
                             {timing.isEnded ? (
-                              <span className="text-slate-600">✓ 종료</span>
-                            ) : timing.statusType === 'RUNNING' ? (
-                              <span className="text-amber-800 flex items-center gap-0.5">
-                                <Flame className="w-2.5 h-2.5 text-amber-600" />
-                                {timing.elapsedDays}일차
+                              <span className="bg-slate-200 text-slate-600 font-bold px-1.5 py-0.2 rounded">
+                                ✓ 행사 종료
                               </span>
-                            ) : blockerCount > 0 ? (
-                              <span className="text-rose-700">🚨 {blockerCount}건</span>
+                            ) : timing.statusType === 'RUNNING' ? (
+                              <span className="bg-amber-100 text-amber-800 font-bold px-1.5 py-0.2 rounded flex items-center gap-1 animate-pulse">
+                                <Flame className="w-3 h-3 text-amber-600" />
+                                진행 {timing.elapsedDays}일차 (D-{timing.daysLeft})
+                              </span>
                             ) : timing.isD30Active ? (
-                              <span className="text-rose-700 font-extrabold flex items-center gap-0.5">
-                                🔥 D-{timing.daysUntil}
+                              <span className="bg-rose-600 text-white font-extrabold px-2 py-0.5 rounded shadow-2xs flex items-center gap-1">
+                                <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span>
+                                🔥 오픈 D-{timing.daysUntil} (집중준비)
                               </span>
                             ) : (
-                              <span className="text-slate-500 font-medium">D-{timing.daysUntil}</span>
-                            )}
-                          </div>
-
-                          {/* 중요: 막대기 외부 트랙에 행사 전체 제목과 총 일수를 잘림 없이 명확하게 배치 */}
-                          <div
-                            className={`absolute top-1/2 -translate-y-1/2 flex items-center gap-1.5 pointer-events-none whitespace-nowrap z-20 ${
-                              isLateYear
-                                ? 'right-[calc(100%+8px)] text-right'
-                                : 'left-[calc(100%+8px)] text-left'
-                            }`}
-                          >
-                            <span className="text-xs font-bold text-slate-800 bg-white/95 px-1.5 py-0.5 rounded shadow-2xs border border-slate-200/60 flex items-center gap-1">
-                              <span>{promo.title}</span>
-                              <span className="text-[10px] text-slate-500 font-mono font-normal">
-                                ({timing.totalDays}일간)
+                              <span className="bg-slate-100 text-slate-500 font-medium px-1.5 py-0.2 rounded">
+                                D-{timing.daysUntil} (편성)
                               </span>
-                            </span>
-                            <span className="text-[10px] font-mono text-slate-400 font-semibold hidden md:inline">
-                              {promo.startDate.slice(5)}~{promo.endDate.slice(5)}
+                            )}
+
+                            {blockerCount > 0 && !timing.isEnded ? (
+                              <span className="bg-rose-100 text-rose-800 font-bold px-1.5 py-0.2 rounded flex items-center gap-0.5">
+                                <AlertTriangle className="w-3 h-3 text-rose-600" />
+                                오류 {blockerCount}건
+                              </span>
+                            ) : null}
+
+                            <span className="text-slate-400 font-mono">
+                              {promo.targetDiscountRate}% / {promo.allowCoupon ? '쿠폰O' : '쿠폰X'}
                             </span>
                           </div>
                         </div>
+
+                        {/* 우측 간트 트랙 & 날짜 비례 바 (글자 잘림 현상 완벽 해결) */}
+                        <div className="flex-1 relative h-10 flex items-center">
+                          {/* 간트 바 (최소 너비 56px 확보 + 콤팩트 상태 뱃지만 내부에 배치) */}
+                          <div
+                            className={`absolute h-8 rounded-lg shadow-xs transition-all duration-300 group-hover:shadow-md flex items-center justify-center px-2 border cursor-pointer ${
+                              timing.isEnded ? 'grayscale-[35%]' : ''
+                            } ${timing.isD30Active ? 'ring-2 ring-rose-400/80 shadow-sm' : ''}`}
+                            style={{
+                              left: coords.left,
+                              width: coords.width,
+                              minWidth: '56px',
+                              backgroundColor: timing.isEnded
+                                ? '#f1f5f9'
+                                : isCompleted
+                                ? '#ecfdf5'
+                                : blockerCount > 0
+                                ? '#fff1f2'
+                                : timing.statusType === 'RUNNING'
+                                ? '#fff7ed'
+                                : timing.isD30Active
+                                ? '#ffe4e6'
+                                : '#f8fafc',
+                              borderColor: timing.isEnded
+                                ? '#cbd5e1'
+                                : isCompleted
+                                ? '#a7f3d0'
+                                : blockerCount > 0
+                                ? '#fecdd3'
+                                : timing.statusType === 'RUNNING'
+                                ? '#fdba74'
+                                : timing.isD30Active
+                                ? '#f43f5e'
+                                : '#e2e8f0',
+                            }}
+                            title={`${promo.title} (${promo.startDate} ~ ${promo.endDate}) - 클릭하여 QC 열기`}
+                          >
+                            {/* 내부 진행률 충전 게이지 (Progress fill bar) */}
+                            <div
+                              className={`absolute left-0 top-0 bottom-0 opacity-25 rounded-l-lg transition-all duration-500 ${
+                                timing.isEnded
+                                  ? 'bg-slate-500'
+                                  : isCompleted
+                                  ? 'bg-emerald-600'
+                                  : blockerCount > 0
+                                  ? 'bg-rose-600'
+                                  : timing.statusType === 'RUNNING'
+                                  ? 'bg-amber-600'
+                                  : timing.isD30Active
+                                  ? 'bg-rose-500'
+                                  : 'bg-slate-400'
+                              }`}
+                              style={{ width: `${progress}%` }}
+                            />
+
+                            {/* 바 내부에는 핵심 상태 뱃지만 간결하게 표기 */}
+                            <div className="relative z-10 flex items-center justify-center gap-1 text-[10px] font-bold font-mono">
+                              {timing.isEnded ? (
+                                <span className="text-slate-600">✓ 종료</span>
+                              ) : timing.statusType === 'RUNNING' ? (
+                                <span className="text-amber-800 flex items-center gap-0.5">
+                                  <Flame className="w-2.5 h-2.5 text-amber-600" />
+                                  {timing.elapsedDays}일차
+                                </span>
+                              ) : blockerCount > 0 ? (
+                                <span className="text-rose-700">🚨 {blockerCount}건</span>
+                              ) : timing.isD30Active ? (
+                                <span className="text-rose-800 font-extrabold flex items-center gap-0.5">
+                                  🔥 D-{timing.daysUntil}
+                                </span>
+                              ) : (
+                                <span className="text-slate-500 font-medium">D-{timing.daysUntil}</span>
+                              )}
+                            </div>
+
+                            {/* 중요: 막대기 외부 트랙에 행사 전체 제목과 총 일수를 잘림 없이 명확하게 배치 */}
+                            <div
+                              className={`absolute top-1/2 -translate-y-1/2 flex items-center gap-1.5 pointer-events-none whitespace-nowrap z-20 ${
+                                isLateYear
+                                  ? 'right-[calc(100%+8px)] text-right'
+                                  : 'left-[calc(100%+8px)] text-left'
+                              }`}
+                            >
+                              <span
+                                className={`text-xs font-bold px-2 py-0.5 rounded shadow-2xs border flex items-center gap-1 ${
+                                  timing.isD30Active
+                                    ? 'bg-white text-rose-950 font-black border-rose-300 ring-1 ring-rose-200'
+                                    : 'bg-white/95 text-slate-800 border-slate-200/60'
+                                }`}
+                              >
+                                <span>{promo.title}</span>
+                                <span
+                                  className={`text-[10px] font-mono ${
+                                    timing.isD30Active ? 'text-rose-600 font-bold' : 'text-slate-500 font-normal'
+                                  }`}
+                                >
+                                  ({timing.totalDays}일간)
+                                </span>
+                              </span>
+                              <span className="text-[10px] font-mono text-slate-400 font-semibold hidden md:inline">
+                                {promo.startDate.slice(5)}~{promo.endDate.slice(5)}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                    </div>
+
+                      {/* D-30 구간 마감 선 */}
+                      {isLastActivePrep && (
+                        <div className="border-b-2 border-dashed border-rose-300 my-0.5 opacity-80" />
+                      )}
+                    </React.Fragment>
                   );
                 })}
               </div>
@@ -1136,14 +1211,28 @@ export default function AnnualScheduleView({ onNavigateToQc }: AnnualScheduleVie
               return (
                 <div
                   key={promo.id}
-                  className={`bg-white rounded-2xl border transition-all p-5 flex flex-col justify-between ${
+                  onClick={() => handleSelectPromotion(promo.id)}
+                  className={`bg-white rounded-2xl border transition-all p-5 flex flex-col justify-between cursor-pointer relative overflow-hidden group ${
                     timing.isEnded
-                      ? 'border-slate-200 opacity-80'
+                      ? 'border-slate-200 opacity-80 hover:border-slate-300'
                       : timing.isD30Active
-                      ? 'border-rose-300 ring-1 ring-rose-200/80 shadow-xs hover:border-rose-400 hover:shadow-md'
+                      ? 'border-2 border-rose-400 ring-2 ring-rose-200/60 shadow-md hover:border-rose-500 hover:shadow-xl bg-gradient-to-b from-rose-50/40 via-white to-white'
                       : 'border-slate-200 hover:border-slate-300 shadow-xs hover:shadow-md'
                   }`}
                 >
+                  {/* D-30 이내 강조 상단 리본 */}
+                  {timing.isD30Active && (
+                    <div className="-mt-5 -mx-5 mb-3.5 bg-gradient-to-r from-rose-600 via-rose-500 to-amber-500 text-white px-4 py-1.5 flex items-center justify-between text-[11px] font-black tracking-tight shadow-xs">
+                      <div className="flex items-center gap-1.5">
+                        <span className="w-2 h-2 rounded-full bg-white animate-ping"></span>
+                        <span>🔥 오픈 집중 준비 (D-30 이내)</span>
+                      </div>
+                      <span className="bg-white/20 px-2 py-0.5 rounded-full font-mono text-[10px]">
+                        D-{timing.daysUntil} 우선 검수
+                      </span>
+                    </div>
+                  )}
+
                   <div>
                     {/* 상단 뱃지 바 */}
                     <div className="flex items-center justify-between gap-2 mb-3">
@@ -1238,7 +1327,10 @@ export default function AnnualScheduleView({ onNavigateToQc }: AnnualScheduleVie
                   {/* 하단 이동 버튼 */}
                   <div className="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between">
                     <button
-                      onClick={() => exportToExcel([promo], `${promo.id}_이벤트리포트`)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        exportToExcel([promo], `${promo.id}_이벤트리포트`);
+                      }}
                       className="text-xs text-slate-500 hover:text-slate-800 flex items-center gap-1 font-semibold cursor-pointer"
                       title="해당 이벤트 엑셀 다운로드"
                     >
@@ -1248,7 +1340,11 @@ export default function AnnualScheduleView({ onNavigateToQc }: AnnualScheduleVie
 
                     <button
                       onClick={() => handleSelectPromotion(promo.id)}
-                      className="inline-flex items-center gap-1 px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-bold transition-colors cursor-pointer"
+                      className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                        timing.isD30Active
+                          ? 'bg-rose-600 hover:bg-rose-700 text-white shadow-xs'
+                          : 'bg-slate-900 hover:bg-slate-800 text-white'
+                      }`}
                     >
                       <span>QC 워크스페이스 열기</span>
                       <ArrowRight className="w-3.5 h-3.5" />
