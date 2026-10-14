@@ -33,7 +33,7 @@ interface DeptSummaryIssue {
   severity: 'BLOCKER' | 'WARNING';
   description: string;
   requestAction: string;
-  deadline: string;
+  deadline?: string;
 }
 
 interface DeptSummaryData {
@@ -86,9 +86,11 @@ export default function EmailDraftModal() {
 
   // =========================================================================
   // 부서별 전수 이슈 취합 데이터 (Total Issue Summary Mail Data with Table)
+  // - 심각도 우선순위 정렬 (BLOCKER -> WARNING)
+  // - 간결하고 직관적인 핵심 요약 텍스트
   // =========================================================================
   const deptSummaries: Record<Department, DeptSummaryData> = useMemo(() => {
-    return {
+    const rawData: Record<Department, DeptSummaryData> = {
       MD: {
         dept: 'MD',
         deptName: 'MD1팀',
@@ -103,29 +105,26 @@ export default function EmailDraftModal() {
             targetName: '클래식 더블 버튼 트렌치코트 (네이비)',
             issueType: '가격/할인율 계산 불일치',
             severity: 'BLOCKER',
-            description: '정가 198,000원 / 실판매가 138,600원으로 계산 할인율은 30%이나, 시트 표기 할인율이 40%로 기재됨.',
-            requestAction: '실제 판매가를 118,800원으로 인하할 것인지, 표기 할인율을 30%로 정정할 것인지 승인 요망',
-            deadline: '2026-03-08 17:00',
+            description: '정가 19.8만 / 판매가 13.86만 (계산 30% ≠ 표기 40%)',
+            requestAction: '판매가 118,800원 인하 또는 표기 할인율 30% 정정 승인',
           },
           {
             no: 2,
-            targetCode: 'SWCTKB21030',
-            targetName: '벨티드 하프 트렌치 자켓 (카키)',
-            issueType: '80% 트렌드 극단치 이상치',
-            severity: 'WARNING',
-            description: '자켓 카테고리 시즌 평균(30%) 대비 80% 극단치 기입 (정가 178,000원 ➔ 행사가 35,600원).',
-            requestAction: '시즌 신상품 역마진 위험 확인, 0 누락 또는 오기입 여부 소명 및 최종 승인 요망',
-            deadline: '2026-03-08 17:00',
-          },
-          {
-            no: 3,
             targetCode: 'SWJCKB21060',
             targetName: '루즈핏 벨티드 하프 코트 (베이지)',
             issueType: '기획 한도 초과 역마진',
             severity: 'BLOCKER',
-            description: '기획서 기준 카테고리 최대 허용 할인율(40%)을 초과하는 55% 할인이 설정됨.',
-            requestAction: '기획 한도 준수를 위한 판매가 재산정 또는 팀장 특별 승인 회신 요망',
-            deadline: '2026-03-08 17:00',
+            description: '카테고리 최대 한도(40%) 초과인 55% 할인 설정',
+            requestAction: '한도 내 판매가 재산정 또는 팀장 특별 승인',
+          },
+          {
+            no: 3,
+            targetCode: 'SWCTKB21030',
+            targetName: '벨티드 하프 트렌치 자켓 (카키)',
+            issueType: '80% 트렌드 극단치 이상치',
+            severity: 'WARNING',
+            description: '시즌 평균(30%) 대비 80% 극단치 (17.8만 ➔ 35,600원)',
+            requestAction: '신상품 역마진 위험 확인 및 오기입 여부 소명',
           },
         ],
       },
@@ -139,23 +138,21 @@ export default function EmailDraftModal() {
         issues: [
           {
             no: 1,
-            targetCode: 'SWBLPB21010',
-            targetName: '클래식 더블 버튼 트렌치코트 (네이비)',
-            issueType: '해상도 규격 미달 & 착용 컷 교체',
-            severity: 'BLOCKER',
-            description: '현재 300x400 px 저해상도 파일 등록으로 모바일 상세페이지 확대 시 심각한 픽셀 깨짐.',
-            requestAction: '750x1000 px 이상 3:4 비율 고해상도 모델 룩북 착용 컷으로 썸네일 교체 재전달',
-            deadline: '2026-03-08 15:00',
-          },
-          {
-            no: 2,
             targetCode: 'SWOPPB11010',
             targetName: '신년 플리츠 벨티드 원피스',
             issueType: '이미지 링크 깨짐 (404 엑스박스)',
             severity: 'BLOCKER',
-            description: '이미지 서버 CDN 파일 누락으로 고객 화면에 엑스박스(깨진 이미지)가 노출되고 있음.',
-            requestAction: '고해상도 대표 착용 컷 이미지 파일 긴급 재전달 (고객 노출 차단 중)',
-            deadline: '즉시 조치 요망',
+            description: 'CDN 이미지 파일 누락으로 엑스박스 노출 중',
+            requestAction: '대표 착용 컷 고해상도 이미지 파일 긴급 재전달',
+          },
+          {
+            no: 2,
+            targetCode: 'SWBLPB21010',
+            targetName: '클래식 더블 버튼 트렌치코트 (네이비)',
+            issueType: '해상도 규격 미달 & 착용 컷 교체',
+            severity: 'BLOCKER',
+            description: '저해상도(300x400) 등록으로 모바일 확대 시 픽셀 깨짐',
+            requestAction: '750x1000 이상 모델 룩북 착용 컷으로 교체 재전달',
           },
           {
             no: 3,
@@ -163,9 +160,8 @@ export default function EmailDraftModal() {
             targetName: '[LIST] 26SS 트렌치코트전 메인 배너',
             issueType: '배너 해상도 규격 미달',
             severity: 'BLOCKER',
-            description: '권장 규격(1920x600 px)에 미달하는 저해상도 파일(1200x400 px)로 타이포그래피 흐림.',
-            requestAction: 'PC 메인 배너 원본 고해상도(1920x600 px, 72dpi 이상) 재전달',
-            deadline: '2026-03-08 15:00',
+            description: '권장 규격(1920x600) 미달 파일(1200x400)로 텍스트 흐림',
+            requestAction: 'PC 메인 원본 고해상도(1920x600, 72dpi) 재전달',
           },
         ],
       },
@@ -183,9 +179,8 @@ export default function EmailDraftModal() {
             targetName: '숏 더블 트렌치 블루종',
             issueType: '상세 URL 404 단절',
             severity: 'BLOCKER',
-            description: '카페24 정상 라우팅 대신 외부 테스트 도메인(broken-link.com)으로 기재되어 404 발생.',
-            requestAction: '정상 자사몰 경로(https://www.idfmall.co.kr/product/SWBLPB21050)로 라우팅 수정',
-            deadline: '즉시 조치 요망',
+            description: '외부 테스트 도메인(broken-link.com) 기재로 404 발생',
+            requestAction: '정상 자사몰 상품 라우팅 URL로 수정 반영',
           },
         ],
       },
@@ -203,9 +198,8 @@ export default function EmailDraftModal() {
             targetName: 'LIVE WEEK 한정 특가 상품군 쿠폰 적용',
             issueType: '쿠폰 중복 적용 플래그 검토',
             severity: 'WARNING',
-            description: 'LIVE WEEK 한정 특가 상품군에 신규회원 웰컴 쿠폰 중복 적용 허용 플래그가 활성화됨.',
-            requestAction: '특가 상품의 중복 쿠폰 적용 허용 여부 최종 승인 (기획 원안대로 중복 불가 정정)',
-            deadline: '2026-03-08 18:00',
+            description: 'LIVE WEEK 특가 상품에 신규회원 웰컴 쿠폰 중복 활성화',
+            requestAction: '중복 쿠폰 허용 여부 확인 (기획 원안대로 중복 불가 정정)',
           },
         ],
       },
@@ -219,6 +213,20 @@ export default function EmailDraftModal() {
         issues: [],
       },
     };
+
+    // 심각도 우선순위 정렬 보장 (BLOCKER가 WARNING보다 위) & 번호 재부여
+    (Object.keys(rawData) as Department[]).forEach((d) => {
+      rawData[d].issues.sort((a, b) => {
+        if (a.severity === 'BLOCKER' && b.severity !== 'BLOCKER') return -1;
+        if (a.severity !== 'BLOCKER' && b.severity === 'BLOCKER') return 1;
+        return 0;
+      });
+      rawData[d].issues.forEach((item, idx) => {
+        item.no = idx + 1;
+      });
+    });
+
+    return rawData;
   }, []);
 
   const defaultSummaryBodies = useMemo(() => {
@@ -234,12 +242,12 @@ E-BIZ 운영본부 QC 시스템 자동 발송 메일입니다.
 
 ■ ${s.deptName} 조치 필요 결함 요약 (총 ${s.issues.length}건)
 ---------------------------------------------------------------------------------------------------------
-| No | 대상 품번 / 상품명 | 결함 유형 | 심각도 | 감지된 오류 내용 및 조치 요청 | 조치 기한 |
+| No | 심각도 | 대상 품번 / 상품명 | 결함 유형 | 감지된 오류 내용 및 조치 요청 |
 ---------------------------------------------------------------------------------------------------------
 ${s.issues
   .map(
     (issue) =>
-      `| ${issue.no} | [${issue.targetCode}] ${issue.targetName} | ${issue.issueType} | [${issue.severity}] | ${issue.description} -> ${issue.requestAction} | ${issue.deadline} |`
+      `| ${issue.no} | [${issue.severity}] | [${issue.targetCode}] ${issue.targetName} | ${issue.issueType} | ${issue.description} ➔ ${issue.requestAction} |`
   )
   .join('\n')}
 ---------------------------------------------------------------------------------------------------------
@@ -855,11 +863,10 @@ E-BIZ 자사몰 운영팀
                         <thead>
                           <tr className="bg-slate-100/80 border-b border-slate-200 text-slate-700 text-[11px] font-bold">
                             <th className="py-2.5 px-3 w-10 text-center">No</th>
-                            <th className="py-2.5 px-3 w-40">대상 품번 / 상품명</th>
-                            <th className="py-2.5 px-3 w-32">결함 유형</th>
                             <th className="py-2.5 px-3 w-24 text-center">심각도</th>
+                            <th className="py-2.5 px-3 w-44">대상 품번 / 상품명</th>
+                            <th className="py-2.5 px-3 w-36">결함 유형</th>
                             <th className="py-2.5 px-3">감지된 오류 내용 및 조치 요청</th>
-                            <th className="py-2.5 px-3 w-28 text-center">조치 기한</th>
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
@@ -867,17 +874,6 @@ E-BIZ 자사몰 운영팀
                             <tr key={issue.no} className="hover:bg-slate-50/60 transition-colors">
                               <td className="py-2.5 px-3 text-center font-bold text-slate-400">
                                 {issue.no}
-                              </td>
-                              <td className="py-2.5 px-3">
-                                <span className="font-mono font-bold text-indigo-700 block">
-                                  {issue.targetCode}
-                                </span>
-                                <span className="text-[11px] text-slate-600 block truncate max-w-[150px]">
-                                  {issue.targetName}
-                                </span>
-                              </td>
-                              <td className="py-2.5 px-3 font-semibold text-slate-800">
-                                {issue.issueType}
                               </td>
                               <td className="py-2.5 px-3 text-center">
                                 <span
@@ -890,15 +886,23 @@ E-BIZ 자사몰 운영팀
                                   {issue.severity}
                                 </span>
                               </td>
-                              <td className="py-2.5 px-3 space-y-0.5">
-                                <p className="text-slate-800">{issue.description}</p>
-                                <p className="text-[11px] font-semibold text-indigo-600 flex items-center gap-1">
-                                  <ArrowRight className="w-3 h-3 shrink-0" />
+                              <td className="py-2.5 px-3">
+                                <span className="font-mono font-bold text-indigo-700 block">
+                                  {issue.targetCode}
+                                </span>
+                                <span className="text-[11px] text-slate-600 block truncate max-w-[170px]">
+                                  {issue.targetName}
+                                </span>
+                              </td>
+                              <td className="py-2.5 px-3 font-semibold text-slate-800">
+                                {issue.issueType}
+                              </td>
+                              <td className="py-2.5 px-3 space-y-1">
+                                <p className="text-slate-800 font-medium">{issue.description}</p>
+                                <p className="text-[11px] text-indigo-700 font-semibold flex items-center gap-1 bg-indigo-50/70 px-2 py-0.5 rounded w-fit">
+                                  <ArrowRight className="w-3 h-3 shrink-0 text-indigo-500" />
                                   <span>{issue.requestAction}</span>
                                 </p>
-                              </td>
-                              <td className="py-2.5 px-3 text-center font-semibold text-slate-600 text-[11px]">
-                                {issue.deadline}
                               </td>
                             </tr>
                           ))}
