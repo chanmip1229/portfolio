@@ -85,12 +85,12 @@ export default function AnnualScheduleView({ onNavigateToQc }: AnnualScheduleVie
     return 'Q4';
   };
 
-  // 행사 기간, 오늘 진행 일차, 마감 D-Day 계산 헬퍼 (기준일: 2026-03-08)
+  // 행사 기간, 오늘 진행 일차, 마감 D-Day 계산 헬퍼 (시연 기준일: 2026-10-15 고정 시뮬레이션)
   // 오픈 1달 전(D-30 이내)은 '실제 집중 준비 대상'으로 분류, 30일 초과는 '연간 기획 편성'으로 분리
   const getPromoTiming = (startDate: string, endDate: string) => {
     const start = new Date(startDate);
     const end = new Date(endDate);
-    const today = new Date('2026-03-08');
+    const today = new Date('2026-10-15');
 
     // 총 행사 일수
     const totalDays = Math.round((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
@@ -242,8 +242,8 @@ export default function AnnualScheduleView({ onNavigateToQc }: AnnualScheduleVie
     };
   };
 
-  // 현재 시점 (2026년 3월 2주차 3월 8일) 위치 퍼센트
-  const currentTimelinePos = '19.4%';
+  // 현재 시점 (2026년 10월 15일 기준) 위치 퍼센트 (10월 중순: 79.0%)
+  const currentTimelinePos = '79.0%';
 
   const handleSelectPromotion = (promoId: string) => {
     setSelectedPromotionId(promoId);
@@ -258,13 +258,17 @@ export default function AnnualScheduleView({ onNavigateToQc }: AnnualScheduleVie
       <div className="bg-white rounded-2xl border border-slate-200 shadow-xs p-6">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-6 border-b border-slate-100">
           <div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <span className="p-2 bg-indigo-50 text-indigo-600 rounded-xl">
                 <Calendar className="w-5 h-5" />
               </span>
               <h2 className="text-lg font-black text-slate-900 tracking-tight">
                 2026 연간 프로모션 마스터 캘린더 & 간트차트 로드맵
               </h2>
+              <span className="text-[11px] font-extrabold bg-indigo-50 text-indigo-700 border border-indigo-200/80 px-2.5 py-1 rounded-full flex items-center gap-1.5 shadow-2xs">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>📅 시연 기준일: <strong>2026.10.15</strong> (오픈 D-2 고정 시뮬레이션)</span>
+              </span>
             </div>
             <p className="text-xs text-slate-500 mt-1">
               인동FN 3대 브랜드(SHESMISS, LIST, SISTINA)의 1~12월 실제 일정 위치와 마일스톤 완료 진척도를 일치시켜 관리합니다.
@@ -410,7 +414,7 @@ export default function AnnualScheduleView({ onNavigateToQc }: AnnualScheduleVie
                 </span>
                 {blockerPromoCount > 0 ? (
                   <span className="text-[10px] font-extrabold text-white bg-rose-600 px-2 py-0.5 rounded-full shadow-2xs">
-                    QC 이슈 {blockerPromoCount}건
+                    결함 감지 {blockerPromoCount}개 행사
                   </span>
                 ) : (
                   <span className="text-[10px] font-bold text-rose-700 bg-rose-100 px-1.5 py-0.2 rounded-full">
@@ -548,7 +552,7 @@ export default function AnnualScheduleView({ onNavigateToQc }: AnnualScheduleVie
             <div className="flex items-center gap-2 font-bold text-slate-800">
               <HelpCircle className="w-4 h-4 text-indigo-600" />
               <span>ℹ️ 프로모션 상태 판정 기준 및 운영 마일스톤 가이드</span>
-              <span className="text-[11px] font-normal text-slate-500">(기준일: 2026년 3월 8일 오늘)</span>
+              <span className="text-[11px] font-normal text-slate-500">(시연 기준일: 2026년 10월 15일 · 오픈 D-2 고정)</span>
             </div>
             <button type="button" className="text-slate-400 hover:text-slate-600">
               {showCriteriaGuide ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
@@ -830,7 +834,7 @@ export default function AnnualScheduleView({ onNavigateToQc }: AnnualScheduleVie
               </span>
               <span className="flex items-center gap-1.5 text-rose-600 font-bold">
                 <span className="w-2 h-2 rounded-full bg-rose-500 ring-2 ring-rose-200"></span>
-                오늘 (3월 8일)
+                시연 기준일 (10월 15일)
               </span>
             </div>
           </div>
@@ -860,8 +864,8 @@ export default function AnnualScheduleView({ onNavigateToQc }: AnnualScheduleVie
                     className="absolute -top-3.5 z-20 transform -translate-x-1/2 flex flex-col items-center pointer-events-none"
                     style={{ left: currentTimelinePos }}
                   >
-                    <span className="bg-rose-500 text-white text-[9px] font-extrabold px-1.5 py-0.2 rounded-full shadow-2xs">
-                      오늘 (3/8)
+                    <span className="bg-rose-500 text-white text-[9px] font-extrabold px-1.5 py-0.2 rounded-full shadow-2xs whitespace-nowrap">
+                      시연 기준일 (10/15 · D-2)
                     </span>
                     <span className="w-1.5 h-1.5 bg-rose-500 rotate-45 -mt-0.5"></span>
                   </div>
@@ -1024,9 +1028,12 @@ export default function AnnualScheduleView({ onNavigateToQc }: AnnualScheduleVie
                             )}
 
                             {blockerCount > 0 && !timing.isEnded ? (
-                              <span className="bg-rose-100 text-rose-800 font-bold px-1.5 py-0.2 rounded flex items-center gap-0.5">
-                                <AlertTriangle className="w-3 h-3 text-rose-600" />
-                                오류 {blockerCount}건
+                              <span
+                                className="bg-rose-100 text-rose-800 font-bold px-1.5 py-0.2 rounded flex items-center gap-1 text-[11px]"
+                                title={`단품 결함 3종 (복합 결함 포함) + 배너 결함 1건 = 부서별 총 ${blockerCount}건 조치 대상`}
+                              >
+                                <AlertTriangle className="w-3 h-3 text-rose-600 shrink-0" />
+                                <span>결함 {blockerCount}건 <span className="font-normal text-rose-600 text-[10px]">(단품 3종 · 배너 1건)</span></span>
                               </span>
                             ) : null}
 

@@ -163,20 +163,20 @@ export interface Promotion {
 export type EventLifecycle = 'ALL' | 'ACTIVE' | 'UPCOMING' | 'ENDED';
 
 export function getPromotionLifecycle(promo: Promotion): 'ACTIVE' | 'UPCOMING' | 'ENDED' {
-  // 1. 종료된 행사: 기준 시점(2026년 3월) 이전 종료된 행사
-  if (promo.endDate < '2026-03-01') {
+  // 1. 종료된 행사: 시연 기준 시점(2026년 10월 15일) 이전 종료된 행사
+  if (promo.endDate < '2026-10-15') {
     return 'ENDED';
   }
-  // 2. 진행 중인 행사 (당월 집중 대응): 3월 오픈 및 현재 실시간 조치/대기 중인 행사
+  // 2. 진행 중인 행사 (당월 집중 대응): 10월 오픈 및 현재 실시간 조치/대기 중인 행사
   if (
-    promo.startDate.startsWith('2026-03') ||
+    promo.startDate.startsWith('2026-10') ||
     promo.status === 'NEEDS_CHECK' ||
     promo.status === 'ASSET_REQUESTED' ||
     promo.status === 'DATA_RECEIVED'
   ) {
     return 'ACTIVE';
   }
-  // 3. 진행 예정 행사: 4월 이후 오픈 예정 로드맵
+  // 3. 진행 예정 행사: 11월 이후 오픈 예정 로드맵
   return 'UPCOMING';
 }
 

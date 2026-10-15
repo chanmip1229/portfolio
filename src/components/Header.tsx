@@ -70,7 +70,7 @@ export default function Header({ onLoadDemo, onOpenDrafts, draftCount }: HeaderP
             className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-xs hover:shadow transition-all cursor-pointer"
           >
             <Sparkles className="w-3.5 h-3.5" />
-            <span>🚀 시연 시나리오 로드 (26SS LIST)</span>
+            <span>🚀 시연 시나리오 로드 (26FW LIST)</span>
           </button>
 
           {/* 메일 임시보관함 알림 버튼 */}

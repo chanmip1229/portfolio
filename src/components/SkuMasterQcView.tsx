@@ -221,8 +221,8 @@ export default function SkuMasterQcView({ onOpenDualDraftModal }: SkuMasterQcVie
           id: `promo-upload-${Date.now()}`,
           title: `[엑셀 업로드] ${file.name.replace(/\.[^/.]+$/, '')}`,
           brand: brandFromExcel,
-          startDate: '2026-03-10',
-          endDate: '2026-03-24',
+          startDate: '2026-10-17',
+          endDate: '2026-10-24',
           targetDiscountRate: parsedProducts[0]?.displayDiscountRate || 30,
           category: parsedProducts[0]?.category || '아우터',
           status: 'NEEDS_CHECK',
@@ -240,9 +240,9 @@ export default function SkuMasterQcView({ onOpenDualDraftModal }: SkuMasterQcVie
           },
           milestones: [],
           timestamps: {
-            plannedAt: '2026-03-01 09:00',
-            dataReceivedAt: '2026-03-08 14:00',
-            issueDetectedAt: '2026-03-08 14:01',
+            plannedAt: '2026-10-05 09:00',
+            dataReceivedAt: '2026-10-15 14:00',
+            issueDetectedAt: '2026-10-15 14:01',
           },
         };
 
@@ -367,9 +367,9 @@ export default function SkuMasterQcView({ onOpenDualDraftModal }: SkuMasterQcVie
       },
       milestones: [],
       timestamps: {
-        plannedAt: '2026-03-01 09:00',
-        dataReceivedAt: '2026-03-08 14:00',
-        issueDetectedAt: '2026-03-08 14:01',
+        plannedAt: '2026-10-05 09:00',
+        dataReceivedAt: '2026-10-15 14:00',
+        issueDetectedAt: '2026-10-15 14:01',
       },
     };
 
@@ -480,46 +480,79 @@ export default function SkuMasterQcView({ onOpenDualDraftModal }: SkuMasterQcVie
           </div>
         )}
 
-        {/* 2. 5대 핵심 SKU 상태 지표 카드 */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-3 pt-6">
-          <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80">
-            <span className="text-[11px] font-bold text-slate-500 uppercase">전체 검수 대상 SKU</span>
-            <div className="flex items-baseline gap-1.5 mt-1">
-              <span className="text-2xl font-black text-slate-900 font-mono">{totalCount}</span>
-              <span className="text-xs text-slate-500">종</span>
-            </div>
-            <p className="text-[10px] text-slate-400 mt-1">인동FN 3대 브랜드 통합</p>
-          </div>
-
-          {/* 다부서 복합 결함 카드 */}
+        {/* 2. 핵심 4대 SKU 상태 정합성 지표 카드 (정합 수식: 결함 4종 + 이상치 1종 + 정상 3종 = 전체 8종 100% 일치) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-6">
+          {/* 카드 1: 전체 검수 대상 SKU */}
           <div
-            onClick={() => setFilterType(filterType === 'MULTI_DEPT' ? 'ALL' : 'MULTI_DEPT')}
-            className={`p-3.5 rounded-xl border transition-all cursor-pointer ${
-              filterType === 'MULTI_DEPT'
-                ? 'bg-purple-100/80 border-purple-400 ring-2 ring-purple-300'
-                : 'bg-purple-50/70 border-purple-200 hover:bg-purple-100/50'
+            onClick={() => setFilterType('ALL')}
+            className={`p-4 rounded-xl border transition-all cursor-pointer ${
+              filterType === 'ALL'
+                ? 'bg-slate-100/90 border-slate-400 ring-2 ring-slate-300'
+                : 'bg-slate-50 border-slate-200/80 hover:bg-slate-100/60'
             }`}
           >
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold text-purple-800 uppercase flex items-center gap-1">
-                <Layers className="w-3.5 h-3.5 text-purple-600" />
-                다부서 복합 결함
-              </span>
-              <span className="text-[10px] font-bold bg-purple-200/80 text-purple-900 px-1.5 py-0.2 rounded-full">
-                MD+디자인
-              </span>
+              <span className="text-[11px] font-bold text-slate-500 uppercase">전체 검수 대상 SKU</span>
+              {filterType === 'ALL' && (
+                <span className="text-[10px] font-bold text-slate-600 bg-white px-1.5 py-0.2 rounded border border-slate-300">
+                  전체 표시 중
+                </span>
+              )}
             </div>
-            <div className="flex items-baseline gap-1.5 mt-1">
-              <span className="text-2xl font-black text-purple-900 font-mono">{multiDeptCount}</span>
-              <span className="text-xs text-purple-700 font-bold">건</span>
+            <div className="flex items-baseline gap-1.5 mt-1.5">
+              <span className="text-2xl font-black text-slate-900 font-mono">{totalCount}</span>
+              <span className="text-xs text-slate-500 font-bold">종</span>
             </div>
-            <p className="text-[10px] text-purple-700 mt-1 font-semibold">2개 이상 부서 동시 확인</p>
+            <p className="text-[10px] text-slate-500 mt-1">인동FN 3대 브랜드 통합 전수 검수</p>
           </div>
 
-          {/* 트렌드 이상치 (80% 등) 카드 */}
+          {/* 카드 2: 즉시 조치 결함 (BLOCKER - 다부서 복합 1종 포함) */}
+          <div
+            onClick={() => setFilterType(filterType === 'BLOCKER' ? 'ALL' : 'BLOCKER')}
+            className={`p-4 rounded-xl border transition-all cursor-pointer relative ${
+              filterType === 'BLOCKER' || filterType === 'MULTI_DEPT'
+                ? 'bg-rose-100/80 border-rose-400 ring-2 ring-rose-300'
+                : 'bg-rose-50/70 border-rose-200 hover:bg-rose-100/50'
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-bold text-rose-800 uppercase flex items-center gap-1">
+                <AlertTriangle className="w-3.5 h-3.5 text-rose-600" />
+                즉시 조치 결함 (BLOCKER)
+              </span>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setFilterType(filterType === 'MULTI_DEPT' ? 'ALL' : 'MULTI_DEPT');
+                }}
+                className={`text-[10px] font-bold px-2 py-0.5 rounded-full transition-all cursor-pointer flex items-center gap-1 ${
+                  filterType === 'MULTI_DEPT'
+                    ? 'bg-purple-600 text-white shadow-2xs'
+                    : 'bg-purple-100 text-purple-800 border border-purple-300 hover:bg-purple-200'
+                }`}
+                title="다부서 복합 결함 품번만 필터링 (MD 가격오류 + 디자인 썸네일 해상도)"
+              >
+                <Layers className="w-3 h-3 text-purple-600" />
+                <span>다부서 {multiDeptCount}종 포함</span>
+              </button>
+            </div>
+            <div className="flex items-baseline gap-1.5 mt-1.5">
+              <span className="text-2xl font-black text-rose-900 font-mono">{blockerCount}</span>
+              <span className="text-xs text-rose-700 font-bold">종</span>
+              <span className="text-[10px] text-rose-600 font-medium ml-1">
+                (단품 4건)
+              </span>
+            </div>
+            <p className="text-[10px] text-rose-700 mt-1 font-medium">
+              가격불일치(1) · 미승인(1) · 404 URL(1) · 썸네일(1)
+            </p>
+          </div>
+
+          {/* 카드 3: 트렌드 이상치 (WARNING) */}
           <div
             onClick={() => setFilterType(filterType === 'TREND_ANOMALY' ? 'ALL' : 'TREND_ANOMALY')}
-            className={`p-3.5 rounded-xl border transition-all cursor-pointer ${
+            className={`p-4 rounded-xl border transition-all cursor-pointer ${
               filterType === 'TREND_ANOMALY'
                 ? 'bg-amber-100/80 border-amber-400 ring-2 ring-amber-300'
                 : 'bg-amber-50/70 border-amber-200 hover:bg-amber-100/50'
@@ -528,57 +561,46 @@ export default function SkuMasterQcView({ onOpenDualDraftModal }: SkuMasterQcVie
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-bold text-amber-800 uppercase flex items-center gap-1">
                 <TrendingDown className="w-3.5 h-3.5 text-amber-600" />
-                트렌드 이상치
+                트렌드 이상치 (WARNING)
               </span>
               <span className="text-[10px] font-bold bg-amber-200/80 text-amber-900 px-1.5 py-0.2 rounded-full">
                 80% 오기입
               </span>
             </div>
-            <div className="flex items-baseline gap-1.5 mt-1">
+            <div className="flex items-baseline gap-1.5 mt-1.5">
               <span className="text-2xl font-black text-amber-900 font-mono">{trendAnomalyCount}</span>
-              <span className="text-xs text-amber-700 font-bold">건</span>
+              <span className="text-xs text-amber-700 font-bold">종</span>
             </div>
-            <p className="text-[10px] text-amber-700 mt-1 font-semibold">시즌 평균(30%) 대비 극단치</p>
+            <p className="text-[10px] text-amber-700 mt-1 font-medium">
+              시즌 평균(30%) 대비 MD 기획 원본 극단치 감지
+            </p>
           </div>
 
-          {/* 단일 차단 결함 카드 */}
-          <div
-            onClick={() => setFilterType(filterType === 'BLOCKER' ? 'ALL' : 'BLOCKER')}
-            className={`p-3.5 rounded-xl border transition-all cursor-pointer ${
-              filterType === 'BLOCKER'
-                ? 'bg-rose-100/80 border-rose-400 ring-2 ring-rose-300'
-                : 'bg-rose-50/70 border-rose-200 hover:bg-rose-100/50'
-            }`}
-          >
-            <span className="text-[11px] font-bold text-rose-800 uppercase flex items-center gap-1">
-              <AlertTriangle className="w-3.5 h-3.5 text-rose-600" />
-              즉시 조치 결함 (BLOCKER)
-            </span>
-            <div className="flex items-baseline gap-1.5 mt-1">
-              <span className="text-2xl font-black text-rose-900 font-mono">{blockerCount}</span>
-              <span className="text-xs text-rose-700 font-bold">건</span>
-            </div>
-            <p className="text-[10px] text-rose-700 mt-1">미승인·404·할인율 불일치</p>
-          </div>
-
-          {/* 정상 검증 완료 카드 */}
+          {/* 카드 4: 정합성 검증 완료 (PASSED) */}
           <div
             onClick={() => setFilterType(filterType === 'PASSED' ? 'ALL' : 'PASSED')}
-            className={`p-3.5 rounded-xl border transition-all cursor-pointer ${
+            className={`p-4 rounded-xl border transition-all cursor-pointer ${
               filterType === 'PASSED'
                 ? 'bg-emerald-100/80 border-emerald-400 ring-2 ring-emerald-300'
                 : 'bg-emerald-50/70 border-emerald-200 hover:bg-emerald-100/50'
             }`}
           >
-            <span className="text-[11px] font-bold text-emerald-800 uppercase flex items-center gap-1">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-              정합성 검증 완료
-            </span>
-            <div className="flex items-baseline gap-1.5 mt-1">
-              <span className="text-2xl font-black text-emerald-900 font-mono">{passedCount}</span>
-              <span className="text-xs text-emerald-700 font-bold">건</span>
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-bold text-emerald-800 uppercase flex items-center gap-1">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                정합성 검증 완료
+              </span>
+              <span className="text-[10px] font-bold bg-emerald-200/80 text-emerald-900 px-1.5 py-0.2 rounded-full">
+                PASS
+              </span>
             </div>
-            <p className="text-[10px] text-emerald-700 mt-1">오류 없음 (게시 승인 가능)</p>
+            <div className="flex items-baseline gap-1.5 mt-1.5">
+              <span className="text-2xl font-black text-emerald-900 font-mono">{passedCount}</span>
+              <span className="text-xs text-emerald-700 font-bold">종</span>
+            </div>
+            <p className="text-[10px] text-emerald-700 mt-1 font-medium">
+              오류 없음 (스케줄 자동 게시 승인 가능)
+            </p>
           </div>
         </div>
 

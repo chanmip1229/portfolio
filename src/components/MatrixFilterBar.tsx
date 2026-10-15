@@ -172,7 +172,7 @@ export default function MatrixFilterBar() {
             <span>1. 행사 진행 단계 관점 (업무 우선순위 식별)</span>
           </label>
           <span className="text-[11px] text-slate-400">
-            현재 집중 관리: <strong className="text-rose-600 font-bold">3월 당월 진행 3건</strong>
+            현재 집중 관리: <strong className="text-rose-600 font-bold">10월 당월 진행 3건</strong>
           </span>
         </div>
 
@@ -249,7 +249,7 @@ export default function MatrixFilterBar() {
           {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => {
             const isSelected = selectedMonth === m;
             const count = monthCounts[m] || 0;
-            const isCurrentMonth = m === 3; // 시뮬레이션 기준 3월이 현재 당월
+            const isCurrentMonth = m === 10; // 시뮬레이션 기준 10월이 현재 당월
 
             return (
               <button

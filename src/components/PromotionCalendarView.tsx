@@ -119,9 +119,9 @@ export default function PromotionCalendarView() {
             </div>
           </div>
 
-          <div className="flex items-center gap-2 text-xs text-slate-400">
+          <div className="flex items-center gap-2 text-xs text-slate-300 bg-white/10 px-3 py-1.5 rounded-xl border border-white/10">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            <span>2026년 3월 실시간 관제 중</span>
+            <span>📅 시연 기준일: <strong>2026.10.15</strong> (오픈 D-2 고정 시뮬레이션)</span>
           </div>
         </div>
 
