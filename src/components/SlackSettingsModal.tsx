@@ -319,7 +319,7 @@ export default function SlackSettingsModal() {
 
         {/* 모달 하단 닫기 */}
         <div className="px-6 py-3 border-t border-slate-200 bg-slate-50 flex items-center justify-between text-xs text-slate-500">
-          <span>인동FN E-BIZ 자사몰 무결점 사전 QC & 알림 시스템</span>
+          <span>인동FN E-BIZ 자사몰 프로모션 일정 관리 & 오픈 사전 점검</span>
           <button
             type="button"
             onClick={() => setIsSlackModalOpen(false)}

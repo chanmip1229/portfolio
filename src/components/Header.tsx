@@ -31,7 +31,7 @@ export default function Header({ onLoadDemo, onOpenDrafts, draftCount }: HeaderP
               </span>
             </div>
             <p className="text-[11px] text-slate-400 font-medium">
-              인동FN 자사몰 프로모션 사전 QC & 무결점 런칭 데스크
+              인동FN 자사몰 프로모션 일정 관리 & 오픈 사전 점검
             </p>
           </div>
         </div>

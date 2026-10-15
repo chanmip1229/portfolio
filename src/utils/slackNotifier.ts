@@ -96,7 +96,7 @@ export function buildTestSlackBlocks() {
       elements: [
         {
           type: 'mrkdwn',
-          text: '💡 인동FN 자사몰 프로모션 사전 QC & 무결점 런칭 데스크 • IDF E-Biz 운영 보드',
+          text: '💡 인동FN 자사몰 프로모션 일정 관리 & 오픈 사전 점검 • IDF E-Biz 운영 보드',
         },
       ],
     },

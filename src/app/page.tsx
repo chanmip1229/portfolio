@@ -254,7 +254,7 @@ export default function Home() {
                 <div>
                   <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-white/10 text-white text-[11px] font-semibold mb-2">
                     <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    E-BIZ 프로모션 & SKU 마스터 무결점 검증 엔진
+                    E-BIZ 프로모션 & SKU 마스터 사전 검증 엔진
                   </div>
                   <h1 className="text-xl md:text-2xl font-black tracking-tight flex items-center gap-2">
                     <ShieldCheck className="w-6 h-6 text-indigo-400" />
@@ -378,7 +378,7 @@ export default function Home() {
       <SlackSettingsModal />
 
       <footer className="border-t border-slate-200 bg-white py-6 text-center text-xs text-slate-400">
-        IDF E-Biz 운영 보드 — 인동FN 자사몰 프로모션 사전 QC & 무결점 런칭 데스크
+        IDF E-Biz 운영 보드 — 인동FN 자사몰 프로모션 일정 관리 & 오픈 사전 점검
       </footer>
     </div>
   );
