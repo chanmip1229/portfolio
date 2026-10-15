@@ -148,7 +148,7 @@ export default function AiSearchPage() {
               className="text-xs font-semibold text-indigo-600 hover:text-indigo-800 flex items-center gap-1"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
-              <span>OpsPilot 관리자 화면</span>
+              <span>E-Biz 운영 보드</span>
             </Link>
           </div>
         </div>

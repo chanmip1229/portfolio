@@ -56,7 +56,7 @@ export function buildTestSlackBlocks() {
       type: 'header',
       text: {
         type: 'plain_text',
-        text: '🎉 [연동 성공] OpsPilot & Slack 실시간 알림 연결 완료',
+        text: '🎉 [연동 성공] IDF E-Biz 운영 보드 & Slack 실시간 알림 연결 완료',
         emoji: true,
       },
     },
@@ -64,7 +64,7 @@ export function buildTestSlackBlocks() {
       type: 'section',
       text: {
         type: 'mrkdwn',
-        text: '안녕하세요! 인동FN 자사몰 운영 Copilot **OpsPilot**과 실제 Slack 채널 연동이 정상적으로 완료되었습니다.\n앞으로 프로모션 사전 QC에서 감지된 **가격 역전, 마진 오류, 이미지 누락** 등 긴급 결함이 이 채널로 실시간 발송됩니다.',
+        text: '안녕하세요! 인동FN 자사몰 **IDF E-Biz 운영 보드**와 실제 Slack 채널 연동이 정상적으로 완료되었습니다.\n앞으로 프로모션 사전 QC에서 감지된 **가격 역전, 마진 오류, 이미지 누락** 등 긴급 결함이 이 채널로 실시간 발송됩니다.',
       },
     },
     {
@@ -72,7 +72,7 @@ export function buildTestSlackBlocks() {
       fields: [
         {
           type: 'mrkdwn',
-          text: '*발송 시스템:*\nOpsPilot AI E-BIZ Copilot',
+          text: '*발송 시스템:*\nIDF E-Biz 운영 보드 (스마트 코파일럿)',
         },
         {
           type: 'mrkdwn',
@@ -96,7 +96,7 @@ export function buildTestSlackBlocks() {
       elements: [
         {
           type: 'mrkdwn',
-          text: '💡 인동FN 자사몰 프로모션 운영 & 무결점 사전 QC 시스템 • OpsPilot',
+          text: '💡 인동FN 자사몰 프로모션 사전 QC & 무결점 런칭 데스크 • IDF E-Biz 운영 보드',
         },
       ],
     },
@@ -269,7 +269,7 @@ export function buildSingleDraftSlackBlocks(draft: EmailDraft) {
       elements: [
         {
           type: 'mrkdwn',
-          text: `OpsPilot AI E-BIZ Copilot • ${deptLabel} 담당자 즉시 확인 요망`,
+          text: `IDF E-Biz 운영 보드 • ${deptLabel} 담당자 즉시 확인 요망`,
         },
       ],
     },

@@ -25,13 +25,13 @@ export default function Header({ onLoadDemo, onOpenDrafts, draftCount }: HeaderP
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-base font-extrabold text-slate-900 tracking-tight">OpsPilot</span>
+              <span className="text-base font-extrabold text-slate-900 tracking-tight">IDF E-Biz 운영 보드</span>
               <span className="px-1.5 py-0.5 text-[10px] font-bold bg-indigo-50 text-indigo-700 rounded-md border border-indigo-200">
-                AI E-BIZ Copilot
+                스마트 코파일럿
               </span>
             </div>
             <p className="text-[11px] text-slate-400 font-medium">
-              인동FN 자사몰 프로모션 운영 & 무결점 사전 QC 시스템
+              인동FN 자사몰 프로모션 사전 QC & 무결점 런칭 데스크
             </p>
           </div>
         </div>

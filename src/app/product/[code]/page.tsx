@@ -52,7 +52,7 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
             IDF <span className="text-xs font-semibold text-slate-400">Mall</span>
           </div>
           <Link href="/" className="text-xs text-slate-500 hover:text-slate-800">
-            OpsPilot으로 돌아가기
+            E-Biz 운영 보드로 돌아가기
           </Link>
         </header>
 
@@ -275,7 +275,7 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
             </Link>
             <ShoppingBag className="w-4 h-4 cursor-pointer hover:text-slate-900" />
             <Link href="/" className="text-xs text-indigo-600 font-semibold hover:underline ml-2">
-              OpsPilot 복귀
+              E-Biz 운영 보드 복귀
             </Link>
           </div>
         </div>
@@ -521,7 +521,7 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
             <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-between text-xs text-emerald-900">
               <span className="flex items-center gap-1.5 font-semibold">
                 <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                OpsPilot 6대 사전 QC 통과 완료
+                E-Biz 6대 사전 QC 통과 완료
               </span>
               <span className="font-mono text-emerald-700 text-[11px]">
                 정합치: {calculatedDiscount}% / 쿠폰 정책 적합

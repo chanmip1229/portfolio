@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "OpsPilot — Fashion E-Commerce Ops Copilot",
-  description: "인동FN 자사몰 프로모션 운영 & 무결점 사전 QC 플랫폼",
+  title: "IDF E-Biz 운영 보드 — 인동FN 자사몰 사전 QC & 프로모션 관리",
+  description: "인동FN 자사몰 프로모션 사전 QC & 무결점 런칭 데스크",
 };
 
 export default function RootLayout({

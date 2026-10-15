@@ -79,7 +79,7 @@ export default function SlackSettingsModal() {
 
     const res = await sendSlackMessage({
       webhookUrl: targetUrl || undefined,
-      text: '🎉 [연동 성공] OpsPilot & Slack 실시간 알림 연결 완료',
+      text: '🎉 [연동 성공] IDF E-Biz 운영 보드 & Slack 실시간 알림 연결 완료',
       blocks: buildTestSlackBlocks(),
     });
 

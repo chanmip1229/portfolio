@@ -378,7 +378,7 @@ export default function Home() {
       <SlackSettingsModal />
 
       <footer className="border-t border-slate-200 bg-white py-6 text-center text-xs text-slate-400">
-        AI Commerce Ops Copilot (OpsPilot) — Fashion E-Commerce Operations & Automated QC Platform
+        IDF E-Biz 운영 보드 — 인동FN 자사몰 프로모션 사전 QC & 무결점 런칭 데스크
       </footer>
     </div>
   );
