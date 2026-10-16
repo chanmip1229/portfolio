@@ -24,7 +24,10 @@ import {
   CheckCircle2,
   ArrowRight,
   X,
+  Flame,
+  Layers,
 } from 'lucide-react';
+import { getPromotionLifecycle } from '@/types/promotion';
 
 export default function Home() {
   const {
@@ -39,6 +42,7 @@ export default function Home() {
 
   const [isIntroExpanded, setIsIntroExpanded] = useState(true);
   const [showDemoToast, setShowDemoToast] = useState(false);
+  const [isPromoDropdownOpen, setIsPromoDropdownOpen] = useState(false);
 
   const handleLoadDemo = () => {
     resetToDefault();
@@ -165,10 +169,10 @@ export default function Home() {
               {/* 프로젝트 헤드라인 */}
               <div>
                 <h2 className="text-base sm:text-lg font-black tracking-tight text-white flex items-center gap-2">
-                  <span>패션 자사몰 프로모션 운영의 누락과 오픈 오류를 줄이기 위한 E-Biz 운영 보드</span>
+                  <span>패션 자사몰 프로모션의 잦은 오픈 사고와 소통 지연을 해결하는 E-Biz 운영 솔루션</span>
                 </h2>
-                <p className="text-xs text-slate-300 mt-1 leading-relaxed max-w-4xl">
-                  인동FN(SHESMISS, LIST, SISTINA) 패션 자사몰의 연간 프로모션 오픈 과정에서 발생하는 <strong>수기 엑셀 계산 착오(역마진)·404 링크 깨짐·배너 규격 불일치·소통 지연</strong>을 사전에 원천 차단하기 위해, 6대 결정론적 룰 엔진과 다부서 듀얼 이메일 자동화 시스템을 1인 단독으로 기획·설계·구현한 프로덕트입니다.
+                <p className="text-xs text-slate-300 mt-1.5 leading-relaxed max-w-4xl">
+                  매번 프로모션을 열 때마다 <strong>엑셀 가격 오기입으로 인한 역마진, 404 깨진 링크, 규격 안 맞는 배너</strong> 때문에 오픈 직전까지 진땀 흘렸던 실무의 비효율을 직접 겪고 해결하고자 만들었습니다. 수백 개 상품을 사람이 눈으로 일일이 대조하지 않아도 파일 업로드 한 번으로 오류를 즉시 걸러내고, 관련 부서(기획MD·웹디자인)에 수정 요청 메일까지 알아서 나눠 보내주는 <strong>실무형 1인 프로젝트</strong>입니다.
                 </p>
               </div>
 
@@ -181,7 +185,7 @@ export default function Home() {
                     <span>1. 해결한 문제 (Problem)</span>
                   </div>
                   <p className="text-[11px] text-slate-300 leading-snug">
-                    오픈 직전 엑셀 수기 취합 시 할인율 오기입으로 인한 역마진, 테스트 URL 잔존(404), 배너 해상도 미달 및 부서 간(기획MD·웹디자인·전산·마케팅) 메신저 누락 문제 해결
+                    행사 오픈 직전까지 엑셀 수기로 가격·할인율을 맞추다 생기는 역마진 사고, 잘못 들어간 404 테스트 링크, 배너 사이즈 불일치, 부서 간 요청 누락
                   </p>
                 </div>
 
@@ -192,7 +196,7 @@ export default function Home() {
                     <span>2. 해결 방식 (Solution)</span>
                   </div>
                   <p className="text-[11px] text-slate-300 leading-snug">
-                    6대 결정론적 룰 엔진(코드 100%)으로 업로드 즉시 단품 전수 검증, 단일 품번 다부서 복합 결함 2분할 듀얼 메일 자동 발송, 실시간 모바일/PC 크로스 뷰어
+                    엑셀만 올리면 6가지 핵심 기준(가격·쿠폰·이미지·배너 등)으로 즉시 전수 검사하고, 오류가 난 부서별로 수정 요청 메일을 딱 맞춰 자동 작성
                   </p>
                 </div>
 
@@ -204,7 +208,7 @@ export default function Home() {
                   </div>
                   <p className="text-[11px] text-slate-300 leading-snug">
                     <strong>1인 단독 기획·설계·개발 (기여도 100%)</strong><br />
-                    패션 이커머스 실무 워크플로우 정의, UI/UX 설계, Next.js 풀스택 프로토타입 구현 및 실시간 슬랙 웹훅 연동
+                    패션 이커머스 운영 워크플로우 정의부터 화면 UI 설계, 프론트엔드/백엔드 로직 구현 및 슬랙 연동까지 혼자 완성
                   </p>
                 </div>
 
@@ -220,7 +224,7 @@ export default function Home() {
                     </span>
                   </div>
                   <p className="text-[11px] text-slate-300 leading-snug">
-                    사전 검수 소요시간 <strong>91% 단축</strong> (기존 120분 ➔ 10분), 오픈 당일 크리티컬 결함 <strong>0건 달성</strong>, 다부서 커뮤니케이션 리드타임 50% 단축
+                    사전 검수 소요시간 <strong>91% 단축</strong> (기존 120분 ➔ 10분), 오픈 당일 치명적 결함 <strong>0건 달성</strong>, 부서 간 확인 소통 리드타임 50% 단축
                     <span className="block mt-1 text-[10px] text-emerald-300/80">※ 시연 시나리오 데이터 측정 기준</span>
                   </p>
                 </div>
@@ -524,33 +528,193 @@ export default function Home() {
                 </button>
               </div>
 
-              <div className="flex items-center gap-2 px-3 py-1 bg-slate-50 border border-slate-200/80 rounded-xl text-xs flex-wrap">
-                <span className="font-bold text-slate-500 shrink-0">선택된 기획전:</span>
-                {selectedPromo ? (
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span
-                      className={`px-1.5 py-0.5 rounded text-[10px] font-black ${
-                        selectedPromo.brand === 'SHESMISS'
-                          ? 'bg-purple-100 text-purple-800'
-                          : selectedPromo.brand === 'LIST'
-                          ? 'bg-blue-100 text-blue-800'
-                          : 'bg-emerald-100 text-emerald-800'
-                      }`}
-                    >
-                      {selectedPromo.brand}
-                    </span>
-                    <span className="font-black text-slate-900 truncate max-w-[240px] sm:max-w-[360px]">
-                      {selectedPromo.title}
-                    </span>
-                    <span className="bg-indigo-50 text-indigo-700 font-mono font-bold px-2 py-0.5 rounded text-[10px] border border-indigo-200">
-                      ID: {selectedPromo.id}
-                    </span>
-                    <span className="text-[10px] font-mono text-slate-500 hidden md:inline">
-                      ({selectedPromo.startDate} ~ {selectedPromo.endDate})
-                    </span>
-                  </div>
-                ) : (
-                  <span className="text-slate-400 font-mono">선택된 기획전 없음 (전체)</span>
+              {/* 상단 기획전 퀵 셀렉터 (드롭다운 인터랙티브 전환) */}
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setIsPromoDropdownOpen(!isPromoDropdownOpen)}
+                  className="flex items-center gap-2 px-3 py-1.5 bg-slate-50 hover:bg-indigo-50/70 border border-slate-200 hover:border-indigo-400 rounded-xl text-xs transition-all cursor-pointer shadow-2xs group"
+                  title="클릭하여 사전 QC 검수 대상 기획전을 즉시 변경합니다"
+                >
+                  <span className="font-bold text-slate-500 shrink-0">선택된 기획전:</span>
+                  {selectedPromo ? (
+                    <div className="flex items-center gap-1.5 flex-wrap text-left">
+                      <span
+                        className={`px-1.5 py-0.5 rounded text-[10px] font-black ${
+                          selectedPromo.brand === 'SHESMISS'
+                            ? 'bg-purple-100 text-purple-800'
+                            : selectedPromo.brand === 'LIST'
+                            ? 'bg-blue-100 text-blue-800'
+                            : 'bg-emerald-100 text-emerald-800'
+                        }`}
+                      >
+                        {selectedPromo.brand}
+                      </span>
+                      <span className="font-black text-slate-900 truncate max-w-[200px] sm:max-w-[320px]">
+                        {selectedPromo.title}
+                      </span>
+                      <span className="bg-indigo-50 text-indigo-700 font-mono font-bold px-1.5 py-0.2 rounded text-[10px] border border-indigo-200 hidden md:inline">
+                        ID: {selectedPromo.id}
+                      </span>
+                      <span className="text-[10px] font-mono text-slate-400 hidden xl:inline">
+                        ({selectedPromo.startDate} ~ {selectedPromo.endDate})
+                      </span>
+                    </div>
+                  ) : (
+                    <span className="text-slate-400 font-mono">기획전 선택 필요</span>
+                  )}
+                  <span className="ml-1 text-[11px] font-bold text-indigo-600 bg-indigo-100/70 group-hover:bg-indigo-600 group-hover:text-white px-2 py-0.5 rounded-md flex items-center gap-1 transition-all shrink-0">
+                    <span>변경</span>
+                    <ChevronDown className={`w-3 h-3 transition-transform ${isPromoDropdownOpen ? 'rotate-180' : ''}`} />
+                  </span>
+                </button>
+
+                {/* 기획전 변경 퀵 드롭다운 메뉴 (플로팅 팝오버) */}
+                {isPromoDropdownOpen && (
+                  <>
+                    <div
+                      className="fixed inset-0 z-30"
+                      onClick={() => setIsPromoDropdownOpen(false)}
+                    />
+                    <div className="absolute right-0 mt-2 w-[340px] sm:w-[420px] bg-white rounded-2xl border border-slate-200 shadow-2xl p-2 z-40 animate-in fade-in zoom-in-95 duration-150 max-h-[460px] overflow-y-auto">
+                      <div className="px-3 py-2 border-b border-slate-100 flex items-center justify-between">
+                        <span className="text-xs font-black text-slate-800 flex items-center gap-1.5">
+                          <Layers className="w-3.5 h-3.5 text-indigo-600" />
+                          <span>사전 QC 검수 대상 기획전 변경</span>
+                        </span>
+                        <span className="text-[10px] text-slate-400 font-mono">
+                          총 {promotions.length}건 등록
+                        </span>
+                      </div>
+
+                      {/* 1. 진행 중인 행사 (실시간 집중 검수 3건) */}
+                      <div className="p-1 space-y-1">
+                        <div className="px-2 pt-2 pb-1 text-[10px] font-extrabold uppercase text-rose-600 flex items-center gap-1">
+                          <Flame className="w-3 h-3" />
+                          <span>실시간 집중 검수 행사 (진행 중)</span>
+                        </div>
+                        {promotions
+                          .filter((p) => getPromotionLifecycle(p) === 'ACTIVE')
+                          .map((p) => {
+                            const isCurrent = p.id === selectedPromotionId;
+                            const isBlocker = p.status === 'NEEDS_CHECK';
+                            const isWaiting = p.status === 'ASSET_REQUESTED';
+                            return (
+                              <button
+                                key={p.id}
+                                type="button"
+                                onClick={() => {
+                                  setSelectedPromotionId(p.id);
+                                  setIsPromoDropdownOpen(false);
+                                  const target = document.getElementById('qc-workspace-section');
+                                  if (target) {
+                                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                  }
+                                }}
+                                className={`w-full p-2.5 rounded-xl border text-left transition-all flex items-start justify-between gap-2 cursor-pointer ${
+                                  isCurrent
+                                    ? 'bg-indigo-50 border-indigo-400 ring-1 ring-indigo-300'
+                                    : 'bg-white hover:bg-slate-50 border-slate-200 hover:border-slate-300'
+                                }`}
+                              >
+                                <div className="min-w-0 flex-1">
+                                  <div className="flex items-center gap-1.5 mb-1">
+                                    <span
+                                      className={`text-[9px] font-black px-1.5 py-0.2 rounded ${
+                                        p.brand === 'SHESMISS'
+                                          ? 'bg-purple-100 text-purple-800'
+                                          : p.brand === 'LIST'
+                                          ? 'bg-blue-100 text-blue-800'
+                                          : 'bg-emerald-100 text-emerald-800'
+                                      }`}
+                                    >
+                                      {p.brand}
+                                    </span>
+                                    <span className="font-mono text-[10px] text-slate-400">
+                                      {p.startDate} ~ {p.endDate}
+                                    </span>
+                                  </div>
+                                  <p className="text-xs font-bold text-slate-900 truncate">
+                                    {p.title}
+                                  </p>
+                                  <p className="text-[10px] text-slate-500 mt-0.5 truncate font-mono">
+                                    ID: {p.id}
+                                  </p>
+                                </div>
+
+                                <div className="shrink-0 flex flex-col items-end gap-1">
+                                  {isBlocker && (
+                                    <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-rose-100 text-rose-700 border border-rose-200 animate-pulse">
+                                      🚨 결함 4건
+                                    </span>
+                                  )}
+                                  {isWaiting && (
+                                    <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700 border border-amber-200">
+                                      ⏳ 소재 대기
+                                    </span>
+                                  )}
+                                  {!isBlocker && !isWaiting && (
+                                    <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 border border-emerald-200">
+                                      ✓ 통과 완료
+                                    </span>
+                                  )}
+                                  {isCurrent && (
+                                    <span className="text-[10px] font-extrabold text-indigo-600 flex items-center gap-0.5">
+                                      <CheckCircle2 className="w-3 h-3" />
+                                      선택됨
+                                    </span>
+                                  )}
+                                </div>
+                              </button>
+                            );
+                          })}
+                      </div>
+
+                      {/* 2. 진행 예정 및 기타 행사 */}
+                      <div className="p-1 space-y-1 border-t border-slate-100 mt-1">
+                        <div className="px-2 pt-2 pb-1 text-[10px] font-extrabold uppercase text-slate-500">
+                          진행 예정 & 기타 행사
+                        </div>
+                        {promotions
+                          .filter((p) => getPromotionLifecycle(p) !== 'ACTIVE')
+                          .slice(0, 6)
+                          .map((p) => {
+                            const isCurrent = p.id === selectedPromotionId;
+                            return (
+                              <button
+                                key={p.id}
+                                type="button"
+                                onClick={() => {
+                                  setSelectedPromotionId(p.id);
+                                  setIsPromoDropdownOpen(false);
+                                  const target = document.getElementById('qc-workspace-section');
+                                  if (target) {
+                                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                  }
+                                }}
+                                className={`w-full p-2 rounded-lg border text-left transition-all flex items-center justify-between gap-2 cursor-pointer ${
+                                  isCurrent
+                                    ? 'bg-indigo-50 border-indigo-300'
+                                    : 'bg-white hover:bg-slate-50 border-slate-200'
+                                }`}
+                              >
+                                <div className="min-w-0 flex-1 flex items-center gap-2">
+                                  <span className="text-[9px] font-black px-1.5 py-0.2 rounded bg-slate-100 text-slate-700 shrink-0">
+                                    {p.brand}
+                                  </span>
+                                  <span className="text-xs font-medium text-slate-800 truncate">
+                                    {p.title}
+                                  </span>
+                                </div>
+                                <span className="text-[10px] font-mono text-slate-400 shrink-0">
+                                  {p.startDate.slice(5)} 오픈
+                                </span>
+                              </button>
+                            );
+                          })}
+                      </div>
+                    </div>
+                  </>
                 )}
               </div>
             </div>
