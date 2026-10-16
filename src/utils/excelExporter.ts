@@ -33,7 +33,7 @@ export interface ExportRow {
   신규웰컴쿠폰_종료일: string;
 
   쿠폰정책_QC: string;
-  적발오류코드: string;
+  점검결과_오류코드: string;
   심각도: string;
   상세오류내용: string;
   조치요청사항: string;
@@ -154,7 +154,7 @@ export function buildExportData(
             신규웰컴쿠폰_종료일: hasWelcome ? welcomeEnd : '-',
 
             쿠폰정책_QC: couponQcStatus,
-            적발오류코드: issue.ruleCode,
+            점검결과_오류코드: issue.ruleCode,
             심각도: issue.severity,
             상세오류내용: issue.message,
             조치요청사항: actionNeeded,
@@ -195,9 +195,9 @@ export function buildExportData(
             신규웰컴쿠폰_종료일: hasWelcome ? welcomeEnd : '-',
 
             쿠폰정책_QC: couponQcStatus,
-            적발오류코드: '정상 (PASS)',
+            점검결과_오류코드: '정상 (PASS)',
             심각도: '정상',
-            상세오류내용: '6대 룰 엔진 사전 검증 통과 (이상 없음)',
+            상세오류내용: '6가지 사전 점검 기준 통과 (이상 없음)',
             조치요청사항: '게시 승인 가능',
           });
         }
@@ -241,7 +241,7 @@ export function buildExportData(
           신규웰컴쿠폰_종료일: '-',
 
           쿠폰정책_QC: '-',
-          적발오류코드: issue.ruleCode,
+          점검결과_오류코드: issue.ruleCode,
           심각도: issue.severity,
           상세오류내용: issue.message,
           조치요청사항: '디자인팀: 배너 카피 문구 수정 및 배너스튜디오 원클릭 컨펌 필요',
@@ -303,7 +303,7 @@ export function exportToExcel(
     { wch: 16 }, // 신규웰컴쿠폰_종료일
 
     { wch: 22 }, // 쿠폰정책_QC
-    { wch: 24 }, // 적발오류코드
+    { wch: 24 }, // 점검결과_오류코드
     { wch: 10 }, // 심각도
     { wch: 50 }, // 상세오류내용
     { wch: 45 }, // 조치요청사항

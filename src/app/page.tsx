@@ -99,7 +99,7 @@ export default function Home() {
               <div className="mt-2 text-[10px] text-slate-400 space-y-0.5 bg-slate-800/80 p-2.5 rounded-lg font-mono border border-slate-700/60">
                 <div className="text-rose-400 font-bold">• 단품 결함: 계산 불일치(30%≠40%), 404 URL, 미승인 품번</div>
                 <div className="text-amber-400 font-bold">• 배너 결함: PC 메인 배너 권장 규격(1920x600) 미달</div>
-                <div className="text-indigo-300 font-bold">• 협업 자동화: 다부서 2분할 듀얼 메일 4건 생성</div>
+                <div className="text-indigo-300 font-bold">• 협업 자동화: 부서별(MD·디자인) 맞춤 요청 메일 4건 생성</div>
               </div>
               <div className="mt-3 flex items-center gap-2">
                 <button
@@ -136,7 +136,7 @@ export default function Home() {
                   PORTFOLIO BRIEFING
                 </span>
                 <span className="text-xs font-bold text-slate-200 truncate">
-                  E-Biz 자사몰 프로모션 운영 기획 · 1인 단독 프로젝트 (기획 100% · UI/UX 100% · 로직 100%)
+                  인동FN E-Biz 프로모션 운영 보드 · 1인 단독 기획/개발 (100%)
                 </span>
               </div>
             </div>
@@ -169,10 +169,10 @@ export default function Home() {
               {/* 프로젝트 헤드라인 */}
               <div>
                 <h2 className="text-base sm:text-lg font-black tracking-tight text-white flex items-center gap-2">
-                  <span>패션 자사몰 프로모션의 잦은 오픈 사고와 소통 지연을 해결하는 E-Biz 운영 솔루션</span>
+                  <span>인동FN 자사몰 프로모션 오픈 전 사전 검수 & 운영 솔루션</span>
                 </h2>
                 <p className="text-xs text-slate-300 mt-1.5 leading-relaxed max-w-4xl">
-                  매번 프로모션을 열 때마다 <strong>엑셀 가격 오기입으로 인한 역마진, 404 깨진 링크, 규격 안 맞는 배너</strong> 때문에 오픈 직전까지 진땀 흘렸던 실무의 비효율을 직접 겪고 해결하고자 만들었습니다. 수백 개 상품을 사람이 눈으로 일일이 대조하지 않아도 파일 업로드 한 번으로 오류를 즉시 걸러내고, 관련 부서(기획MD·웹디자인)에 수정 요청 메일까지 알아서 나눠 보내주는 <strong>실무형 1인 프로젝트</strong>입니다.
+                  인동FN 자사몰(SHESMISS·LIST·SISTINA)을 가상으로 설정해 제작한 프로모션 오픈 전 사전 점검 도구입니다. 엑셀 업로드 한 번으로 가격·이미지·링크 오류를 자동 검사하고, 부서별(MD·디자인) 수정 요청 메일 초안을 스마트하게 작성합니다.
                 </p>
               </div>
 
@@ -208,7 +208,7 @@ export default function Home() {
                   </div>
                   <p className="text-[11px] text-slate-300 leading-snug">
                     <strong>1인 단독 기획·설계·개발 (기여도 100%)</strong><br />
-                    패션 이커머스 운영 워크플로우 정의부터 화면 UI 설계, 프론트엔드/백엔드 로직 구현 및 슬랙 연동까지 혼자 완성
+                    자사몰 프로모션 운영 워크플로우 정의부터 화면 UI 설계, 프론트엔드/백엔드 로직 구현 및 슬랙 연동까지 혼자 완성
                   </p>
                 </div>
 
@@ -501,7 +501,7 @@ export default function Home() {
                         : 'bg-slate-200/70 text-slate-600'
                     }`}
                   >
-                    마일스톤 & 듀얼메일
+                    마일스톤 & 부서별 분할 메일
                   </span>
                 </button>
 
@@ -523,7 +523,7 @@ export default function Home() {
                         : 'bg-slate-200/70 text-slate-600'
                     }`}
                   >
-                    엑셀업로드 · 80%이상치 · 404
+                    엑셀업로드 · 비정상 할인율 · 404
                   </span>
                 </button>
               </div>

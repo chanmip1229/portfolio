@@ -690,9 +690,9 @@ export default function SkuMasterQcView({ onOpenDualDraftModal }: SkuMasterQcVie
               </div>
 
               <div className="p-2.5 bg-white rounded-lg border border-slate-200">
-                <strong className="text-slate-900 block mb-1">3. 다부서 복합 결함 원클릭 분할 처리</strong>
+                <strong className="text-slate-900 block mb-1">3. 복수 부서 오류 원클릭 분할 요청</strong>
                 <p className="text-slate-500">
-                  단일 품번에 가격 오류(MD)와 썸네일 해상도 미달(디자인)이 함께 발생한 경우, <strong>'2분할 듀얼 메일'</strong> 화면을 통해 각 부서에 맞는 초안을 한 번에 확인하고 동시 발송할 수 있습니다.
+                  단일 품번에 가격 오류(MD)와 썸네일 해상도 미달(디자인)이 함께 발생한 경우, <strong>'부서별 분할 메일'</strong> 화면을 통해 각 부서에 맞는 초안을 한 번에 확인하고 동시 발송할 수 있습니다.
                 </p>
               </div>
             </div>
@@ -762,7 +762,7 @@ export default function SkuMasterQcView({ onOpenDualDraftModal }: SkuMasterQcVie
                   filterType === 'TREND_ANOMALY' ? 'bg-white text-amber-900 shadow-2xs font-bold' : 'hover:text-slate-900'
                 }`}
               >
-                ⚠️ 트렌드 이상치 ({trendAnomalyCount})
+                ⚠️ 비정상 할인율 ({trendAnomalyCount})
               </button>
               <button
                 onClick={() => setFilterType('BLOCKER')}
@@ -981,7 +981,7 @@ export default function SkuMasterQcView({ onOpenDualDraftModal }: SkuMasterQcVie
                           <div className="bg-amber-50 border border-amber-300 p-2 rounded-lg text-amber-900">
                             <div className="flex items-center gap-1 font-bold text-[11px] text-amber-800">
                               <AlertTriangle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-                              <span>⚠️ 트렌드 이상치 감지 (80% 극단치)</span>
+                              <span>⚠️ 비정상 할인율 감지 (80% 오기입 의심)</span>
                             </div>
                             <p className="text-[10px] text-amber-700 mt-0.5 leading-snug">
                               카테고리 시즌 평균({prod.categoryAvgDiscountRate || 30}%) 대비 과도한 할인.
@@ -1006,7 +1006,7 @@ export default function SkuMasterQcView({ onOpenDualDraftModal }: SkuMasterQcVie
                             <div className="flex items-center justify-between">
                               <span className="font-bold text-[11px] text-purple-900 flex items-center gap-1">
                                 <Layers className="w-3.5 h-3.5 text-purple-600 shrink-0" />
-                                🚨 다부서 복합 결함 (MD+디자인)
+                                🚨 복수 부서 확인 필요 (MD+디자인)
                               </span>
                               <span className="text-[9px] bg-purple-200 text-purple-900 font-bold px-1.5 py-0.2 rounded">
                                 2개 부서
@@ -1022,7 +1022,7 @@ export default function SkuMasterQcView({ onOpenDualDraftModal }: SkuMasterQcVie
                               className="w-full py-1 bg-purple-600 hover:bg-purple-700 text-white rounded text-[10px] font-bold transition-colors flex items-center justify-center gap-1 shadow-2xs cursor-pointer"
                             >
                               <Mail className="w-3 h-3" />
-                              <span>✉️ 2분할 듀얼 메일 초안 열기</span>
+                              <span>✉️ 부서별 맞춤 요청 메일 열기</span>
                             </button>
                           </div>
                         ) : hasBrokenImage ? (
@@ -1033,7 +1033,7 @@ export default function SkuMasterQcView({ onOpenDualDraftModal }: SkuMasterQcVie
                                 🎨 웹디자인팀: 이미지 깨짐(404 / 엑스박스)
                               </span>
                               <span className="text-[9px] bg-rose-200 text-rose-900 font-bold px-1.5 py-0.2 rounded">
-                                BLOCKER
+                                오픈 불가
                               </span>
                             </div>
                             <p className="text-[10px] text-rose-700 leading-snug">
@@ -1260,7 +1260,7 @@ export default function SkuMasterQcView({ onOpenDualDraftModal }: SkuMasterQcVie
                     <div className="flex items-center justify-between mb-1">
                       <span className="text-xs font-bold text-amber-900">시나리오 2</span>
                       <span className="text-[9px] font-bold bg-amber-200 text-amber-900 px-1.5 py-0.2 rounded">
-                        트렌드 이상치
+                        비정상 할인율
                       </span>
                     </div>
                     <p className="text-[11px] text-amber-700 font-medium">
@@ -1296,7 +1296,7 @@ export default function SkuMasterQcView({ onOpenDualDraftModal }: SkuMasterQcVie
             {/* 모달 푸터 */}
             <div className="p-4 border-t border-slate-100 bg-slate-50 flex items-center justify-between text-xs">
               <span className="text-slate-500 text-[11px]">
-                업로드 즉시 6대 룰 엔진이 자동 실행되어 상단 그리드에 반영됩니다.
+                업로드 즉시 6가지 사전 점검 기준이 자동 실행되어 상단 그리드에 반영됩니다.
               </span>
               <button
                 type="button"

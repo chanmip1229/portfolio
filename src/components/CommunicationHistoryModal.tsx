@@ -104,18 +104,18 @@ export default function CommunicationHistoryModal({
     {
       id: 'step-issue',
       time: promotion.timestamps.issueDetectedAt || (promotion.qcIssues.length > 0 ? '2026-10-13 11:22' : '이슈 없음'),
-      title: '04. 6대 룰 엔진 사전 QC 결함 감지',
+      title: '04. 6가지 핵심 기준 사전 검수 및 결함 발견',
       sender: 'E-BIZ 사전 QC 자동화 엔진',
       receiver: 'E-BIZ 자사몰 운영팀 (박찬미)',
       channel: '시스템 내부 룰엔진 즉시 판독',
       status: promotion.qcIssues.length > 0 ? 'ALERT' : 'PASS',
-      badge: promotion.qcIssues.length > 0 ? `결함 ${promotion.qcIssues.length}건 감지` : '결함 0건 (정상)',
+      badge: promotion.qcIssues.length > 0 ? `결함 ${promotion.qcIssues.length}건 발견` : '결함 0건 (정상)',
       badgeColor: promotion.qcIssues.length > 0
         ? 'bg-rose-100 text-rose-800 border-rose-300'
         : 'bg-emerald-100 text-emerald-800 border-emerald-200',
       content: promotion.qcIssues.length > 0
-        ? `단품 가격 계산 오류, 404 URL, 배너 규격 미달 등 ${promotion.qcIssues.length}건의 크리티컬 결함이 감지되었습니다. 다부서 2분할 듀얼 메일 초안이 자동 생성되었습니다.`
-        : '6대 결정론적 룰 엔진(가격, 쿠폰, 이미지, 배너, 품번 승인, 오픈일자) 전 항목 정합성을 통과하였습니다.',
+        ? `단품 가격 계산 오류, 404 URL, 배너 규격 미달 등 ${promotion.qcIssues.length}건의 결함이 감지되었습니다. 부서별(MD·디자인) 맞춤 요청 메일 초안이 자동 생성되었습니다.`
+        : '6가지 핵심 사전 점검 기준(가격, 쿠폰, 이미지, 배너, 품번 승인, 오픈일자) 전 항목을 정상 통과하였습니다.',
       details: promotion.qcIssues.map((err) => `• [${err.department || 'MD'}] ${err.message}`),
     },
   ];
@@ -252,7 +252,7 @@ export default function CommunicationHistoryModal({
               <div className="flex items-center justify-between mb-3">
                 <h4 className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
                   <Mail className="w-4 h-4 text-indigo-600" />
-                  <span>생성 및 발송 대기 중인 다부서 듀얼 메일 ({relatedDrafts.length}건)</span>
+                  <span>생성 및 발송 대기 중인 부서별 맞춤 요청 메일 ({relatedDrafts.length}건)</span>
                 </h4>
                 <span className="text-[11px] text-slate-400">
                   클릭 시 발송 모달 원문이 즉시 열립니다

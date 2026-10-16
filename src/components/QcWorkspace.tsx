@@ -159,7 +159,7 @@ export default function QcWorkspace({ promotionId, onNavigateToSkuQc }: QcWorksp
             </h3>
           </div>
           <p className="text-xs text-slate-500 mt-1">
-            결정론적 6대 룰 엔진이 가격 계산 정합성, 기획서 대조, 승인 품번 매핑, 404 URL, 배너 컨펌 상태를 100% 코드로 자동 검증합니다.
+            가격 계산(할인율), 404 링크, 승인 품번, 배너 해상도 등 6가지 사전 점검 기준을 코드로 자동 검증합니다.
           </p>
         </div>
 
@@ -169,12 +169,12 @@ export default function QcWorkspace({ promotionId, onNavigateToSkuQc }: QcWorksp
             {blockerCount > 0 ? (
               <span className="px-3 py-1.5 rounded-lg text-xs font-bold bg-rose-100 text-rose-800 border border-rose-300 flex items-center gap-1.5">
                 <AlertTriangle className="w-4 h-4 text-rose-600" />
-                BLOCKER 에러 {blockerCount}건 적발
+                오픈 불가 결함 {blockerCount}건 발견
               </span>
             ) : (
               <span className="px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 flex items-center gap-1.5">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                모든 사전 QC 룰 통과 (PASS)
+                모든 사전 점검 항목 통과 (PASS)
               </span>
             )}
 
@@ -546,7 +546,7 @@ export default function QcWorkspace({ promotionId, onNavigateToSkuQc }: QcWorksp
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-bold text-purple-800 uppercase flex items-center gap-1">
                 <Layers className="w-3.5 h-3.5 text-purple-600" />
-                다부서 복합 결함
+                복수 부서 확인 필요
               </span>
               <span className="text-[10px] font-bold bg-purple-200/80 text-purple-900 px-1.5 py-0.2 rounded-full">
                 MD+디자인
@@ -563,17 +563,17 @@ export default function QcWorkspace({ promotionId, onNavigateToSkuQc }: QcWorksp
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-bold text-amber-800 uppercase flex items-center gap-1">
                 <TrendingDown className="w-3.5 h-3.5 text-amber-600" />
-                트렌드 이상치
+                비정상 할인율 의심
               </span>
               <span className="text-[10px] font-bold bg-amber-200/80 text-amber-900 px-1.5 py-0.2 rounded-full">
-                80% 극단치
+                80% 오기입 의심
               </span>
             </div>
             <div className="flex items-baseline gap-1.5 mt-1">
               <span className="text-2xl font-black text-amber-900 font-mono">{trendAnomalySkuCount}</span>
               <span className="text-xs text-amber-700 font-bold">건</span>
             </div>
-            <p className="text-[10px] text-amber-700 mt-0.5 font-semibold">SWCTKB21030 (평균30% 대비)</p>
+            <p className="text-[10px] text-amber-700 mt-0.5 font-semibold">SWCTKB21030 (평균30% 대비 80%)</p>
           </div>
 
           <div className="p-3.5 rounded-xl bg-emerald-50/70 border border-emerald-200 shadow-2xs">
@@ -644,11 +644,11 @@ export default function QcWorkspace({ promotionId, onNavigateToSkuQc }: QcWorksp
                       }`}
                     >
                       {isMultiDept
-                        ? '다부서'
+                        ? '복수 부서'
                         : hasBrokenImage
                         ? '404'
                         : isTrendAnomaly
-                        ? '80% 이상치'
+                        ? '80% 오기입 의심'
                         : '정상'}
                     </span>
                   </div>
@@ -670,7 +670,7 @@ export default function QcWorkspace({ promotionId, onNavigateToSkuQc }: QcWorksp
                 단품(SKU) 단위 전수 정합성 검증 및 인라인 수정 워크스페이스
               </p>
               <p className="text-[11px] text-slate-300 mt-0.5">
-                MD 기획 엑셀 업로드, 80% 트렌드 이상치 소명 메일 발송, 404 이미지 교체 요청을 전용 서브탭에서 진행하세요.
+                MD 기획 엑셀 업로드, 80% 비정상 할인율 확인 메일 발송, 404 이미지 교체 요청을 전용 서브탭에서 진행하세요.
               </p>
             </div>
           </div>

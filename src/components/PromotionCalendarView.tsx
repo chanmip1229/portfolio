@@ -253,10 +253,10 @@ export default function PromotionCalendarView() {
                           setIsDraftModalOpen(true);
                         }}
                         className="flex-1 py-1.5 px-2 bg-rose-600 hover:bg-rose-500 text-white text-[11px] font-bold rounded-lg transition-colors flex items-center justify-center gap-1 shadow-xs cursor-pointer"
-                        title="다부서 재확인 듀얼 메일 모달 열기"
+                        title="부서별 수정 요청 메일 모달 열기"
                       >
                         <Send className="w-3 h-3" />
-                        <span>재확인 듀얼 메일</span>
+                        <span>부서별 수정 요청 메일</span>
                       </button>
                       <button
                         onClick={() => handleScrollToQc(promo.id)}

@@ -1689,7 +1689,7 @@ E-BIZ 자사몰 운영팀
                         <span className="text-slate-500 font-semibold">문구 정합성 QC:</span>
                         <span className="text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 font-semibold flex items-center gap-1 text-[11px]">
                           <Check className="w-3.5 h-3.5 text-emerald-600" />
-                          수백 개 SKU 중 적발된 오류 및 쿠폰/할인 수치 정합성 100% 매핑 완료
+                          수백 개 SKU 중 확인된 오류 및 쿠폰/할인 수치 100% 매핑 완료
                         </span>
                       </div>
                     </div>
