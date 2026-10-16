@@ -48,8 +48,8 @@ export default function CommunicationHistoryModal({
       id: 'step-planned',
       time: promotion.timestamps.plannedAt || '2026-10-01 09:30',
       title: '01. 프로모션 기획안 접수',
-      sender: '기획MD팀 (강민지 대리)',
-      receiver: 'E-BIZ 자사몰 운영팀 (박찬미)',
+      sender: '기획MD 담당자',
+      receiver: 'E-Biz 운영 담당 (박찬미)',
       channel: '사내 ERP / 그룹웨어 전자결재',
       status: 'DONE',
       badge: '기획 완료',
@@ -65,15 +65,15 @@ export default function CommunicationHistoryModal({
       id: 'step-requested',
       time: promotion.timestamps.assetRequestedAt || '2026-10-08 14:15',
       title: '02. 단품 엑셀 및 배너 소재 요청 (D-7)',
-      sender: 'E-BIZ 자사몰 운영팀 (박찬미)',
-      receiver: '기획MD팀, 웹디자인팀',
+      sender: 'E-Biz 운영 담당 (박찬미)',
+      receiver: '기획MD 담당, 디자인 담당',
       channel: '사내 메일 (공통 발신)',
       status: promotion.timestamps.assetRequestedAt ? 'DONE' : 'PENDING',
       badge: promotion.timestamps.assetRequestedAt ? '요청 완료' : '대기 중',
       badgeColor: promotion.timestamps.assetRequestedAt
         ? 'bg-indigo-100 text-indigo-800 border-indigo-200'
         : 'bg-slate-100 text-slate-600 border-slate-200',
-      content: '기획MD팀 대상 행사 등록용 단품 SKU 마스터 엑셀 요청 및 웹디자인팀 대상 PC(1920x600)/모바일(750x900) 메인 룩북 화보 소재 제작을 정식 요청하였습니다.',
+      content: '기획MD 담당 대상 행사 등록용 단품 SKU 마스터 엑셀 요청 및 디자인 담당 대상 PC(1920x600)/모바일(750x900) 메인 룩북 화보 소재 제작을 정식 요청하였습니다.',
       details: [
         '요청 기한: 오픈 D-5 18:00까지',
         '필수 회신 항목: 단품 행사가, 승인 품번, 권장 해상도 화보 파일',
@@ -83,8 +83,8 @@ export default function CommunicationHistoryModal({
       id: 'step-received',
       time: promotion.timestamps.dataReceivedAt || '대기 중 (미수신)',
       title: '03. 기획 엑셀 및 룩북 화보 회신',
-      sender: '기획MD팀, 웹디자인팀',
-      receiver: 'E-BIZ 자사몰 운영팀 (박찬미)',
+      sender: '기획MD 담당, 디자인 담당',
+      receiver: 'E-Biz 운영 담당 (박찬미)',
       channel: '사내 메일 & 대용량 파일 서버 (NAS)',
       status: promotion.timestamps.dataReceivedAt ? 'DONE' : 'WAITING',
       badge: promotion.timestamps.dataReceivedAt ? '회신 수신 완료' : '회신 대기 (D-3)',
@@ -93,7 +93,7 @@ export default function CommunicationHistoryModal({
         : 'bg-amber-100 text-amber-800 border-amber-300 animate-pulse',
       content: promotion.timestamps.dataReceivedAt
         ? `단품 마스터 엑셀 및 메인 룩북 화보(${promotion.banner.sourceImageName || '화보 파일'}) 수신이 완료되어 사전 QC 검증 엔진으로 이관되었습니다.`
-        : '웹디자인팀 또는 기획MD팀의 필수 데이터가 아직 회신되지 않았습니다. 지연 방지 리마인더 메일 또는 슬랙 넛지가 필요합니다.',
+        : '디자인 담당 또는 기획MD 담당의 필수 데이터가 아직 회신되지 않았습니다. 지연 방지 리마인더 메일 또는 슬랙 넛지가 필요합니다.',
       details: promotion.timestamps.dataReceivedAt
         ? [
             `수신 화보 파일: ${promotion.banner.sourceImageName || '메인 룩북 컷'}`,
@@ -106,7 +106,7 @@ export default function CommunicationHistoryModal({
       time: promotion.timestamps.issueDetectedAt || (promotion.qcIssues.length > 0 ? '2026-10-13 11:22' : '이슈 없음'),
       title: '04. 6가지 핵심 기준 사전 검수 및 결함 발견',
       sender: 'E-BIZ 사전 QC 자동화 엔진',
-      receiver: 'E-BIZ 자사몰 운영팀 (박찬미)',
+      receiver: 'E-Biz 운영 담당 (박찬미)',
       channel: '시스템 내부 룰엔진 즉시 판독',
       status: promotion.qcIssues.length > 0 ? 'ALERT' : 'PASS',
       badge: promotion.qcIssues.length > 0 ? `결함 ${promotion.qcIssues.length}건 발견` : '결함 0건 (정상)',
@@ -274,7 +274,7 @@ export default function CommunicationHistoryModal({
                     <div className="space-y-0.5 min-w-0">
                       <div className="flex items-center gap-2">
                         <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-indigo-50 text-indigo-700 border border-indigo-200">
-                          {draft.toDepartment === 'MD' ? '기획MD팀' : draft.toDepartment === 'DESIGN' ? '웹디자인팀' : draft.toDepartment === 'DEV' ? '전산팀' : '마케팅팀'}
+                          {draft.toDepartment === 'MD' ? '기획MD 담당' : draft.toDepartment === 'DESIGN' ? '디자인 담당' : draft.toDepartment === 'DEV' ? '전산/개발 담당' : '마케팅 담당'}
                         </span>
                         <p className="text-xs font-bold text-slate-900 truncate">
                           {draft.subject}

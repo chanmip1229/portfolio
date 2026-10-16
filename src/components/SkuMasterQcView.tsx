@@ -1013,8 +1013,8 @@ export default function SkuMasterQcView({ onOpenDualDraftModal }: SkuMasterQcVie
                               </span>
                             </div>
                             <p className="text-[10px] text-purple-700 leading-snug">
-                              • 기획MD팀: 표기 할인율 40% vs 실제 30%<br />
-                              • 웹디자인팀: 썸네일 저화질(300x400) 교체
+                              • 기획MD 담당: 표기 할인율 40% vs 실제 30%<br />
+                              • 디자인 담당: 썸네일 저화질(300x400) 교체
                             </p>
                             <button
                               type="button"
@@ -1030,7 +1030,7 @@ export default function SkuMasterQcView({ onOpenDualDraftModal }: SkuMasterQcVie
                             <div className="flex items-center justify-between">
                               <span className="font-bold text-[11px] text-rose-900 flex items-center gap-1">
                                 <AlertTriangle className="w-3.5 h-3.5 text-rose-600 shrink-0" />
-                                🎨 웹디자인팀: 이미지 깨짐(404 / 엑스박스)
+                                🎨 디자인 담당: 이미지 깨짐(404 / 엑스박스)
                               </span>
                               <span className="text-[9px] bg-rose-200 text-rose-900 font-bold px-1.5 py-0.2 rounded">
                                 오픈 불가
@@ -1048,30 +1048,30 @@ export default function SkuMasterQcView({ onOpenDualDraftModal }: SkuMasterQcVie
                               className="w-full py-1 bg-rose-600 hover:bg-rose-700 text-white rounded text-[10px] font-bold transition-colors flex items-center justify-center gap-1 shadow-2xs cursor-pointer"
                             >
                               <Mail className="w-3 h-3" />
-                              <span>✉️ 웹디자인팀 조치 요청 메일 작성 &gt;</span>
+                              <span>✉️ 디자인 담당 조치 요청 메일 작성 &gt;</span>
                             </button>
                           </div>
                         ) : isMathMismatch ? (
                           <div className="text-[11px] text-rose-700 font-semibold flex items-center gap-1">
                             <AlertTriangle className="w-3.5 h-3.5 text-rose-600 shrink-0" />
-                            <span>👗 기획MD팀: 계산 불일치(수정 필요)</span>
+                            <span>👗 기획MD 담당: 계산 불일치(수정 필요)</span>
                           </div>
                         ) : !prod.isApproved ? (
                           <div className="text-[11px] text-rose-700 font-semibold flex items-center gap-1">
                             <ShieldAlert className="w-3.5 h-3.5 text-rose-600 shrink-0" />
-                            <span>👗 MD팀: 사전 미승인 품번</span>
+                            <span>👗 기획MD 담당: 사전 미승인 품번</span>
                           </div>
                         ) : prod.detailUrl.includes('broken-link') ? (
                           <div className="text-[11px] text-rose-700 font-semibold flex items-center gap-1">
                             <AlertTriangle className="w-3.5 h-3.5 text-rose-600 shrink-0" />
-                            <span>💻 개발팀: 404 URL 단절</span>
+                            <span>💻 전산/개발 담당: 404 URL 단절</span>
                           </div>
                         ) : isTrendAnomaly ? (
                           <div className="bg-amber-50 border border-amber-300 p-2 rounded-lg text-amber-900 space-y-1.5">
                             <div className="flex items-center justify-between">
                               <span className="font-bold text-[11px] text-amber-900 flex items-center gap-1">
                                 <AlertTriangle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-                                ⚠️ MD팀: 80% 트렌드 이상치 소명 필요
+                                ⚠️ 기획MD 담당: 80% 트렌드 이상치 소명 필요
                               </span>
                               <span className="text-[9px] bg-amber-200 text-amber-900 font-bold px-1.5 py-0.2 rounded">
                                 확인 대기
@@ -1089,7 +1089,7 @@ export default function SkuMasterQcView({ onOpenDualDraftModal }: SkuMasterQcVie
                               className="w-full py-1 bg-amber-600 hover:bg-amber-700 text-white rounded text-[10px] font-bold transition-colors flex items-center justify-center gap-1 shadow-2xs cursor-pointer"
                             >
                               <Mail className="w-3 h-3" />
-                              <span>✉️ MD팀 확인 요청 메일 작성 &gt;</span>
+                              <span>✉️ 기획MD 담당 확인 요청 메일 작성 &gt;</span>
                             </button>
                           </div>
                         ) : (

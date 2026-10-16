@@ -91,14 +91,14 @@ export default function PromotionCalendarView() {
           type: 'section',
           text: {
             type: 'mrkdwn',
-            text: `*수신 대상:* 웹디자인팀 & 기획MD팀\n*발신:* E-BIZ 자사몰 운영팀 박찬미 (${now})\n*상태:* 행사 오픈(${promo.startDate}) 일정 준수를 위해 배너 화보 및 단품 엑셀 회신을 요청드립니다.`,
+            text: `*수신 대상:* 디자인 담당 & 기획MD 담당\n*발신:* E-Biz 운영 담당 박찬미 (${now})\n*상태:* 행사 오픈(${promo.startDate}) 일정 준수를 위해 배너 화보 및 단품 엑셀 회신을 요청드립니다.`,
           },
         },
       ],
     });
 
     if (result.success) {
-      setToastMessage(`⚡ [${promo.brand}] 웹디자인팀 슬랙 채널로 리마인더 알림을 실시간 발송했습니다!`);
+      setToastMessage(`⚡ [${promo.brand}] 디자인 담당 채널로 리마인더 알림을 실시간 발송했습니다!`);
     } else {
       setToastMessage(`⚠️ 슬랙 발송 완료 (시뮬레이션 모드 작동)`);
     }
@@ -219,9 +219,9 @@ export default function PromotionCalendarView() {
                       }`}
                     >
                       {isNeedsCheck
-                        ? '🚨 사전 QC 결함 (4건)'
+                        ? `🚨 사전 QC 결함 (${promo.qcIssues.filter((i) => i.severity === 'BLOCKER').length}건)`
                         : isDelay
-                        ? '⏳ 웹디자인팀 소재 회신 대기 (D-5)'
+                        ? '⏳ 디자인 담당 소재 회신 대기 (D-5)'
                         : '📋 기획안 접수 등록'}
                     </span>
                   </div>
@@ -237,7 +237,7 @@ export default function PromotionCalendarView() {
                     </span>
                     <span>•</span>
                     <span className="text-amber-300 font-semibold">
-                      병목: [{promo.currentBottleneckDept}팀]
+                      대기: [{promo.currentBottleneckDept === 'MD' ? '기획MD' : promo.currentBottleneckDept === 'DESIGN' ? '디자인' : promo.currentBottleneckDept === 'DEV' ? '전산' : '운영'} 담당]
                     </span>
                   </div>
                 </div>
@@ -277,7 +277,7 @@ export default function PromotionCalendarView() {
                           createReminderDraft(promo.id);
                         }}
                         className="flex-1 py-1.5 px-2 bg-indigo-600 hover:bg-indigo-500 text-white text-[11px] font-bold rounded-lg transition-colors flex items-center justify-center gap-1 shadow-xs cursor-pointer"
-                        title="웹디자인팀 D-5 지연 방지 리마인더 메일 작성"
+                        title="디자인 담당 D-5 지연 방지 리마인더 메일 작성"
                       >
                         <BellRing className="w-3 h-3" />
                         <span>리마인더 메일</span>
@@ -285,7 +285,7 @@ export default function PromotionCalendarView() {
                       <button
                         onClick={() => handleSendSlackNudge(promo)}
                         className="py-1.5 px-2 bg-amber-600 hover:bg-amber-500 text-white text-[11px] font-bold rounded-lg transition-colors flex items-center gap-1 cursor-pointer"
-                        title="웹디자인팀 채널로 실시간 슬랙 넛지 발송"
+                        title="디자인 담당 채널로 실시간 슬랙 넛지 발송"
                       >
                         <MessageSquare className="w-3 h-3" />
                         <span>슬랙 넛지</span>
@@ -450,7 +450,7 @@ export default function PromotionCalendarView() {
                         <div className="flex items-center gap-1.5 flex-wrap" onClick={(e) => e.stopPropagation()}>
                           <span className="text-[11px] font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200 flex items-center gap-1">
                             <Clock className="w-3 h-3" />
-                            웹디자인팀 회신 대기 (D-5)
+                            디자인 담당 회신 대기 (D-5)
                           </span>
                           <button
                             onClick={() => createReminderDraft(promo.id)}

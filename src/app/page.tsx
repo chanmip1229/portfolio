@@ -599,6 +599,7 @@ export default function Home() {
                             const isCurrent = p.id === selectedPromotionId;
                             const isBlocker = p.status === 'NEEDS_CHECK';
                             const isWaiting = p.status === 'ASSET_REQUESTED';
+                            const pBlockerCount = p.qcIssues.filter((i) => i.severity === 'BLOCKER').length;
                             return (
                               <button
                                 key={p.id}
@@ -645,7 +646,7 @@ export default function Home() {
                                 <div className="shrink-0 flex flex-col items-end gap-1">
                                   {isBlocker && (
                                     <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-rose-100 text-rose-700 border border-rose-200 animate-pulse">
-                                      🚨 결함 4건
+                                      🚨 결함 {pBlockerCount}건
                                     </span>
                                   )}
                                   {isWaiting && (
@@ -818,7 +819,7 @@ export default function Home() {
           IDF E-Biz 운영 보드 — 인동FN 자사몰 프로모션 일정 관리 & 오픈 사전 점검
         </p>
         <p className="text-[11px] text-slate-400 max-w-2xl mx-auto px-4 leading-relaxed">
-          ※ <strong>Data Compliance Note:</strong> 본 프로토타입에 수록된 행사 기획, 상품 단가, 임직원 성명 및 이메일(@indongfn.co.kr)은 포트폴리오 시연 목적으로 구성된 <strong>가상 데이터(Mock Data)</strong>입니다.
+          ※ <strong>Data Compliance Note:</strong> 본 프로토타입에 수록된 행사 기획, 상품 단가, 협업 직무(기획MD 담당자 등), 가상 이메일(@example.invalid)은 포트폴리오 시연용 <strong>가상 데이터(Mock Data)</strong>입니다.
         </p>
       </footer>
     </div>

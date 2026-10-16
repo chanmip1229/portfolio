@@ -64,14 +64,14 @@ export default function QcWorkspace({ promotionId, onNavigateToSkuQc }: QcWorksp
         .filter((i) => i.severity === 'BLOCKER')
         .map((i) => {
           if (i.department === 'MD') return '기획MD';
-          if (i.department === 'DESIGN') return '웹디자인';
-          if (i.department === 'DEV') return '전산';
+          if (i.department === 'DESIGN') return '디자인';
+          if (i.department === 'DEV') return '전산/개발';
           return '마케팅';
         })
     )
   );
   const waitingDeptText = blockerDepts.length > 0
-    ? blockerDepts.join(' · ') + '팀'
+    ? blockerDepts.join(' · ') + ' 담당'
     : '대기 없음';
 
   const handlePublish = () => {
@@ -259,7 +259,7 @@ export default function QcWorkspace({ promotionId, onNavigateToSkuQc }: QcWorksp
                   setIsDraftModalOpen(true);
                 }}
                 className="text-[11px] font-bold text-purple-800 hover:text-purple-950 bg-purple-50 hover:bg-purple-100 px-2.5 py-1 rounded-lg border border-purple-300 flex items-center gap-1 transition-colors shadow-2xs cursor-pointer"
-                title="기획MD팀과 웹디자인팀 부서별 듀얼 메일 작성"
+                title="기획MD 담당과 디자인 담당 부서별 듀얼 메일 작성"
               >
                 <Layers className="w-3.5 h-3.5 text-purple-600" />
                 <span>👥 부서별 듀얼 메일 (1)</span>
@@ -269,40 +269,40 @@ export default function QcWorkspace({ promotionId, onNavigateToSkuQc }: QcWorksp
                 type="button"
                 onClick={() => handleOpenDeptDraft('MD')}
                 className="text-[11px] font-bold text-blue-700 hover:text-blue-900 bg-white hover:bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-200 flex items-center gap-1 transition-colors shadow-2xs cursor-pointer"
-                title="MD팀에 할인율/품번 재확인 메일 및 슬랙 발송"
+                title="기획MD 담당에 할인율/품번 재확인 메일 및 알림 발송"
               >
                 <Mail className="w-3 h-3 text-blue-600" />
-                <span>✉️ MD팀 요청 ({mdIssues.length})</span>
+                <span>✉️ 기획MD 담당 요청 ({mdIssues.length})</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => handleOpenDeptDraft('DESIGN')}
                 className="text-[11px] font-bold text-purple-700 hover:text-purple-900 bg-white hover:bg-purple-50 px-2.5 py-1 rounded-lg border border-purple-200 flex items-center gap-1 transition-colors shadow-2xs cursor-pointer"
-                title="웹디자인팀에 배너 규격 수정 요청 메일 발송"
+                title="디자인 담당에 배너 규격 수정 요청 메일 발송"
               >
                 <Mail className="w-3 h-3 text-purple-600" />
-                <span>✉️ 웹디자인팀 요청 ({designIssues.length})</span>
+                <span>✉️ 디자인 담당 요청 ({designIssues.length})</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => handleOpenDeptDraft('DEV')}
                 className="text-[11px] font-bold text-emerald-700 hover:text-emerald-900 bg-white hover:bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200 flex items-center gap-1 transition-colors shadow-2xs cursor-pointer"
-                title="전산팀에 404 URL 단절 조치 요청 메일 발송"
+                title="전산/개발 담당에 404 URL 단절 조치 요청 메일 발송"
               >
                 <Mail className="w-3 h-3 text-emerald-600" />
-                <span>✉️ 전산팀 요청 ({devIssues.length})</span>
+                <span>✉️ 전산/개발 담당 요청 ({devIssues.length})</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => handleOpenDeptDraft('MARKETING')}
                 className="text-[11px] font-bold text-amber-700 hover:text-amber-900 bg-white hover:bg-amber-50 px-2.5 py-1 rounded-lg border border-amber-200 flex items-center gap-1 transition-colors shadow-2xs cursor-pointer"
-                title="마케팅팀에 쿠폰 정책 확인 요청 메일 발송"
+                title="마케팅 담당에 쿠폰 정책 확인 요청 메일 발송"
               >
                 <Mail className="w-3 h-3 text-amber-600" />
-                <span>✉️ 마케팅팀 요청 ({mktIssues.length})</span>
+                <span>✉️ 마케팅 담당 요청 ({mktIssues.length})</span>
               </button>
             </div>
           </div>
@@ -318,7 +318,7 @@ export default function QcWorkspace({ promotionId, onNavigateToSkuQc }: QcWorksp
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              전체 부서 ({promo.qcIssues.length})
+              전체 담당 ({promo.qcIssues.length})
             </button>
             <button
               type="button"
@@ -329,7 +329,7 @@ export default function QcWorkspace({ promotionId, onNavigateToSkuQc }: QcWorksp
                   : 'text-blue-700 hover:bg-blue-50'
               }`}
             >
-              <span>👗 기획MD팀</span>
+              <span>👗 기획MD 담당</span>
               <span className="text-[10px] opacity-80">({mdIssues.length})</span>
             </button>
             <button
@@ -341,7 +341,7 @@ export default function QcWorkspace({ promotionId, onNavigateToSkuQc }: QcWorksp
                   : 'text-purple-700 hover:bg-purple-50'
               }`}
             >
-              <span>🎨 웹디자인팀</span>
+              <span>🎨 디자인 담당</span>
               <span className="text-[10px] opacity-80">({designIssues.length})</span>
             </button>
             <button
@@ -353,7 +353,7 @@ export default function QcWorkspace({ promotionId, onNavigateToSkuQc }: QcWorksp
                   : 'text-emerald-700 hover:bg-emerald-50'
               }`}
             >
-              <span>💻 전산팀 (IT)</span>
+              <span>💻 전산/개발 담당</span>
               <span className="text-[10px] opacity-80">({devIssues.length})</span>
             </button>
             <button
@@ -365,7 +365,7 @@ export default function QcWorkspace({ promotionId, onNavigateToSkuQc }: QcWorksp
                   : 'text-amber-700 hover:bg-amber-50'
               }`}
             >
-              <span>📢 E-BIZ 마케팅팀</span>
+              <span>📢 마케팅 담당</span>
               <span className="text-[10px] opacity-80">({mktIssues.length})</span>
             </button>
           </div>
@@ -384,7 +384,18 @@ export default function QcWorkspace({ promotionId, onNavigateToSkuQc }: QcWorksp
                       : 'bg-white border-amber-200 text-amber-900 shadow-xs'
                   }`}
                 >
-                  <div className="flex items-start gap-2.5">
+                  <div className="flex items-start gap-2.5 flex-wrap sm:flex-nowrap">
+                    {/* 심각도 라벨 (결함 vs 경고) - 첫 번째 카드부터 명확하게 노출 */}
+                    <span
+                      className={`px-2 py-0.5 rounded-md text-[10px] font-extrabold mt-0.5 shrink-0 flex items-center gap-1 shadow-2xs ${
+                        issue.severity === 'BLOCKER'
+                          ? 'bg-rose-600 text-white'
+                          : 'bg-amber-500 text-white'
+                      }`}
+                    >
+                      {issue.severity === 'BLOCKER' ? '🚨 결함 (오픈 불가)' : '⚠️ 경고 (확인 권장)'}
+                    </span>
+
                     {/* 부서 태그 */}
                     <span
                       className={`px-2 py-0.5 rounded text-[10px] font-bold mt-0.5 shrink-0 border ${
@@ -398,12 +409,12 @@ export default function QcWorkspace({ promotionId, onNavigateToSkuQc }: QcWorksp
                       }`}
                     >
                       {dept === 'MD'
-                        ? '기획MD팀'
+                        ? '기획MD 담당'
                         : dept === 'DESIGN'
-                        ? '웹디자인팀'
+                        ? '디자인 담당'
                         : dept === 'DEV'
-                        ? '전산팀'
-                        : 'E-BIZ 마케팅팀'}
+                        ? '전산/개발 담당'
+                        : '마케팅 담당'}
                     </span>
 
                     {/* 신규: 다부서 복합 이슈 태그 */}
@@ -422,10 +433,10 @@ export default function QcWorkspace({ promotionId, onNavigateToSkuQc }: QcWorksp
                     )}
 
                     <span
-                      className={`px-1.5 py-0.5 rounded text-[10px] font-bold mt-0.5 shrink-0 ${
+                      className={`px-1.5 py-0.5 rounded text-[10px] font-bold mt-0.5 shrink-0 border ${
                         issue.severity === 'BLOCKER'
-                          ? 'bg-rose-100 text-rose-800'
-                          : 'bg-amber-100 text-amber-800'
+                          ? 'bg-rose-50 text-rose-800 border-rose-200'
+                          : 'bg-amber-50 text-amber-800 border-amber-200'
                       }`}
                     >
                       {RULE_CODE_LABELS[issue.ruleCode] || issue.ruleCode}
@@ -450,7 +461,7 @@ export default function QcWorkspace({ promotionId, onNavigateToSkuQc }: QcWorksp
                           setIsDraftModalOpen(true);
                         }}
                         className="px-2.5 py-1 bg-purple-600 hover:bg-purple-700 text-white text-[10px] font-bold rounded-md shadow-2xs transition-colors cursor-pointer flex items-center gap-1"
-                        title="기획MD팀과 웹디자인팀 부서별 듀얼 메일 작성창 열기"
+                        title="기획MD 담당과 디자인 담당 부서별 듀얼 메일 작성창 열기"
                       >
                         <Mail className="w-3 h-3 text-white" />
                         <span>✉️ 부서별 듀얼 메일 &gt;</span>
@@ -460,17 +471,17 @@ export default function QcWorkspace({ promotionId, onNavigateToSkuQc }: QcWorksp
                         type="button"
                         onClick={() => handleOpenDeptDraft(dept)}
                         className="px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] font-bold rounded-md border border-slate-200 transition-colors cursor-pointer flex items-center gap-1"
-                        title="해당 부서 메일/슬랙 초안 열기"
+                        title="해당 부서 메일/알림 초안 열기"
                       >
                         <Mail className="w-3 h-3 text-slate-500" />
                         <span>
                           {dept === 'MD'
                             ? '기획MD'
                             : dept === 'DESIGN'
-                            ? '웹디자인'
+                            ? '디자인'
                             : dept === 'DEV'
-                            ? '전산'
-                            : '마케팅'}팀 요청 &gt;
+                            ? '전산/개발'
+                            : '마케팅'} 담당 요청 &gt;
                         </span>
                       </button>
                     )}
@@ -478,8 +489,8 @@ export default function QcWorkspace({ promotionId, onNavigateToSkuQc }: QcWorksp
                     <span
                       className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
                         issue.severity === 'BLOCKER'
-                          ? 'bg-rose-600 text-white'
-                          : 'bg-amber-500 text-white'
+                          ? 'bg-rose-100 text-rose-800 border border-rose-300'
+                          : 'bg-amber-100 text-amber-800 border border-amber-300'
                       }`}
                     >
                       {issue.severity === 'BLOCKER' ? '오픈 불가' : '경고'}
@@ -488,6 +499,12 @@ export default function QcWorkspace({ promotionId, onNavigateToSkuQc }: QcWorksp
                 </div>
               );
             })}
+          </div>
+
+          {/* 가상 조직/협업 역할 안내 각주 및 집계 검증 */}
+          <div className="text-[11px] text-slate-500 mt-3 pt-2.5 border-t border-rose-200/60 flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+            <span>※ 표기된 부서(기획MD 담당, 디자인 담당, 전산/개발 담당, 마케팅 담당) 및 담당자는 포트폴리오 시연용 협업 역할입니다.</span>
+            <span className="font-bold text-rose-700 shrink-0">집계 일치: 사전 QC 결함 {blockerCount}건 · 경고 {warningCount}건</span>
           </div>
         </div>
       )}
@@ -526,25 +543,25 @@ export default function QcWorkspace({ promotionId, onNavigateToSkuQc }: QcWorksp
                 <span>전체 엑셀</span>
               </button>
               <button
-                onClick={() => exportToExcel([promo], `${promo.id}_기획MD팀_오류품번`, 'MD')}
+                onClick={() => exportToExcel([promo], `${promo.id}_기획MD담당_오류품번`, 'MD')}
                 className="px-2 py-1 text-[11px] font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded transition-colors cursor-pointer"
-                title="기획MD팀 확인 대상 엑셀 다운로드"
+                title="기획MD 담당 확인 대상 엑셀 다운로드"
               >
-                기획MD팀용
+                기획MD용
               </button>
               <button
-                onClick={() => exportToExcel([promo], `${promo.id}_웹디자인팀_배너오류`, 'DESIGN')}
+                onClick={() => exportToExcel([promo], `${promo.id}_디자인담당_배너오류`, 'DESIGN')}
                 className="px-2 py-1 text-[11px] font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded transition-colors cursor-pointer"
-                title="웹디자인팀 확인 대상 엑셀 다운로드"
+                title="디자인 담당 확인 대상 엑셀 다운로드"
               >
-                웹디자인팀용
+                디자인용
               </button>
               <button
-                onClick={() => exportToExcel([promo], `${promo.id}_운영팀_URL쿠폰오류`, 'EBIZ_OPS')}
+                onClick={() => exportToExcel([promo], `${promo.id}_운영담당_URL쿠폰오류`, 'EBIZ_OPS')}
                 className="px-2 py-1 text-[11px] font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded transition-colors cursor-pointer"
-                title="운영팀 확인 대상 엑셀 다운로드"
+                title="E-Biz 운영 담당 확인 대상 엑셀 다운로드"
               >
-                운영팀용
+                E-Biz운영용
               </button>
             </div>
 

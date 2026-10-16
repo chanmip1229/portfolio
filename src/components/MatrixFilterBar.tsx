@@ -31,10 +31,10 @@ const BRANDS: { value: Brand | 'ALL'; label: string; desc: string }[] = [
 ];
 
 const DEPARTMENTS: { value: Department | 'ALL'; label: string }[] = [
-  { value: 'ALL', label: '전체 부서' },
-  { value: 'MD', label: '기획MD팀 (상품/가격)' },
-  { value: 'DESIGN', label: '웹디자인팀 (배너/화보)' },
-  { value: 'EBIZ_OPS', label: 'E-BIZ 자사몰운영팀 (QC/오픈)' },
+  { value: 'ALL', label: '전체 담당' },
+  { value: 'MD', label: '기획MD 담당 (상품/가격)' },
+  { value: 'DESIGN', label: '디자인 담당 (배너/소재)' },
+  { value: 'EBIZ_OPS', label: 'E-Biz 운영 담당 (QC/게시)' },
 ];
 
 const LIFECYCLES: {

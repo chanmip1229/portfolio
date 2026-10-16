@@ -210,12 +210,12 @@ export function buildSingleDraftSlackBlocks(draft: EmailDraft) {
   const now = new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' });
   const deptLabel =
     draft.toDepartment === 'MD'
-      ? '기획MD팀'
+      ? '기획MD 담당'
       : draft.toDepartment === 'DESIGN'
-      ? '웹디자인팀'
+      ? '디자인 담당'
       : draft.toDepartment === 'DEV'
-      ? '전산팀'
-      : 'E-BIZ 마케팅팀';
+      ? '전산/개발 담당'
+      : '마케팅 담당';
 
   return [
     {

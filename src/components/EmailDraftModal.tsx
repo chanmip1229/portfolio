@@ -114,11 +114,11 @@ export default function EmailDraftModal() {
     const rawData: Record<Department, DeptSummaryData> = {
       MD: {
         dept: 'MD',
-        deptName: '기획MD팀',
-        recipientName: '기획MD팀 김지현 대리',
-        recipientEmail: 'md_list@indongfn.co.kr',
-        subject: '[긴급 전수 취합] [LIST] 26SS 트렌치코트 얼리버드 위크 — 기획MD팀 결함 품번 전수 요약 리포트 (총 3건)',
-        excelFileName: '기획MD팀_종합_결함품번전수리스트.xlsx',
+        deptName: '기획MD 담당',
+        recipientName: '기획MD 담당자',
+        recipientEmail: 'md@example.invalid',
+        subject: '[긴급 전수 취합] [LIST] 26SS 트렌치코트 얼리버드 위크 — 기획MD 결함 품번 전수 요약 리포트 (총 3건)',
+        excelFileName: '기획MD_종합_결함품번전수리스트.xlsx',
         issues: [
           {
             no: 1,
@@ -151,11 +151,11 @@ export default function EmailDraftModal() {
       },
       DESIGN: {
         dept: 'DESIGN',
-        deptName: '웹디자인팀',
-        recipientName: '웹디자인팀 박민지 책임',
-        recipientEmail: 'webdesign@indongfn.co.kr',
-        subject: '[긴급 전수 취합] 26SS 프로모션 소재/배너 웹디자인팀 결함 전수 요약 리포트 (총 3건)',
-        excelFileName: '웹디자인팀_종합_소재결함전수리스트.xlsx',
+        deptName: '디자인 담당',
+        recipientName: '디자인 담당자',
+        recipientEmail: 'design@example.invalid',
+        subject: '[긴급 전수 취합] 26SS 프로모션 소재/배너 디자인 결함 전수 요약 리포트 (총 3건)',
+        excelFileName: '디자인_종합_소재결함전수리스트.xlsx',
         issues: [
           {
             no: 1,
@@ -188,11 +188,11 @@ export default function EmailDraftModal() {
       },
       DEV: {
         dept: 'DEV',
-        deptName: '전산팀 (IT)',
-        recipientName: '전산팀 정우진 선임',
-        recipientEmail: 'it_dev@indongfn.co.kr',
+        deptName: '전산/개발 담당',
+        recipientName: '전산/개발 담당자',
+        recipientEmail: 'dev@example.invalid',
         subject: '[긴급 조치 요청] [LIST] 26SS 트렌치코트전 — 상세 URL 404 단절 오류 요약 리포트 (1건)',
-        excelFileName: '전산팀_URL오류리스트.xlsx',
+        excelFileName: '전산_URL오류리스트.xlsx',
         issues: [
           {
             no: 1,
@@ -207,11 +207,11 @@ export default function EmailDraftModal() {
       },
       MARKETING: {
         dept: 'MARKETING',
-        deptName: 'E-BIZ 마케팅팀',
-        recipientName: 'E-BIZ 마케팅팀 최현우 팀장',
-        recipientEmail: 'ebiz_mkt@indongfn.co.kr',
+        deptName: '마케팅 담당',
+        recipientName: '마케팅 담당자',
+        recipientEmail: 'marketing@example.invalid',
         subject: '[정책 확인 요청] [LIST] 26SS 트렌치코트전 — 쿠폰 정책 종합 검토 리포트 (1건)',
-        excelFileName: 'E-BIZ마케팅팀_쿠폰정책검토시트.xlsx',
+        excelFileName: '마케팅_쿠폰정책검토시트.xlsx',
         issues: [
           {
             no: 1,
@@ -226,11 +226,11 @@ export default function EmailDraftModal() {
       },
       EBIZ_OPS: {
         dept: 'EBIZ_OPS',
-        deptName: 'E-BIZ 운영팀',
-        recipientName: 'E-BIZ 운영팀 담당자',
-        recipientEmail: 'ops@indongfn.co.kr',
+        deptName: 'E-Biz 운영 담당',
+        recipientName: 'E-Biz 운영 담당자',
+        recipientEmail: 'ops@example.invalid',
         subject: '[운영 점검] 26SS 프로모션 종합 검증 리포트',
-        excelFileName: '운영팀_종합검증리스트.xlsx',
+        excelFileName: '운영_종합검증리스트.xlsx',
         issues: [],
       },
     };
@@ -286,13 +286,13 @@ E-BIZ 자사몰 운영팀
     return bodies;
   }, [deptSummaries]);
 
-  // 팀별 필터링 옵션 목록
+  // 담당별 필터링 옵션 목록
   const deptFilters: { id: 'ALL' | 'MD' | 'DESIGN' | 'DEV' | 'MARKETING'; label: string; count: number }[] = [
     { id: 'ALL', label: '전체', count: emailDrafts?.length || 0 },
-    { id: 'MD', label: '기획MD팀', count: (emailDrafts || []).filter((d) => d.toDepartment === 'MD').length },
-    { id: 'DESIGN', label: '웹디자인팀', count: (emailDrafts || []).filter((d) => d.toDepartment === 'DESIGN').length },
-    { id: 'DEV', label: '전산팀 (IT)', count: (emailDrafts || []).filter((d) => d.toDepartment === 'DEV').length },
-    { id: 'MARKETING', label: 'E-BIZ 마케팅팀', count: (emailDrafts || []).filter((d) => d.toDepartment === 'MARKETING').length },
+    { id: 'MD', label: '기획MD 담당', count: (emailDrafts || []).filter((d) => d.toDepartment === 'MD').length },
+    { id: 'DESIGN', label: '디자인 담당', count: (emailDrafts || []).filter((d) => d.toDepartment === 'DESIGN').length },
+    { id: 'DEV', label: '전산/개발 담당', count: (emailDrafts || []).filter((d) => d.toDepartment === 'DEV').length },
+    { id: 'MARKETING', label: '마케팅 담당', count: (emailDrafts || []).filter((d) => d.toDepartment === 'MARKETING').length },
   ];
 
   // 팀별 필터링 적용된 초안 목록
@@ -322,13 +322,17 @@ E-BIZ 자사몰 운영팀
   const currentSummaryBody =
     summaryCustomEdits[selectedSummaryDept]?.body ?? (defaultSummaryBodies[selectedSummaryDept] || '');
 
-  // 이메일 수신 주소 매핑
+  // 이메일 수신 주소 매핑 (RFC 2606 시연용 가상 도메인)
   const recipientEmail =
     currentDraft?.toDepartment === 'MD'
-      ? 'md_list@indongfn.co.kr'
+      ? 'md@example.invalid'
       : currentDraft?.toDepartment === 'DESIGN'
-      ? 'design_shesmiss@indongfn.co.kr'
-      : 'ops@indongfn.co.kr';
+      ? 'design@example.invalid'
+      : currentDraft?.toDepartment === 'DEV'
+      ? 'dev@example.invalid'
+      : currentDraft?.toDepartment === 'MARKETING'
+      ? 'marketing@example.invalid'
+      : 'ops@example.invalid';
 
   // 1. 요약 메일 본문용 리치 HTML 테이블 생성 함수 (Gmail / Outlook 붙여넣기 시 표 서식 완벽 보존)
   const generateSummaryRichHtml = (s: DeptSummaryData) => {
@@ -494,10 +498,14 @@ E-BIZ 자사몰 운영팀
 
     const email =
       targetDraft.toDepartment === 'MD'
-        ? 'md_list@indongfn.co.kr'
+        ? 'md@example.invalid'
         : targetDraft.toDepartment === 'DESIGN'
-        ? 'design_shesmiss@indongfn.co.kr'
-        : 'ops@indongfn.co.kr';
+        ? 'design@example.invalid'
+        : targetDraft.toDepartment === 'DEV'
+        ? 'dev@example.invalid'
+        : targetDraft.toDepartment === 'MARKETING'
+        ? 'marketing@example.invalid'
+        : 'ops@example.invalid';
 
     const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(
       email
@@ -686,7 +694,7 @@ E-BIZ 자사몰 운영팀
                       ? 'bg-purple-600 text-white border-purple-600 shadow-2xs'
                       : 'bg-white text-purple-700 border-purple-300 hover:bg-purple-50'
                   }`}
-                  title="좌/우 2분할 화면으로 기획MD팀과 웹디자인팀 초안을 나란히 확인합니다"
+                  title="좌/우 2분할 화면으로 기획MD 담당과 디자인 담당 초안을 나란히 확인합니다"
                 >
                   <Columns className="w-3.5 h-3.5" />
                   <span>{showDualSplit ? '단일 화면' : '듀얼 뷰'}</span>
@@ -711,7 +719,7 @@ E-BIZ 자사몰 운영팀
                 시연용 가상 데이터 안내
               </span>
               <span className="text-[11px] text-amber-900">
-                본 메일 발송 화면에 기재된 임직원 성명, 이메일(@indongfn.co.kr) 및 결함 리포트는 포트폴리오 시연 목적의 <strong>가상 데이터(Mock Data)</strong>입니다.
+                본 메일 화면의 직무 역할명(기획MD 담당자 등), 가상 이메일(@example.invalid) 및 결함 리포트는 포트폴리오 시연용 <strong>가상 데이터(Mock Data)</strong>입니다.
               </span>
             </div>
             <span className="text-[10px] text-amber-700 font-medium shrink-0">
@@ -1141,10 +1149,10 @@ E-BIZ 자사몰 운영팀
                           <div className="flex items-center">
                             <span className="text-slate-400 font-bold w-12 shrink-0">발신:</span>
                             <span className="font-semibold text-slate-700">
-                              E-BIZ 자사몰 운영팀 박찬미
+                              E-Biz 운영 담당 박찬미
                             </span>
                             <span className="text-slate-500 font-mono ml-1.5 text-[10px]">
-                              &lt;ops@indongfn.co.kr&gt;
+                              &lt;ops@example.invalid&gt;
                             </span>
                           </div>
                           <div className="flex items-center pt-1 border-t border-slate-200/60">
@@ -1417,7 +1425,7 @@ E-BIZ 자사몰 운영팀
                         단일 품번 [SWBLPB21010] 다부서 복합 결함 검토 화면 (2-Screen Split)
                       </strong>
                       <p className="text-[11px] text-purple-700">
-                        좌측(기획MD팀: 가격 오류 소명)과 우측(웹디자인팀: 썸네일 해상도 교체)을 독립적으로 검토하고 동시 발송할 수 있습니다.
+                        좌측(기획MD 담당: 가격 오류 소명)과 우측(디자인 담당: 썸네일 해상도 교체)을 독립적으로 검토하고 동시 발송할 수 있습니다.
                       </p>
                     </div>
                   </div>
@@ -1428,32 +1436,32 @@ E-BIZ 자사몰 운영팀
 
                 {/* 좌/우 2분할 메인 편집 컨테이너 */}
                 <div className="flex-1 grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-slate-200 overflow-y-auto p-4 gap-4">
-                  {/* [패널 1: 기획MD팀 앞 발송 초안 (좌측)] */}
+                  {/* [패널 1: 기획MD 담당 앞 발송 초안 (좌측)] */}
                   <div className="flex flex-col justify-between bg-white rounded-xl border border-slate-200 p-4 shadow-2xs">
                     <div>
                       <div className="flex items-center justify-between pb-2 mb-3 border-b border-slate-100">
                         <div className="flex items-center gap-1.5">
                           <span className="px-2 py-0.5 bg-blue-100 text-blue-800 rounded text-xs font-bold">
-                            👗 기획MD팀 담당자 앞
+                            👗 기획MD 담당자 앞
                           </span>
                           <span className="text-xs font-semibold text-slate-800">
                             {mdDraft.recipientName}
                           </span>
                         </div>
-                        <span className="text-[10px] font-mono text-slate-400">&lt;md_list@indongfn.co.kr&gt;</span>
+                        <span className="text-[10px] font-mono text-slate-400">&lt;md@example.invalid&gt;</span>
                       </div>
 
                       {/* 사유 & 첨부파일 뱃지 */}
                       <div className="p-2.5 bg-blue-50/60 rounded-lg border border-blue-200 mb-3 text-xs space-y-1">
                         <p className="text-blue-900 font-semibold flex items-center gap-1">
                           <AlertTriangle className="w-3.5 h-3.5 text-blue-600 shrink-0" />
-                          <span>가격 역전(30% vs 40%) 및 80% 트렌드 이상치 소명</span>
+                          <span>가격 역전(30% vs 40%) 및 80% 비정상 할인율 확인</span>
                         </p>
                         <div className="flex items-center justify-between pt-1 border-t border-blue-200/60">
-                          <span className="text-[11px] text-slate-600">📎 기획MD팀_오류품번리스트.xlsx (첨부됨)</span>
+                          <span className="text-[11px] text-slate-600">📎 기획MD_오류품번리스트.xlsx (첨부됨)</span>
                           <button
                             type="button"
-                            onClick={() => exportToExcel(promotions, '기획MD팀_오류품번리스트', 'MD')}
+                            onClick={() => exportToExcel(promotions, '기획MD_오류품번리스트', 'MD')}
                             className="text-[10px] text-blue-700 font-bold hover:underline cursor-pointer"
                           >
                             다운로드
@@ -1463,7 +1471,7 @@ E-BIZ 자사몰 운영팀
 
                       {/* 제목 입력 */}
                       <div className="mb-3">
-                        <label className="text-[11px] font-bold text-slate-600 mb-1 block">기획MD팀 메일 제목</label>
+                        <label className="text-[11px] font-bold text-slate-600 mb-1 block">기획MD 담당 메일 제목</label>
                         <input
                           type="text"
                           value={mdDraft.subject}
@@ -1475,7 +1483,7 @@ E-BIZ 자사몰 운영팀
                       {/* 본문 입력 */}
                       <div>
                         <label className="text-[11px] font-bold text-slate-600 mb-1 block flex items-center justify-between">
-                          <span>기획MD팀 메일 본문</span>
+                          <span>기획MD 담당 메일 본문</span>
                           <span className="text-[10px] text-indigo-600">가격/할인율 매핑 완료</span>
                         </label>
                         <textarea
@@ -1508,24 +1516,24 @@ E-BIZ 자사몰 운영팀
                             : 'bg-blue-600 hover:bg-blue-700 text-white shadow-2xs'
                         }`}
                       >
-                        {mdDraft.status === 'SENT' ? '✓ 기획MD팀 발송 완료' : '✉️ 기획MD팀만 단독 발송'}
+                        {mdDraft.status === 'SENT' ? '✓ 기획MD 발송 완료' : '✉️ 기획MD만 단독 발송'}
                       </button>
                     </div>
                   </div>
 
-                  {/* [패널 2: 웹디자인팀 앞 발송 초안 (우측)] */}
+                  {/* [패널 2: 디자인 담당 앞 발송 초안 (우측)] */}
                   <div className="flex flex-col justify-between bg-white rounded-xl border border-slate-200 p-4 shadow-2xs">
                     <div>
                       <div className="flex items-center justify-between pb-2 mb-3 border-b border-slate-100">
                         <div className="flex items-center gap-1.5">
                           <span className="px-2 py-0.5 bg-purple-100 text-purple-800 rounded text-xs font-bold">
-                            🎨 웹디자인팀 담당자 앞
+                            🎨 디자인 담당자 앞
                           </span>
                           <span className="text-xs font-semibold text-slate-800">
                             {designDraft.recipientName}
                           </span>
                         </div>
-                        <span className="text-[10px] font-mono text-slate-400">&lt;webdesign@indongfn.co.kr&gt;</span>
+                        <span className="text-[10px] font-mono text-slate-400">&lt;design@example.invalid&gt;</span>
                       </div>
 
                       {/* 사유 & 첨부파일 뱃지 */}
@@ -1535,10 +1543,10 @@ E-BIZ 자사몰 운영팀
                           <span>대표 썸네일 해상도(300x400) 규격 미달 & 착용 컷 교체</span>
                         </p>
                         <div className="flex items-center justify-between pt-1 border-t border-purple-200/60">
-                          <span className="text-[11px] text-slate-600">📎 웹디자인팀_소재오류리스트.xlsx (첨부됨)</span>
+                          <span className="text-[11px] text-slate-600">📎 디자인담당_소재오류리스트.xlsx (첨부됨)</span>
                           <button
                             type="button"
-                            onClick={() => exportToExcel(promotions, '웹디자인팀_소재오류리스트', 'DESIGN')}
+                            onClick={() => exportToExcel(promotions, '디자인담당_소재오류리스트', 'DESIGN')}
                             className="text-[10px] text-purple-700 font-bold hover:underline cursor-pointer"
                           >
                             다운로드
@@ -1548,7 +1556,7 @@ E-BIZ 자사몰 운영팀
 
                       {/* 제목 입력 */}
                       <div className="mb-3">
-                        <label className="text-[11px] font-bold text-slate-600 mb-1 block">웹디자인팀 메일 제목</label>
+                        <label className="text-[11px] font-bold text-slate-600 mb-1 block">디자인 담당 메일 제목</label>
                         <input
                           type="text"
                           value={designDraft.subject}
@@ -1560,7 +1568,7 @@ E-BIZ 자사몰 운영팀
                       {/* 본문 입력 */}
                       <div>
                         <label className="text-[11px] font-bold text-slate-600 mb-1 block flex items-center justify-between">
-                          <span>웹디자인팀 메일 본문</span>
+                          <span>디자인 담당 메일 본문</span>
                           <span className="text-[10px] text-purple-600">룩북 해상도 매핑 완료</span>
                         </label>
                         <textarea
@@ -1593,7 +1601,7 @@ E-BIZ 자사몰 운영팀
                             : 'bg-purple-600 hover:bg-purple-700 text-white shadow-2xs'
                         }`}
                       >
-                        {designDraft.status === 'SENT' ? '✓ 웹디자인팀 발송 완료' : '✉️ 웹디자인팀만 단독 발송'}
+                        {designDraft.status === 'SENT' ? '✓ 디자인 발송 완료' : '✉️ 디자인만 단독 발송'}
                       </button>
                     </div>
                   </div>
@@ -1605,7 +1613,7 @@ E-BIZ 자사몰 운영팀
                     <div className="flex items-center gap-2">
                       <Check className="w-4 h-4 text-emerald-600 shrink-0" />
                       <span>
-                        🎉 [기획MD팀]과 [웹디자인팀] 담당자에게 각각의 맞춤형 초안과 엑셀 리포트가 성공적으로 동시 발송되었습니다!
+                        🎉 [기획MD 담당]과 [디자인 담당]에게 각각의 맞춤형 초안과 엑셀 리포트가 성공적으로 동시 발송되었습니다!
                       </span>
                     </div>
                     <span className="text-[11px] text-emerald-700 font-normal">발송 완료 처리됨</span>
@@ -1616,8 +1624,8 @@ E-BIZ 자사몰 운영팀
                 <div className="p-4 bg-white border-t border-slate-200 flex flex-wrap items-center justify-between gap-3">
                   <div className="text-xs text-slate-500">
                     <span>💡 발송 시 </span>
-                    <strong className="text-slate-700">기획MD팀_오류품번리스트.xlsx</strong> 및{' '}
-                    <strong className="text-slate-700">웹디자인팀_소재오류리스트.xlsx</strong> 파일이 자동 패키징 첨부됩니다.
+                    <strong className="text-slate-700">기획MD담당_오류품번리스트.xlsx</strong> 및{' '}
+                    <strong className="text-slate-700">디자인담당_소재오류리스트.xlsx</strong> 파일이 자동 패키징 첨부됩니다.
                   </div>
 
                   <div className="flex items-center gap-2">
@@ -1644,17 +1652,17 @@ E-BIZ 자사몰 운영팀
                       {isSystemSending ? (
                         <>
                           <Clock className="w-4 h-4 animate-spin" />
-                          <span>양 부서에 동시 전송 중...</span>
+                          <span>양 담당에 동시 전송 중...</span>
                         </>
                       ) : mdDraft.status === 'SENT' && designDraft.status === 'SENT' ? (
                         <>
                           <Check className="w-4 h-4" />
-                          <span>양 부서 모두 발송 완료됨</span>
+                          <span>양 담당 모두 발송 완료됨</span>
                         </>
                       ) : (
                         <>
                           <Send className="w-4 h-4" />
-                          <span>🚀 기획MD팀 & 웹디자인팀 동시 일괄 발송하기 (엑셀 2종 자동 첨부)</span>
+                          <span>🚀 기획MD 담당 & 디자인 담당 동시 일괄 발송하기 (엑셀 2종 자동 첨부)</span>
                         </>
                       )}
                     </button>

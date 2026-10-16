@@ -267,7 +267,7 @@ export const INITIAL_PROMOTIONS: Promotion[] = [
         ruleCode: 'MATH_DISCOUNT_MISMATCH',
         severity: 'BLOCKER',
         targetField: 'SWBLPB21010.displayDiscountRate',
-        message: '품번 SWBLPB21010: 정가(198,000) 대비 판매가(138,600)의 실제 계산 할인율은 30%이나 표기 할인율이 40%로 기재되었습니다. (웹디자인팀 썸네일 이슈와 함께 다부서 확인 필요)',
+        message: '품번 SWBLPB21010: 정가(198,000) 대비 판매가(138,600)의 실제 계산 할인율은 30%이나 표기 할인율이 40%로 기재되었습니다. (디자인 담당 썸네일 이슈와 함께 다부서 확인 필요)',
         details: {
           productCode: 'SWBLPB21010',
           expected: 30,
@@ -283,7 +283,7 @@ export const INITIAL_PROMOTIONS: Promotion[] = [
         ruleCode: 'IMAGE_SPEC_MISMATCH',
         severity: 'BLOCKER',
         targetField: 'SWBLPB21010.thumbnailUrl',
-        message: '품번 SWBLPB21010: 상품 대표 썸네일 해상도 규격 미달(300x400 px, 모바일 확대 시 깨짐 발생). 웹디자인팀 고해상도 룩북 착용 컷 재전달 필요. (기획MD팀 가격오류와 동시 발생)',
+        message: '품번 SWBLPB21010: 상품 대표 썸네일 해상도 규격 미달(300x400 px, 모바일 확대 시 깨짐 발생). 디자인 담당 고해상도 룩북 착용 컷 재전달 필요. (기획MD 담당 가격오류와 동시 발생)',
         details: {
           productCode: 'SWBLPB21010',
           expected: '750x1000 px',
@@ -296,7 +296,7 @@ export const INITIAL_PROMOTIONS: Promotion[] = [
         ruleCode: 'TREND_OUTLIER_NOTICE',
         severity: 'WARNING',
         targetField: 'SWCTKB21030.displayDiscountRate',
-        message: '품번 SWCTKB21030: 원본 기획 데이터 트렌드 이상치 감지: 자켓 카테고리 시즌 평균(30%) 대비 비정상적인 80%가 초기 기입되었습니다. 담당자(MD) 오기입(0 누락 또는 수치 오입력) 여부 확인이 권장됩니다.',
+        message: '품번 SWCTKB21030: 원본 기획 데이터 트렌드 이상치 감지: 자켓 카테고리 시즌 평균(30%) 대비 비정상적인 80%가 초기 기입되었습니다. 기획MD 담당 오기입(0 누락 또는 수치 오입력) 여부 확인이 권장됩니다.',
         details: {
           productCode: 'SWCTKB21030',
           expected: '시즌 평균 30% (허용 20~45%)',
@@ -310,7 +310,7 @@ export const INITIAL_PROMOTIONS: Promotion[] = [
         ruleCode: 'UNAPPROVED_SKU',
         severity: 'BLOCKER',
         targetField: 'SWCTKB21099.isApproved',
-        message: '품번 SWCTKB21099: MD팀 사전 승인표에 미등록된 임의 등록 품번이 감지되었습니다. 승인 여부 재확인이 필요합니다.',
+        message: '품번 SWCTKB21099: 기획MD 담당 사전 승인표에 미등록된 임의 등록 품번이 감지되었습니다. 승인 여부 재확인이 필요합니다.',
         details: {
           productCode: 'SWCTKB21099',
         },
@@ -347,7 +347,7 @@ export const INITIAL_PROMOTIONS: Promotion[] = [
         ruleCode: 'BANNER_SPEC_MISMATCH',
         severity: 'BLOCKER',
         targetField: 'banner.pcBannerUrl',
-        message: '웹디자인팀 배너 해상도 규격 불일치: PC 메인 배너 권장 규격(1920x600 px) 미달(업로드 규격: 1200x400 px, 텍스트 깨짐 발생). 고해상도 재전달 필요.',
+        message: '배너 해상도 규격 불일치: PC 메인 배너 권장 규격(1920x600 px) 미달(업로드 규격: 1200x400 px, 텍스트 깨짐 발생). 디자인 담당 고해상도 재전달 필요.',
         details: {
           expected: '1920x600 px',
           actual: '1200x400 px',
@@ -359,7 +359,7 @@ export const INITIAL_PROMOTIONS: Promotion[] = [
         ruleCode: 'COUPON_POLICY_MISMATCH',
         severity: 'WARNING',
         targetField: 'allowCoupon',
-        message: '마케팅팀 프로모션 쿠폰 정책 충돌: LIVE WEEK 한정 특가 상품군에 신규회원 웰컴 쿠폰 중복 적용 허용 플래그가 켜져 있어 마진율 방어 확인 필요.',
+        message: '마케팅 담당 프로모션 쿠폰 정책 충돌: LIVE WEEK 한정 특가 상품군에 신규회원 웰컴 쿠폰 중복 적용 허용 플래그가 켜져 있어 마진율 방어 확인 필요.',
         details: {
           expected: '쿠폰 중복 불가',
           actual: '중복 허용됨',
@@ -616,7 +616,7 @@ export const INITIAL_PROMOTIONS: Promotion[] = [
         ruleCode: 'IMAGE_LOAD_FAILED',
         severity: 'BLOCKER',
         targetField: 'SWOPPB11010.thumbnailUrl',
-        message: '품번 SWOPPB11010: 상품 대표 썸네일 링크 깨짐(404 / 엑스박스): 썸네일 이미지 파일이 서버에 누락되어 고객 화면에 엑스박스가 발생하고 있습니다. 웹디자인팀 원본 룩북 착용 컷 긴급 재등록 필요.',
+        message: '품번 SWOPPB11010: 상품 대표 썸네일 링크 깨짐(404 / 엑스박스): 썸네일 이미지 파일이 서버에 누락되어 고객 화면에 엑스박스가 발생하고 있습니다. 디자인 담당 원본 룩북 착용 컷 긴급 재등록 필요.',
         details: {
           productCode: 'SWOPPB11010',
           expected: '750x1000 px 고해상도 룩북 컷',

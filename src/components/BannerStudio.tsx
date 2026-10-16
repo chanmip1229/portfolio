@@ -53,9 +53,12 @@ export default function BannerStudio({ promotionId }: BannerStudioProps) {
   const [slideUrls, setSlideUrls] = useState<{
     pc: string[];
     mo: string[];
-  }>({ pc: [], mo: [] });
-  const [pcDataUrl, setPcDataUrl] = useState<string>('');
-  const [moDataUrl, setMoDataUrl] = useState<string>('');
+  }>({
+    pc: promo?.banner.pcBannerUrl ? [promo.banner.pcBannerUrl] : [],
+    mo: promo?.banner.moBannerUrl ? [promo.banner.moBannerUrl] : [],
+  });
+  const [pcDataUrl, setPcDataUrl] = useState<string>(promo?.banner.pcBannerUrl || '');
+  const [moDataUrl, setMoDataUrl] = useState<string>(promo?.banner.moBannerUrl || '');
   const [activeTab, setActiveTab] = useState<'PC' | 'MO'>('PC');
   const [isRendering, setIsRendering] = useState(false);
 
@@ -392,11 +395,15 @@ export default function BannerStudio({ promotionId }: BannerStudioProps) {
                 type="button"
                 onClick={triggerRender}
                 disabled={isRendering}
-                className="text-[11px] text-slate-500 hover:text-slate-800 flex items-center gap-1 cursor-pointer px-1.5 py-1"
+                className={`text-[11px] font-semibold flex items-center gap-1 px-2 py-1 rounded-md transition-colors ${
+                  isRendering
+                    ? 'text-slate-400 bg-slate-100 cursor-not-allowed'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 cursor-pointer'
+                }`}
                 title="배너 캔버스 강제 재합성"
               >
-                <RefreshCw className={`w-3 h-3 ${isRendering ? 'animate-spin' : ''}`} />
-                <span>재렌더링</span>
+                <RefreshCw className={`w-3 h-3 ${isRendering ? 'animate-spin text-indigo-500' : ''}`} />
+                <span>{isRendering ? '합성 중...' : '재렌더링'}</span>
               </button>
             </div>
           </div>
@@ -708,9 +715,25 @@ export default function BannerStudio({ promotionId }: BannerStudioProps) {
                   </div>
                 </div>
               ) : (
-                <div className="text-xs text-slate-400 flex items-center gap-2">
-                  <RefreshCw className="w-4 h-4 animate-spin text-indigo-400" />
-                  <span>배너 캔버스 합성 중...</span>
+                <div className="w-full h-full min-h-[300px] flex flex-col items-center justify-center p-8 text-center space-y-3 bg-linear-to-b from-slate-900 to-slate-950 rounded-xl border border-slate-800">
+                  <div className="relative">
+                    <div className="w-16 h-16 rounded-2xl bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center text-indigo-400 animate-pulse">
+                      <ImageIcon className="w-8 h-8 opacity-70" />
+                    </div>
+                    <span className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-indigo-600 text-white flex items-center justify-center shadow-xs">
+                      <RefreshCw className="w-3 h-3 animate-spin" />
+                    </span>
+                  </div>
+                  <div>
+                    <h5 className="text-sm font-bold text-white tracking-tight">배너 캔버스 합성 준비 중</h5>
+                    <p className="text-xs text-slate-400 mt-1 max-w-sm leading-relaxed">
+                      브랜드 화보 및 카피 폰트를 고해상도({activeTab === 'PC' ? '1920x600' : '750x900'}) 캔버스에 합성하고 있습니다.
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2 pt-1">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                    <span className="text-[11px] font-mono text-indigo-300">HTML5 Canvas Rendering</span>
+                  </div>
                 </div>
               )}
 
