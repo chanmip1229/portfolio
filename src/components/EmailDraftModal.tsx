@@ -624,7 +624,7 @@ E-BIZ 자사몰 운영팀
                   ) : showDualSplit ? (
                     <span className="text-[11px] font-bold bg-purple-100 text-purple-900 border border-purple-200 px-2 py-0.5 rounded-full flex items-center gap-1">
                       <Columns className="w-3 h-3 text-purple-600" />
-                      다부서 2분할 듀얼 뷰
+                      부서별 듀얼 뷰
                     </span>
                   ) : (
                     <span className="text-[11px] font-bold bg-blue-100 text-blue-900 border border-blue-200 px-2 py-0.5 rounded-full flex items-center gap-1">
@@ -689,7 +689,7 @@ E-BIZ 자사몰 운영팀
                   title="좌/우 2분할 화면으로 기획MD팀과 웹디자인팀 초안을 나란히 확인합니다"
                 >
                   <Columns className="w-3.5 h-3.5" />
-                  <span>{showDualSplit ? '단일 화면' : '2분할 듀얼'}</span>
+                  <span>{showDualSplit ? '단일 화면' : '듀얼 뷰'}</span>
                 </button>
               )}
 

@@ -501,7 +501,7 @@ export default function Home() {
                         : 'bg-slate-200/70 text-slate-600'
                     }`}
                   >
-                    마일스톤 & 부서별 분할 메일
+                    마일스톤 & 부서별 듀얼 메일
                   </span>
                 </button>
 

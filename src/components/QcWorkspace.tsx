@@ -20,6 +20,17 @@ import {
 import confetti from 'canvas-confetti';
 import { exportToExcel } from '@/utils/excelExporter';
 
+const RULE_CODE_LABELS: Record<string, string> = {
+  MATH_DISCOUNT_MISMATCH: '할인율 불일치',
+  IMAGE_SPEC_MISMATCH: '썸네일 해상도',
+  TREND_OUTLIER_NOTICE: '비정상 할인율',
+  UNAPPROVED_SKU: '미승인 품번',
+  INVALID_URL: '깨진 링크 (404)',
+  PLAN_DISCOUNT_MISMATCH: '기획 할인 초과',
+  BANNER_SPEC_MISMATCH: '배너 규격 미달',
+  COUPON_POLICY_MISMATCH: '쿠폰 정책 중복',
+};
+
 interface QcWorkspaceProps {
   promotionId: string;
   onNavigateToSkuQc?: () => void;
@@ -45,6 +56,23 @@ export default function QcWorkspace({ promotionId, onNavigateToSkuQc }: QcWorksp
   const blockerCount = promo.qcIssues.filter((i) => i.severity === 'BLOCKER').length;
   const warningCount = promo.qcIssues.filter((i) => i.severity === 'WARNING').length;
   const isAllPassed = blockerCount === 0;
+
+  // 조치 대기 부서 목록 산출 (오픈 불가 결함 보유 부서 기준)
+  const blockerDepts = Array.from(
+    new Set(
+      promo.qcIssues
+        .filter((i) => i.severity === 'BLOCKER')
+        .map((i) => {
+          if (i.department === 'MD') return '기획MD';
+          if (i.department === 'DESIGN') return '웹디자인';
+          if (i.department === 'DEV') return '전산';
+          return '마케팅';
+        })
+    )
+  );
+  const waitingDeptText = blockerDepts.length > 0
+    ? blockerDepts.join(' · ') + '팀'
+    : '대기 없음';
 
   const handlePublish = () => {
     approveForPublish(promo.id);
@@ -139,7 +167,7 @@ export default function QcWorkspace({ promotionId, onNavigateToSkuQc }: QcWorksp
         <div className="flex items-center gap-2 text-[11px] text-slate-300">
           <span>오픈 예정일: <strong>{promo.startDate}</strong></span>
           <span>•</span>
-          <span>현재 병목: <strong>[{promo.currentBottleneckDept}팀]</strong></span>
+          <span>조치 대기: <strong className="text-amber-300">[{waitingDeptText}]</strong></span>
         </div>
       </div>
 
@@ -155,11 +183,11 @@ export default function QcWorkspace({ promotionId, onNavigateToSkuQc }: QcWorksp
               {isAllPassed ? <ShieldCheck className="w-5 h-5" /> : <ShieldAlert className="w-5 h-5" />}
             </span>
             <h3 className="text-base font-bold text-slate-900">
-              게시 전 사전 QC 검증 & 부서별 정합성 워크스페이스
+              프로모션 사전 점검
             </h3>
           </div>
           <p className="text-xs text-slate-500 mt-1">
-            가격 계산(할인율), 404 링크, 승인 품번, 배너 해상도 등 6가지 사전 점검 기준을 코드로 자동 검증합니다.
+            가격·할인율, 404 링크, 승인 품번, 배너 규격을 사전에 자동 점검합니다.
           </p>
         </div>
 
@@ -169,7 +197,7 @@ export default function QcWorkspace({ promotionId, onNavigateToSkuQc }: QcWorksp
             {blockerCount > 0 ? (
               <span className="px-3 py-1.5 rounded-lg text-xs font-bold bg-rose-100 text-rose-800 border border-rose-300 flex items-center gap-1.5">
                 <AlertTriangle className="w-4 h-4 text-rose-600" />
-                오픈 불가 결함 {blockerCount}건 발견
+                결함 {blockerCount}건
               </span>
             ) : (
               <span className="px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 flex items-center gap-1.5">
@@ -214,16 +242,16 @@ export default function QcWorkspace({ promotionId, onNavigateToSkuQc }: QcWorksp
             <div className="flex items-center gap-2">
               <span className="text-xs font-bold text-rose-900 flex items-center gap-1.5">
                 <AlertTriangle className="w-4 h-4 text-rose-600" />
-                부서별 검출된 정합성 오류 상세 리포트 ({promo.qcIssues.length}건)
+                부서별 오류 ({promo.qcIssues.length}건)
               </span>
               <span className="text-[11px] text-slate-500">
-                (MD팀 외 디자인, 개발, 마케팅 부서 이슈를 탭으로 분리 확인 가능)
+                (부서별 탭 선택 가능)
               </span>
             </div>
 
             {/* 부서별 즉시 조치 메일/슬랙 전송 버튼 그룹 */}
             <div className="flex flex-wrap items-center gap-1.5">
-              {/* 신규: 다부서 복합 이슈(MD+디자인) 2분할 동시 요청 버튼 */}
+              {/* 신규: 다부서 복합 이슈(MD+디자인) 부서별 듀얼 메일 버튼 */}
               <button
                 type="button"
                 onClick={() => {
@@ -231,10 +259,10 @@ export default function QcWorkspace({ promotionId, onNavigateToSkuQc }: QcWorksp
                   setIsDraftModalOpen(true);
                 }}
                 className="text-[11px] font-bold text-purple-800 hover:text-purple-950 bg-purple-50 hover:bg-purple-100 px-2.5 py-1 rounded-lg border border-purple-300 flex items-center gap-1 transition-colors shadow-2xs cursor-pointer"
-                title="단일 품번(SWBLPB21010)에 가격과 해상도 2개 부서가 걸린 복합 결함 2분할 듀얼 메일 작성"
+                title="기획MD팀과 웹디자인팀 부서별 듀얼 메일 작성"
               >
                 <Layers className="w-3.5 h-3.5 text-purple-600" />
-                <span>👥 다부서(MD+디자인) 동시 요청 (1)</span>
+                <span>👥 부서별 듀얼 메일 (1)</span>
               </button>
 
               <button
@@ -261,20 +289,20 @@ export default function QcWorkspace({ promotionId, onNavigateToSkuQc }: QcWorksp
                 type="button"
                 onClick={() => handleOpenDeptDraft('DEV')}
                 className="text-[11px] font-bold text-emerald-700 hover:text-emerald-900 bg-white hover:bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200 flex items-center gap-1 transition-colors shadow-2xs cursor-pointer"
-                title="전산팀(IT)에 404 URL 단절 조치 요청 메일 발송"
+                title="전산팀에 404 URL 단절 조치 요청 메일 발송"
               >
                 <Mail className="w-3 h-3 text-emerald-600" />
-                <span>✉️ 전산팀(IT) 요청 ({devIssues.length})</span>
+                <span>✉️ 전산팀 요청 ({devIssues.length})</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => handleOpenDeptDraft('MARKETING')}
                 className="text-[11px] font-bold text-amber-700 hover:text-amber-900 bg-white hover:bg-amber-50 px-2.5 py-1 rounded-lg border border-amber-200 flex items-center gap-1 transition-colors shadow-2xs cursor-pointer"
-                title="E-BIZ 마케팅팀에 쿠폰 중복 정책 확인 요청 메일 발송"
+                title="마케팅팀에 쿠폰 정책 확인 요청 메일 발송"
               >
                 <Mail className="w-3 h-3 text-amber-600" />
-                <span>✉️ E-BIZ 마케팅팀 요청 ({mktIssues.length})</span>
+                <span>✉️ 마케팅팀 요청 ({mktIssues.length})</span>
               </button>
             </div>
           </div>
@@ -382,33 +410,32 @@ export default function QcWorkspace({ promotionId, onNavigateToSkuQc }: QcWorksp
                     {issue.isMultiDeptIssue && (
                       <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-purple-100 text-purple-900 border border-purple-300 flex items-center gap-1 shrink-0">
                         <Layers className="w-3 h-3 text-purple-600" />
-                        <span>다부서 복합 (기획MD+웹디자인)</span>
+                        <span>복수 부서 (MD+디자인)</span>
                       </span>
                     )}
 
                     {/* 신규: 트렌드 이상치 태그 */}
                     {issue.ruleCode === 'TREND_OUTLIER_NOTICE' && (
                       <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300 flex items-center gap-1 shrink-0">
-                        <span>⚠️ 80% 트렌드 이상치 감지</span>
+                        <span>⚠️ 80% 오기입 의심</span>
                       </span>
                     )}
 
                     <span
-                      className={`px-1.5 py-0.5 rounded text-[10px] font-mono font-bold mt-0.5 shrink-0 ${
+                      className={`px-1.5 py-0.5 rounded text-[10px] font-bold mt-0.5 shrink-0 ${
                         issue.severity === 'BLOCKER'
                           ? 'bg-rose-100 text-rose-800'
                           : 'bg-amber-100 text-amber-800'
                       }`}
                     >
-                      {issue.ruleCode}
+                      {RULE_CODE_LABELS[issue.ruleCode] || issue.ruleCode}
                     </span>
 
                     <div>
                       <p className="font-semibold leading-relaxed text-slate-900">{issue.message}</p>
                       {issue.details && (
-                        <p className="text-[11px] text-slate-500 mt-1 font-mono">
-                          기대값(Expected): {String(issue.details.expected)} / 현재값(Actual):{' '}
-                          <span className="text-rose-600 font-bold">{String(issue.details.actual)}</span>
+                        <p className="text-[11px] text-slate-500 mt-1">
+                          기준: <span className="font-semibold">{String(issue.details.expected)}</span> / 현재 입력: <span className="text-rose-600 font-bold">{String(issue.details.actual)}</span>
                         </p>
                       )}
                     </div>
@@ -423,10 +450,10 @@ export default function QcWorkspace({ promotionId, onNavigateToSkuQc }: QcWorksp
                           setIsDraftModalOpen(true);
                         }}
                         className="px-2.5 py-1 bg-purple-600 hover:bg-purple-700 text-white text-[10px] font-bold rounded-md shadow-2xs transition-colors cursor-pointer flex items-center gap-1"
-                        title="기획MD팀과 웹디자인팀 2분할 듀얼 메일 작성창 열기"
+                        title="기획MD팀과 웹디자인팀 부서별 듀얼 메일 작성창 열기"
                       >
                         <Mail className="w-3 h-3 text-white" />
-                        <span>✉️ 2분할 듀얼 메일 &gt;</span>
+                        <span>✉️ 부서별 듀얼 메일 &gt;</span>
                       </button>
                     ) : (
                       <button
@@ -443,7 +470,7 @@ export default function QcWorkspace({ promotionId, onNavigateToSkuQc }: QcWorksp
                             ? '웹디자인'
                             : dept === 'DEV'
                             ? '전산'
-                            : 'E-BIZ마케팅'}팀 조치 요청 &gt;
+                            : '마케팅'}팀 요청 &gt;
                         </span>
                       </button>
                     )}
@@ -455,7 +482,7 @@ export default function QcWorkspace({ promotionId, onNavigateToSkuQc }: QcWorksp
                           : 'bg-amber-500 text-white'
                       }`}
                     >
-                      {issue.severity}
+                      {issue.severity === 'BLOCKER' ? '오픈 불가' : '경고'}
                     </span>
                   </div>
                 </div>
@@ -475,13 +502,13 @@ export default function QcWorkspace({ promotionId, onNavigateToSkuQc }: QcWorksp
               </span>
               <div>
                 <h4 className="text-sm font-black text-slate-900 tracking-tight flex items-center gap-2">
-                  행사 대상 상품(SKU) 정합성 요약 리포트
+                  행사 편성 상품 (SKU)
                   <span className="text-[11px] font-bold text-indigo-700 bg-indigo-100/70 px-2 py-0.5 rounded-full">
                     총 {totalSkuCount}종 편성
                   </span>
                 </h4>
                 <p className="text-xs text-slate-500 mt-0.5">
-                  단품 단위의 가격·할인율 인라인 수정, 트렌드 이상치 소명, 엑셀 기획서 업로드 검수는 <strong>[단품(SKU) 마스터 전수 QC]</strong> 전용 서브탭으로 완전 일원화되었습니다.
+                  상세 가격 수정 및 엑셀 업로드 검사는 <strong>[단품 마스터 QC]</strong> 탭에서 확인하실 수 있습니다.
                 </p>
               </div>
             </div>
@@ -667,7 +694,7 @@ export default function QcWorkspace({ promotionId, onNavigateToSkuQc }: QcWorksp
             </span>
             <div>
               <p className="text-xs font-bold text-white">
-                단품(SKU) 단위 전수 정합성 검증 및 인라인 수정 워크스페이스
+                단품(SKU) 마스터 전수 검수
               </p>
               <p className="text-[11px] text-slate-300 mt-0.5">
                 MD 기획 엑셀 업로드, 80% 비정상 할인율 확인 메일 발송, 404 이미지 교체 요청을 전용 서브탭에서 진행하세요.
@@ -681,7 +708,7 @@ export default function QcWorkspace({ promotionId, onNavigateToSkuQc }: QcWorksp
               onClick={onNavigateToSkuQc}
               className="inline-flex items-center gap-1.5 px-4 py-2 bg-indigo-500 hover:bg-indigo-400 text-white rounded-lg text-xs font-black transition-all shadow-md shrink-0 cursor-pointer"
             >
-              <span>단품(SKU) 마스터 전수 QC 서브탭으로 이동</span>
+              <span>단품 마스터 검수로 이동</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           )}

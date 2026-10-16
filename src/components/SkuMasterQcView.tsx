@@ -690,9 +690,9 @@ export default function SkuMasterQcView({ onOpenDualDraftModal }: SkuMasterQcVie
               </div>
 
               <div className="p-2.5 bg-white rounded-lg border border-slate-200">
-                <strong className="text-slate-900 block mb-1">3. 복수 부서 오류 원클릭 분할 요청</strong>
+                <strong className="text-slate-900 block mb-1">3. 복수 부서 오류 원클릭 분할 처리</strong>
                 <p className="text-slate-500">
-                  단일 품번에 가격 오류(MD)와 썸네일 해상도 미달(디자인)이 함께 발생한 경우, <strong>'부서별 분할 메일'</strong> 화면을 통해 각 부서에 맞는 초안을 한 번에 확인하고 동시 발송할 수 있습니다.
+                  단일 품번에 가격 오류(MD)와 썸네일 해상도 미달(디자인)이 함께 발생한 경우, <strong>'부서별 듀얼 메일'</strong> 화면을 통해 각 부서에 맞는 초안을 한 번에 확인하고 동시 발송할 수 있습니다.
                 </p>
               </div>
             </div>
@@ -1022,7 +1022,7 @@ export default function SkuMasterQcView({ onOpenDualDraftModal }: SkuMasterQcVie
                               className="w-full py-1 bg-purple-600 hover:bg-purple-700 text-white rounded text-[10px] font-bold transition-colors flex items-center justify-center gap-1 shadow-2xs cursor-pointer"
                             >
                               <Mail className="w-3 h-3" />
-                              <span>✉️ 부서별 맞춤 요청 메일 열기</span>
+                              <span>✉️ 부서별 듀얼 메일 열기</span>
                             </button>
                           </div>
                         ) : hasBrokenImage ? (
