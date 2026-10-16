@@ -18,14 +18,14 @@ export function generateMilestones(startDate: string): Milestone[] {
   return [
     {
       code: 'D_MINUS_7',
-      label: 'MD팀 대상 상품 확정 엑셀 요청',
+      label: '기획MD팀 대상 상품 확정 엑셀 요청',
       targetDate: subtractDays(startDate, 7),
       department: 'MD',
       isCompleted: false,
     },
     {
       code: 'D_MINUS_5',
-      label: '디자인팀 배너 소재/키비주얼 요청',
+      label: '웹디자인팀 배너 소재/키비주얼 요청',
       targetDate: subtractDays(startDate, 5),
       department: 'DESIGN',
       isCompleted: false,

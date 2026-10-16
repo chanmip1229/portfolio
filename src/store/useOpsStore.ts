@@ -65,7 +65,7 @@ const INITIAL_DRAFTS: EmailDraft[] = [
     promotionId: 'promo-list-trench-2026',
     emailType: 'RECHECK_ERROR',
     toDepartment: 'MD',
-    recipientName: 'MD1팀 김지현 대리',
+    recipientName: '기획MD팀 김지현 대리',
     relatedProductCode: 'SWBLPB21010',
     isMultiDeptSplitDraft: true,
     pairedDraftId: 'draft-multi-dept-design',
@@ -73,9 +73,9 @@ const INITIAL_DRAFTS: EmailDraft[] = [
     body: `안녕하세요 김지현 대리님, E-BIZ 자사몰 운영팀입니다.
 
 [LIST] 26FW 캐시미어 & 울코트 프리미엄 위크 등록 품번 [SWBLPB21010] 및 기획 데이터 사전 QC 결과, 가격 정합성 오류가 확인되어 확인 요청드립니다.
-(※ 본 품번은 디자인팀 썸네일 해상도 오류와 동시 적발되어 양 부서에 각각 별도 요청이 발송되었습니다.)
+(※ 본 품번은 웹디자인팀 썸네일 해상도 오류와 동시 적발되어 양 부서에 각각 별도 요청이 발송되었습니다.)
 
-■ MD팀 확인 필요 사항:
+■ 기획MD팀 확인 필요 사항:
 1. 품번: SWBLPB21010 (캐시미어 블렌드 더블 울코트 - 네이비)
    - 정가: 198,000원 / 실제 판매가: 138,600원
    - 계산 할인율은 30%이나, 등록 시트 표기 할인율이 40%로 기재됨.
@@ -85,7 +85,7 @@ const INITIAL_DRAFTS: EmailDraft[] = [
    - 자켓 카테고리 시즌 평균 할인율(30%) 대비 80%로 기재되어 0 누락 또는 오입력 여부 확인 필요.
 
 ■ 조치 마감: 2026년 10월 15일(목) 17:00까지
-첨부 엑셀(MD팀_오류품번리스트.xlsx) 확인 후 회신 부탁드립니다.
+첨부 엑셀(기획MD팀_오류품번리스트.xlsx) 확인 후 회신 부탁드립니다.
 
 
 감사합니다.
@@ -93,7 +93,7 @@ const INITIAL_DRAFTS: EmailDraft[] = [
 Best regards,
 E-BIZ 자사몰 운영팀
 박찬미 드림`,
-    triggerReason: '품번 SWBLPB21010 할인율 계산 불일치 및 SWCTKB21030 80% 트렌드 이상치 감지 (MD+디자인 다부서 복합 이슈)',
+    triggerReason: '품번 SWBLPB21010 할인율 계산 불일치 및 SWCTKB21030 80% 트렌드 이상치 감지 (기획MD+웹디자인 다부서 복합 이슈)',
     status: 'DRAFT',
     createdAt: '2026-10-13 11:32',
   },
@@ -102,7 +102,7 @@ E-BIZ 자사몰 운영팀
     promotionId: 'promo-list-trench-2026',
     emailType: 'RECHECK_ERROR',
     toDepartment: 'DESIGN',
-    recipientName: '디자인팀 박민지 책임',
+    recipientName: '웹디자인팀 박민지 책임',
     relatedProductCode: 'SWBLPB21010',
     isMultiDeptSplitDraft: true,
     pairedDraftId: 'draft-multi-dept-md',
@@ -110,16 +110,16 @@ E-BIZ 자사몰 운영팀
     body: `안녕하세요 박민지 책임님, E-BIZ 자사몰 운영팀입니다.
 
 [LIST] 26FW 캐시미어 & 울코트 프리미엄 위크 대표 등록 품번 [SWBLPB21010]의 이미지 에셋 사전 검수 결과, 해상도 규격 미달이 확인되어 재전달 요청드립니다.
-(※ 본 품번은 MD팀 가격 오류와 동시 적발되어 양 부서에 각각 별도 요청이 발송되었습니다.)
+(※ 본 품번은 기획MD팀 가격 오류와 동시 적발되어 양 부서에 각각 별도 요청이 발송되었습니다.)
 
-■ 디자인팀 조치 필요 사항:
+■ 웹디자인팀 조치 필요 사항:
 1. 품번: SWBLPB21010 (캐시미어 블렌드 더블 울코트 - 네이비)
    - 현재 등록 이미지: 300 x 400 px 저해상도 (모바일 상세 확대 시 심각한 픽셀 깨짐)
    - 권장 규격: 750 x 1000 px 이상 (3:4 비율 고해상도)
    - 추가 요청: 현재 원단 디테일 컷이 대표로 지정되어 있어, 26FW 모델 착용 룩북 메인 컷으로 썸네일 교체 요망
 
 ■ 조치 마감: 2026년 10월 15일(목) 15:00까지
-첨부 엑셀(디자인팀_오류품번리스트.xlsx) 참조 부탁드립니다.
+첨부 엑셀(웹디자인팀_오류품번리스트.xlsx) 참조 부탁드립니다.
 
 
 감사합니다.
@@ -127,7 +127,7 @@ E-BIZ 자사몰 운영팀
 Best regards,
 E-BIZ 자사몰 운영팀
 박찬미 드림`,
-    triggerReason: '품번 SWBLPB21010 대표 썸네일 해상도 규격 미달 및 착용 컷 교체 필요 (MD+디자인 다부서 복합 이슈)',
+    triggerReason: '품번 SWBLPB21010 대표 썸네일 해상도 규격 미달 및 착용 컷 교체 필요 (기획MD+웹디자인 다부서 복합 이슈)',
     status: 'DRAFT',
     createdAt: '2026-10-13 11:32',
   },
@@ -173,7 +173,7 @@ E-BIZ 자사몰 운영팀
     promotionId: 'promo-shesmiss-jan-2026',
     emailType: 'RECHECK_ERROR',
     toDepartment: 'DESIGN',
-    recipientName: '디자인팀 박민지 책임',
+    recipientName: '웹디자인팀 박민지 책임',
     relatedProductCode: 'SWOPPB11010',
     subject: '[긴급 조치 요청] [SWOPPB11010] 상품 대표 썸네일 링크 깨짐(404 / 엑스박스) 재등록의 건',
     body: `안녕하세요 박민지 책임님, E-BIZ 자사몰 운영팀입니다.
@@ -204,13 +204,13 @@ E-BIZ 자사몰 운영팀
     promotionId: 'promo-list-trench-2026',
     emailType: 'RECHECK_ERROR',
     toDepartment: 'MD',
-    recipientName: 'MD1팀 김지현 대리',
+    recipientName: '기획MD팀 김지현 대리',
     subject: '[긴급 재확인 요청] [LIST] 26SS 트렌치코트전 - 상품 정합성 다건 오류(4건) 확인의 건',
     body: `안녕하세요 김지현 대리님, E-BIZ 자사몰 운영팀입니다.
 
 보내주신 [LIST] 26SS 트렌치코트 얼리버드 위크 상품 등록 엑셀에 대한 6대 룰 엔진 사전 QC 검증 결과, 즉시 조치가 필요한 오류 4건이 감지되어 회신드립니다.
 
-수백 건 상품의 정확한 검토를 위해 상세 오류 내역을 정리한 엑셀 파일(MD팀_오류품번리스트.xlsx)을 함께 첨부해 드리오니 참조 부탁드립니다.
+수백 건 상품의 정확한 검토를 위해 상세 오류 내역을 정리한 엑셀 파일(기획MD팀_오류품번리스트.xlsx)을 함께 첨부해 드리오니 참조 부탁드립니다.
 
 ■ 주요 오류 적발 내역 (총 4건):
 1. [할인율 계산 불일치] SWBLPB21010 (클래식 더블 버튼 트렌치코트)
@@ -250,7 +250,7 @@ E-BIZ 자사몰 운영팀
     promotionId: 'promo-list-trench-2026',
     emailType: 'RECHECK_ERROR',
     toDepartment: 'DESIGN',
-    recipientName: '디자인팀 박민지 책임',
+    recipientName: '웹디자인팀 박민지 책임',
     subject: '[긴급 수정 요청] [LIST] 26FW 코트전 - PC 메인 배너 해상도 규격 미달의 건',
     body: `안녕하세요 박민지 책임님, E-BIZ 자사몰 운영팀입니다.
 
@@ -277,14 +277,14 @@ E-BIZ 자사몰 운영팀
     promotionId: 'promo-list-trench-2026',
     emailType: 'RECHECK_ERROR',
     toDepartment: 'DEV',
-    recipientName: '웹개발/퍼블리싱팀 정우진 선임',
+    recipientName: '전산팀 정우진 선임',
     subject: '[긴급 조치 요청] [LIST] 26FW 코트전 - 품번 SWBLPB21050 404 URL 단절의 건',
     body: `안녕하세요 정우진 선임님, E-BIZ 자사몰 운영팀입니다.
 
 [LIST] 26FW 코트전 등록 상품 URL 유효성 검증 중, 품번 SWBLPB21050의 상세페이지 링크가 외부 테스트 도메인(http://broken-link.com)으로 기재되어 404 페이지 오류가 발생하고 있습니다.
 
 ■ 조치 요청 사항:
-- 정상 카페24 자사몰 경로(https://www.idfmall.co.kr/product/SWBLPB21050)로 라우팅 수정
+- 정상 자사몰 경로(https://www.idfmall.co.kr/product/SWBLPB21050)로 라우팅 수정
 - 조치 마감: 즉시 조치 요망 (오픈 전 필수)
 
 빠른 확인 및 서버 링크 갱신 부탁드립니다.
@@ -304,7 +304,7 @@ E-BIZ 자사몰 운영팀
     promotionId: 'promo-list-trench-2026',
     emailType: 'RECHECK_ERROR',
     toDepartment: 'MARKETING',
-    recipientName: '마케팅팀 최현우 팀장',
+    recipientName: 'E-BIZ 마케팅팀 최현우 팀장',
     subject: '[정책 확인 요청] [LIST] 26FW 코트전 - LIVE WEEK 쿠폰 중복 적용 플래그 검토의 건',
     body: `안녕하세요 최현우 팀장님, E-BIZ 자사몰 운영팀입니다.
 
@@ -331,7 +331,7 @@ E-BIZ 자사몰 운영팀
     promotionId: 'promo-shesmiss-suit-2026',
     emailType: 'REMINDER_DELAY',
     toDepartment: 'DESIGN',
-    recipientName: '디자인팀 이수민 과장',
+    recipientName: '웹디자인팀 이수민 과장',
     subject: '[리마인드] [SHESMISS] 26FW 모던 수트전 - 배너 키비주얼 회신 요청의 건 (D-10 사전 마감)',
     body: `안녕하세요 이수민 과장님, E-BIZ 자사몰 운영팀입니다.
 
@@ -571,7 +571,14 @@ export const useOpsStore = create<OpsStore>((set, get) => ({
     if (!promo) return;
 
     const dept = promo.currentBottleneckDept || 'DESIGN';
-    const deptName = dept === 'DESIGN' ? '디자인팀' : dept === 'MD' ? 'MD팀' : '마케팅팀';
+    const deptName =
+      dept === 'DESIGN'
+        ? '웹디자인팀'
+        : dept === 'MD'
+        ? '기획MD팀'
+        : dept === 'DEV'
+        ? '전산팀'
+        : 'E-BIZ 마케팅팀';
     const nowStr = new Date().toISOString().replace('T', ' ').substring(0, 16);
 
     const newDraft: EmailDraft = {

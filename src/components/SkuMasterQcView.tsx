@@ -52,7 +52,7 @@ export default function SkuMasterQcView({ onOpenDualDraftModal }: SkuMasterQcVie
     addPromotions,
   } = useOpsStore();
 
-  const [onlySelectedPromo, setOnlySelectedPromo] = useState<boolean>(false);
+  const [onlySelectedPromo, setOnlySelectedPromo] = useState<boolean>(true);
   const selectedPromo = promotions.find((p) => p.id === selectedPromotionId);
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -446,12 +446,13 @@ export default function SkuMasterQcView({ onOpenDualDraftModal }: SkuMasterQcVie
             <span className="bg-white/90 font-mono text-[11px] text-slate-600 px-2 py-0.5 rounded-md border border-indigo-200 font-bold">
               ID: {selectedPromo.id}
             </span>
-            <span className="text-slate-500 font-medium text-[11px]">
-              (등록 품번: {selectedPromo.products.length}종 전수 검사)
+            <span className="text-indigo-900 font-bold text-[11px] bg-white px-2 py-0.5 rounded border border-indigo-200">
+              QC 센터 동기화: 등록 품번 {selectedPromo.products.length}종 전수 검사
             </span>
           </div>
 
           <button
+            type="button"
             onClick={() => setOnlySelectedPromo(!onlySelectedPromo)}
             className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 ${
               onlySelectedPromo
@@ -459,7 +460,9 @@ export default function SkuMasterQcView({ onOpenDualDraftModal }: SkuMasterQcVie
                 : 'bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 shadow-2xs'
             }`}
           >
-            {onlySelectedPromo ? '✓ 이 기획전 품번만 필터링 중' : '이 기획전 품번만 필터링'}
+            {onlySelectedPromo
+              ? `✓ 선택된 기획전 품번만 필터링 중 (${selectedPromo.products.length}종)`
+              : '전체 기획전 품번 보기'}
           </button>
         </div>
       )}
@@ -1010,8 +1013,8 @@ export default function SkuMasterQcView({ onOpenDualDraftModal }: SkuMasterQcVie
                               </span>
                             </div>
                             <p className="text-[10px] text-purple-700 leading-snug">
-                              • MD팀: 표기 할인율 40% vs 실제 30%<br />
-                              • 디자인팀: 썸네일 저화질(300x400) 교체
+                              • 기획MD팀: 표기 할인율 40% vs 실제 30%<br />
+                              • 웹디자인팀: 썸네일 저화질(300x400) 교체
                             </p>
                             <button
                               type="button"
@@ -1027,7 +1030,7 @@ export default function SkuMasterQcView({ onOpenDualDraftModal }: SkuMasterQcVie
                             <div className="flex items-center justify-between">
                               <span className="font-bold text-[11px] text-rose-900 flex items-center gap-1">
                                 <AlertTriangle className="w-3.5 h-3.5 text-rose-600 shrink-0" />
-                                🎨 디자인팀: 이미지 깨짐(404 / 엑스박스)
+                                🎨 웹디자인팀: 이미지 깨짐(404 / 엑스박스)
                               </span>
                               <span className="text-[9px] bg-rose-200 text-rose-900 font-bold px-1.5 py-0.2 rounded">
                                 BLOCKER
@@ -1045,13 +1048,13 @@ export default function SkuMasterQcView({ onOpenDualDraftModal }: SkuMasterQcVie
                               className="w-full py-1 bg-rose-600 hover:bg-rose-700 text-white rounded text-[10px] font-bold transition-colors flex items-center justify-center gap-1 shadow-2xs cursor-pointer"
                             >
                               <Mail className="w-3 h-3" />
-                              <span>✉️ 디자인팀 조치 요청 메일 작성 &gt;</span>
+                              <span>✉️ 웹디자인팀 조치 요청 메일 작성 &gt;</span>
                             </button>
                           </div>
                         ) : isMathMismatch ? (
                           <div className="text-[11px] text-rose-700 font-semibold flex items-center gap-1">
                             <AlertTriangle className="w-3.5 h-3.5 text-rose-600 shrink-0" />
-                            <span>👗 MD팀: 계산 불일치(수정 필요)</span>
+                            <span>👗 기획MD팀: 계산 불일치(수정 필요)</span>
                           </div>
                         ) : !prod.isApproved ? (
                           <div className="text-[11px] text-rose-700 font-semibold flex items-center gap-1">
@@ -1109,9 +1112,11 @@ export default function SkuMasterQcView({ onOpenDualDraftModal }: SkuMasterQcVie
                               <Check className="w-3.5 h-3.5" />
                             </button>
                             <button
+                              type="button"
                               onClick={() => setEditingKey(null)}
                               className="p-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg text-xs font-bold transition-colors cursor-pointer"
                               title="수정 취소"
+                              aria-label="인라인 수정 취소"
                             >
                               <X className="w-3.5 h-3.5" />
                             </button>
@@ -1155,8 +1160,10 @@ export default function SkuMasterQcView({ onOpenDualDraftModal }: SkuMasterQcVie
                 </div>
               </div>
               <button
+                type="button"
                 onClick={() => setIsUploadModalOpen(false)}
                 className="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer"
+                aria-label="엑셀 업로드 팝업 닫기"
               >
                 <X className="w-5 h-5" />
               </button>

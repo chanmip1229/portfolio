@@ -9,7 +9,7 @@ import { Promotion, QcIssue, ProductItem } from '@/types/promotion';
  * 5. MD 사전 승인 품번 매핑 검증
  * 6. 상세페이지 URL 유효성 및 404 단절 검증
  * 7. 쿠폰 정책 및 중복 플래그 검증
- * 8. 단품 썸네일/룩북 해상도 규격 검증 (디자인팀)
+ * 8. 단품 썸네일/룩북 해상도 규격 검증 (웹디자인팀)
  * 9. 배너 컨펌 상태 및 카피 허위/과장 검증
  */
 export function runDeterministicQc(promotion: Promotion): QcIssue[] {
@@ -99,7 +99,7 @@ export function runDeterministicQc(promotion: Promotion): QcIssue[] {
       }
     }
 
-    // 5. [신규 기능] 단품 대표 썸네일 해상도 및 룩북 컷 정합성 검증 (디자인팀)
+    // 5. [신규 기능] 단품 대표 썸네일 해상도 및 룩북 컷 정합성 검증 (웹디자인팀)
     // SWBLPB21010의 경우 MD 가격오류와 동시에 디자인 해상도 미달이 발생하는 복합 이슈
     if (isMultiDeptTarget) {
       issues.push({
@@ -111,7 +111,7 @@ export function runDeterministicQc(promotion: Promotion): QcIssue[] {
         ruleCode: 'IMAGE_SPEC_MISMATCH',
         severity: 'BLOCKER',
         targetField: `${product.productCode}.thumbnailUrl`,
-        message: `[${product.productCode}] 상품 대표 썸네일 해상도 규격 미달: 권장 규격(750x1000 px) 미달(업로드 규격: 300x400 px, 모바일 확대 시 픽셀 깨짐 발생). 디자인팀 고해상도 룩북 착용 컷 재전달 필요.`,
+        message: `[${product.productCode}] 상품 대표 썸네일 해상도 규격 미달: 권장 규격(750x1000 px) 미달(업로드 규격: 300x400 px, 모바일 확대 시 픽셀 깨짐 발생). 웹디자인팀 고해상도 룩북 착용 컷 재전달 필요.`,
         details: {
           productCode: product.productCode,
           expected: '750x1000 px (3:4 비율 고해상도)',
@@ -120,7 +120,7 @@ export function runDeterministicQc(promotion: Promotion): QcIssue[] {
       });
     }
 
-    // 5-2. [신규 기능] 단품 썸네일 이미지 링크 누락/깨짐(404 / 엑스박스) 검증 (디자인팀)
+    // 5-2. [신규 기능] 단품 썸네일 이미지 링크 누락/깨짐(404 / 엑스박스) 검증 (웹디자인팀)
     const isImageBroken = !product.thumbnailUrl || product.thumbnailUrl.trim() === '' || product.thumbnailUrl.includes('broken');
     if (isImageBroken) {
       issues.push({
@@ -129,7 +129,7 @@ export function runDeterministicQc(promotion: Promotion): QcIssue[] {
         ruleCode: 'IMAGE_LOAD_FAILED',
         severity: 'BLOCKER',
         targetField: `${product.productCode}.thumbnailUrl`,
-        message: `[${product.productCode}] 상품 대표 썸네일 링크 누락/깨짐(404 / 엑스박스): 썸네일 이미지 경로가 누락되었거나 존재하지 않는 파일로 연결되어 엑스박스가 노출됩니다. 디자인팀 룩북 컷 긴급 재등록 필요.`,
+        message: `[${product.productCode}] 상품 대표 썸네일 링크 누락/깨짐(404 / 엑스박스): 썸네일 이미지 경로가 누락되었거나 존재하지 않는 파일로 연결되어 엑스박스가 노출됩니다. 웹디자인팀 룩북 컷 긴급 재등록 필요.`,
         details: {
           productCode: product.productCode,
           expected: '정상 룩북 이미지 URL (750x1000 px)',
@@ -146,7 +146,7 @@ export function runDeterministicQc(promotion: Promotion): QcIssue[] {
         ruleCode: 'UNAPPROVED_SKU',
         severity: 'BLOCKER',
         targetField: `${product.productCode}.isApproved`,
-        message: `[${product.productCode}] MD팀 승인 미완료 품번: 사전 승인 목록에 포함되지 않은 미확인 상품이 게시 예정 목록에 포함되어 있습니다.`,
+        message: `[${product.productCode}] 기획MD팀 승인 미완료 품번: 사전 승인 목록에 포함되지 않은 미확인 상품이 게시 예정 목록에 포함되어 있습니다.`,
         details: { productCode: product.productCode },
       });
     }
@@ -186,7 +186,7 @@ export function runDeterministicQc(promotion: Promotion): QcIssue[] {
     }
   });
 
-  // 9. 배너 컨펌 상태 검증 (디자인팀)
+  // 9. 배너 컨펌 상태 검증 (웹디자인팀)
   if (!promotion.banner.isConfirmed) {
     issues.push({
       id: `qc-banner-spec-${Date.now()}`,

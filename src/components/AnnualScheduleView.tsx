@@ -36,6 +36,7 @@ export default function AnnualScheduleView({ onNavigateToQc }: AnnualScheduleVie
     promotions,
     selectedBrand,
     setSelectedBrand,
+    selectedPromotionId,
     setSelectedPromotionId,
   } = useOpsStore();
 
@@ -950,7 +951,9 @@ export default function AnnualScheduleView({ onNavigateToQc }: AnnualScheduleVie
                       <div
                         onClick={() => handleSelectPromotion(promo.id)}
                         className={`flex items-center py-3.5 transition-all group cursor-pointer relative z-10 ${
-                          timing.statusType === 'UPCOMING_ACTIVE'
+                          promo.id === selectedPromotionId
+                            ? 'ring-2 ring-indigo-500 bg-indigo-50/60 shadow-xs pl-3 rounded-lg'
+                            : timing.statusType === 'UPCOMING_ACTIVE'
                             ? `bg-rose-50/70 hover:bg-rose-100/80 border-l-4 border-l-rose-500 border-r-2 border-r-rose-400 pl-3 pr-2 ${
                                 isFirstActivePrep ? 'border-t-2 border-t-rose-400 rounded-t-xl' : ''
                               } ${
@@ -965,7 +968,12 @@ export default function AnnualScheduleView({ onNavigateToQc }: AnnualScheduleVie
                         {/* 좌측 정보 컬럼 (너비 320px) */}
                         <div className="w-80 shrink-0 pr-4">
                           <div className="flex items-center justify-between mb-1">
-                            <div className="flex items-center gap-1.5">
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              {promo.id === selectedPromotionId && (
+                                <span className="bg-indigo-600 text-white text-[9px] font-black px-1.5 py-0.2 rounded-full">
+                                  선택 행사
+                                </span>
+                              )}
                               <span
                                 className={`px-1.5 py-0.2 rounded text-[10px] font-bold ${
                                   promo.brand === 'SHESMISS'
@@ -1220,13 +1228,24 @@ export default function AnnualScheduleView({ onNavigateToQc }: AnnualScheduleVie
                   key={promo.id}
                   onClick={() => handleSelectPromotion(promo.id)}
                   className={`bg-white rounded-2xl border transition-all p-5 flex flex-col justify-between cursor-pointer relative overflow-hidden group ${
-                    timing.isEnded
+                    promo.id === selectedPromotionId
+                      ? 'border-2 border-indigo-600 ring-4 ring-indigo-200/80 shadow-lg bg-indigo-50/20'
+                      : timing.isEnded
                       ? 'border-slate-200 opacity-80 hover:border-slate-300'
                       : timing.isD30Active
                       ? 'border-2 border-rose-400 ring-2 ring-rose-200/60 shadow-md hover:border-rose-500 hover:shadow-xl bg-gradient-to-b from-rose-50/40 via-white to-white'
                       : 'border-slate-200 hover:border-slate-300 shadow-xs hover:shadow-md'
                   }`}
                 >
+                  {promo.id === selectedPromotionId && !timing.isD30Active && (
+                    <div className="absolute top-2 right-2 z-20">
+                      <span className="bg-indigo-600 text-white text-[10px] font-black px-2 py-0.5 rounded-full shadow-xs flex items-center gap-1">
+                        <CheckCircle2 className="w-3 h-3 text-white" />
+                        <span>선택된 행사</span>
+                      </span>
+                    </div>
+                  )}
+
                   {/* D-30 이내 강조 상단 리본 */}
                   {timing.isD30Active && (
                     <div className="-mt-5 -mx-5 mb-3.5 bg-gradient-to-r from-rose-600 via-rose-500 to-amber-500 text-white px-4 py-1.5 flex items-center justify-between text-[11px] font-black tracking-tight shadow-xs">

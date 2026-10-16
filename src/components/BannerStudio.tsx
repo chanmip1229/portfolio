@@ -672,6 +672,7 @@ export default function BannerStudio({ promotionId }: BannerStudioProps) {
                     onClick={handlePrevSlide}
                     className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/60 hover:bg-black/80 text-white flex items-center justify-center opacity-80 group-hover:opacity-100 transition-all shadow-md cursor-pointer hover:scale-110 z-20"
                     title="이전 배너 슬라이드"
+                    aria-label="이전 배너 슬라이드"
                   >
                     <ChevronLeft className="w-5 h-5" />
                   </button>
@@ -680,6 +681,7 @@ export default function BannerStudio({ promotionId }: BannerStudioProps) {
                     onClick={handleNextSlide}
                     className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/60 hover:bg-black/80 text-white flex items-center justify-center opacity-80 group-hover:opacity-100 transition-all shadow-md cursor-pointer hover:scale-110 z-20"
                     title="다음 배너 슬라이드"
+                    aria-label="다음 배너 슬라이드"
                   >
                     <ChevronRight className="w-5 h-5" />
                   </button>

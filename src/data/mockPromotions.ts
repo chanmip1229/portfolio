@@ -267,7 +267,7 @@ export const INITIAL_PROMOTIONS: Promotion[] = [
         ruleCode: 'MATH_DISCOUNT_MISMATCH',
         severity: 'BLOCKER',
         targetField: 'SWBLPB21010.displayDiscountRate',
-        message: '품번 SWBLPB21010: 정가(198,000) 대비 판매가(138,600)의 실제 계산 할인율은 30%이나 표기 할인율이 40%로 기재되었습니다. (디자인팀 썸네일 이슈와 함께 다부서 확인 필요)',
+        message: '품번 SWBLPB21010: 정가(198,000) 대비 판매가(138,600)의 실제 계산 할인율은 30%이나 표기 할인율이 40%로 기재되었습니다. (웹디자인팀 썸네일 이슈와 함께 다부서 확인 필요)',
         details: {
           productCode: 'SWBLPB21010',
           expected: 30,
@@ -283,7 +283,7 @@ export const INITIAL_PROMOTIONS: Promotion[] = [
         ruleCode: 'IMAGE_SPEC_MISMATCH',
         severity: 'BLOCKER',
         targetField: 'SWBLPB21010.thumbnailUrl',
-        message: '품번 SWBLPB21010: 상품 대표 썸네일 해상도 규격 미달(300x400 px, 모바일 확대 시 깨짐 발생). 디자인팀 고해상도 룩북 착용 컷 재전달 필요. (MD팀 가격오류와 동시 발생)',
+        message: '품번 SWBLPB21010: 상품 대표 썸네일 해상도 규격 미달(300x400 px, 모바일 확대 시 깨짐 발생). 웹디자인팀 고해상도 룩북 착용 컷 재전달 필요. (기획MD팀 가격오류와 동시 발생)',
         details: {
           productCode: 'SWBLPB21010',
           expected: '750x1000 px',
@@ -347,7 +347,7 @@ export const INITIAL_PROMOTIONS: Promotion[] = [
         ruleCode: 'BANNER_SPEC_MISMATCH',
         severity: 'BLOCKER',
         targetField: 'banner.pcBannerUrl',
-        message: '디자인팀 배너 해상도 규격 불일치: PC 메인 배너 권장 규격(1920x600 px) 미달(업로드 규격: 1200x400 px, 텍스트 깨짐 발생). 고해상도 재전달 필요.',
+        message: '웹디자인팀 배너 해상도 규격 불일치: PC 메인 배너 권장 규격(1920x600 px) 미달(업로드 규격: 1200x400 px, 텍스트 깨짐 발생). 고해상도 재전달 필요.',
         details: {
           expected: '1920x600 px',
           actual: '1200x400 px',
@@ -616,7 +616,7 @@ export const INITIAL_PROMOTIONS: Promotion[] = [
         ruleCode: 'IMAGE_LOAD_FAILED',
         severity: 'BLOCKER',
         targetField: 'SWOPPB11010.thumbnailUrl',
-        message: '품번 SWOPPB11010: 상품 대표 썸네일 링크 깨짐(404 / 엑스박스): 썸네일 이미지 파일이 서버에 누락되어 고객 화면에 엑스박스가 발생하고 있습니다. 디자인팀 원본 룩북 착용 컷 긴급 재등록 필요.',
+        message: '품번 SWOPPB11010: 상품 대표 썸네일 링크 깨짐(404 / 엑스박스): 썸네일 이미지 파일이 서버에 누락되어 고객 화면에 엑스박스가 발생하고 있습니다. 웹디자인팀 원본 룩북 착용 컷 긴급 재등록 필요.',
         details: {
           productCode: 'SWOPPB11010',
           expected: '750x1000 px 고해상도 룩북 컷',

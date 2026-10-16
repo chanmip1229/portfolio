@@ -48,13 +48,15 @@ export default function Header({ onLoadDemo, onOpenDrafts, draftCount }: HeaderP
         <div className="flex items-center gap-2.5">
           {/* 실제 Slack 실시간 연동 버튼 */}
           <button
+            type="button"
             onClick={() => setIsSlackModalOpen(true)}
             className={`flex items-center gap-1.5 px-3 py-2 text-xs font-bold rounded-lg border transition-all cursor-pointer shadow-2xs ${
               isSlackConnected
                 ? 'bg-purple-50 text-purple-900 border-purple-300 hover:bg-purple-100'
                 : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
             }`}
-            title="실제 슬랙 채널과 연동하여 실시간 결함 알림을 전송합니다"
+            title="기본 Webhook 연동 방식: Webhook URL 등록 후 실제 Slack 채널로 결함 알림이 전송됩니다"
+            aria-label="Slack Webhook 실시간 연동 설정 열기"
           >
             <span
               className={`w-2 h-2 rounded-full ${

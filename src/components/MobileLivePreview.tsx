@@ -355,6 +355,7 @@ export default function MobileLivePreview({ promotionId }: MobileLivePreviewProp
                   type="button"
                   onClick={() => setCurrentSlide((prev) => (prev === 0 ? 2 : prev - 1))}
                   className="absolute left-4 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/50 hover:bg-black/80 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer z-20"
+                  aria-label="이전 배너 슬라이드"
                 >
                   <ChevronLeft className="w-4 h-4" />
                 </button>
@@ -362,6 +363,7 @@ export default function MobileLivePreview({ promotionId }: MobileLivePreviewProp
                   type="button"
                   onClick={() => setCurrentSlide((prev) => (prev + 1) % 3)}
                   className="absolute right-4 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/50 hover:bg-black/80 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer z-20"
+                  aria-label="다음 배너 슬라이드"
                 >
                   <ChevronRight className="w-4 h-4" />
                 </button>
@@ -375,14 +377,16 @@ export default function MobileLivePreview({ promotionId }: MobileLivePreviewProp
 
                 {/* 하단 우측 롤링 인디케이터 (01 / 03 ❚❚) */}
                 <div className="absolute bottom-3 right-4 z-20">
-                  <div
+                  <button
+                    type="button"
                     onClick={() => setIsAutoRolling(!isAutoRolling)}
+                    aria-label={isAutoRolling ? "배너 롤링 일시정지" : "배너 롤링 자동재생"}
                     className="bg-black/75 hover:bg-black/90 backdrop-blur-md text-white text-[11px] font-mono font-bold px-2.5 py-0.5 rounded-full border border-white/20 flex items-center gap-1.5 shadow-md cursor-pointer select-none"
                   >
                     <span>0{currentSlide + 1} / 03</span>
                     <span className="text-slate-400">|</span>
                     {isAutoRolling ? <Pause className="w-2.5 h-2.5 text-amber-400" /> : <Play className="w-2.5 h-2.5 text-emerald-400" />}
-                  </div>
+                  </button>
                 </div>
 
                 {/* 하단 중앙 점 인디케이터 */}
@@ -392,6 +396,7 @@ export default function MobileLivePreview({ promotionId }: MobileLivePreviewProp
                       key={idx}
                       type="button"
                       onClick={() => setCurrentSlide(idx)}
+                      aria-label={`배너 슬라이드 ${idx + 1}번으로 이동`}
                       className={`h-1.5 rounded-full transition-all cursor-pointer ${
                         currentSlide === idx ? 'w-6 bg-white' : 'w-1.5 bg-white/50 hover:bg-white/80'
                       }`}
@@ -613,6 +618,7 @@ export default function MobileLivePreview({ promotionId }: MobileLivePreviewProp
                   type="button"
                   onClick={() => setCurrentSlide((prev) => (prev === 0 ? 2 : prev - 1))}
                   className="absolute left-2 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-black/40 hover:bg-black/70 text-white flex items-center justify-center cursor-pointer z-20"
+                  aria-label="이전 배너 슬라이드"
                 >
                   <ChevronLeft className="w-3.5 h-3.5" />
                 </button>
@@ -620,6 +626,7 @@ export default function MobileLivePreview({ promotionId }: MobileLivePreviewProp
                   type="button"
                   onClick={() => setCurrentSlide((prev) => (prev + 1) % 3)}
                   className="absolute right-2 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-black/40 hover:bg-black/70 text-white flex items-center justify-center cursor-pointer z-20"
+                  aria-label="다음 배너 슬라이드"
                 >
                   <ChevronRight className="w-3.5 h-3.5" />
                 </button>
@@ -639,14 +646,16 @@ export default function MobileLivePreview({ promotionId }: MobileLivePreviewProp
 
                 {/* 하단 우측 롤링 인디케이터 (01 / 03 ❚❚) */}
                 <div className="absolute bottom-2 right-2 z-20">
-                  <div
+                  <button
+                    type="button"
                     onClick={() => setIsAutoRolling(!isAutoRolling)}
+                    aria-label={isAutoRolling ? "배너 롤링 일시정지" : "배너 롤링 자동재생"}
                     className="bg-black/75 hover:bg-black/90 backdrop-blur-md text-white text-[9px] font-mono font-bold px-2 py-0.5 rounded-full border border-white/20 flex items-center gap-1 shadow-md cursor-pointer select-none"
                   >
                     <span>0{currentSlide + 1} / 03</span>
                     <span className="text-slate-400">|</span>
                     {isAutoRolling ? <Pause className="w-2 h-2 text-amber-400" /> : <Play className="w-2 h-2 text-emerald-400" />}
-                  </div>
+                  </button>
                 </div>
 
                 {/* 하단 중앙 점 인디케이터 */}
@@ -656,6 +665,7 @@ export default function MobileLivePreview({ promotionId }: MobileLivePreviewProp
                       key={idx}
                       type="button"
                       onClick={() => setCurrentSlide(idx)}
+                      aria-label={`배너 슬라이드 ${idx + 1}번으로 이동`}
                       className={`h-1 rounded-full transition-all cursor-pointer ${
                         currentSlide === idx ? 'w-4 bg-white' : 'w-1 bg-white/50 hover:bg-white/80'
                       }`}

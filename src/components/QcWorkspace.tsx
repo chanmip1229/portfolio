@@ -231,30 +231,30 @@ export default function QcWorkspace({ promotionId, onNavigateToSkuQc }: QcWorksp
                 type="button"
                 onClick={() => handleOpenDeptDraft('DESIGN')}
                 className="text-[11px] font-bold text-purple-700 hover:text-purple-900 bg-white hover:bg-purple-50 px-2.5 py-1 rounded-lg border border-purple-200 flex items-center gap-1 transition-colors shadow-2xs cursor-pointer"
-                title="디자인팀에 배너 규격 수정 요청 메일 발송"
+                title="웹디자인팀에 배너 규격 수정 요청 메일 발송"
               >
                 <Mail className="w-3 h-3 text-purple-600" />
-                <span>✉️ 디자인팀 요청 ({designIssues.length})</span>
+                <span>✉️ 웹디자인팀 요청 ({designIssues.length})</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => handleOpenDeptDraft('DEV')}
                 className="text-[11px] font-bold text-emerald-700 hover:text-emerald-900 bg-white hover:bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200 flex items-center gap-1 transition-colors shadow-2xs cursor-pointer"
-                title="웹개발/퍼블리싱팀에 404 URL 단절 조치 요청 메일 발송"
+                title="전산팀(IT)에 404 URL 단절 조치 요청 메일 발송"
               >
                 <Mail className="w-3 h-3 text-emerald-600" />
-                <span>✉️ 개발팀 요청 ({devIssues.length})</span>
+                <span>✉️ 전산팀(IT) 요청 ({devIssues.length})</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => handleOpenDeptDraft('MARKETING')}
                 className="text-[11px] font-bold text-amber-700 hover:text-amber-900 bg-white hover:bg-amber-50 px-2.5 py-1 rounded-lg border border-amber-200 flex items-center gap-1 transition-colors shadow-2xs cursor-pointer"
-                title="마케팅팀에 쿠폰 중복 정책 확인 요청 메일 발송"
+                title="E-BIZ 마케팅팀에 쿠폰 중복 정책 확인 요청 메일 발송"
               >
                 <Mail className="w-3 h-3 text-amber-600" />
-                <span>✉️ 마케팅팀 요청 ({mktIssues.length})</span>
+                <span>✉️ E-BIZ 마케팅팀 요청 ({mktIssues.length})</span>
               </button>
             </div>
           </div>
@@ -281,7 +281,7 @@ export default function QcWorkspace({ promotionId, onNavigateToSkuQc }: QcWorksp
                   : 'text-blue-700 hover:bg-blue-50'
               }`}
             >
-              <span>👗 MD팀</span>
+              <span>👗 기획MD팀</span>
               <span className="text-[10px] opacity-80">({mdIssues.length})</span>
             </button>
             <button
@@ -293,7 +293,7 @@ export default function QcWorkspace({ promotionId, onNavigateToSkuQc }: QcWorksp
                   : 'text-purple-700 hover:bg-purple-50'
               }`}
             >
-              <span>🎨 디자인팀</span>
+              <span>🎨 웹디자인팀</span>
               <span className="text-[10px] opacity-80">({designIssues.length})</span>
             </button>
             <button
@@ -305,7 +305,7 @@ export default function QcWorkspace({ promotionId, onNavigateToSkuQc }: QcWorksp
                   : 'text-emerald-700 hover:bg-emerald-50'
               }`}
             >
-              <span>💻 웹개발/퍼블팀</span>
+              <span>💻 전산팀 (IT)</span>
               <span className="text-[10px] opacity-80">({devIssues.length})</span>
             </button>
             <button
@@ -317,7 +317,7 @@ export default function QcWorkspace({ promotionId, onNavigateToSkuQc }: QcWorksp
                   : 'text-amber-700 hover:bg-amber-50'
               }`}
             >
-              <span>📢 마케팅팀</span>
+              <span>📢 E-BIZ 마케팅팀</span>
               <span className="text-[10px] opacity-80">({mktIssues.length})</span>
             </button>
           </div>
@@ -350,19 +350,19 @@ export default function QcWorkspace({ promotionId, onNavigateToSkuQc }: QcWorksp
                       }`}
                     >
                       {dept === 'MD'
-                        ? 'MD팀'
+                        ? '기획MD팀'
                         : dept === 'DESIGN'
-                        ? '디자인팀'
+                        ? '웹디자인팀'
                         : dept === 'DEV'
-                        ? '웹개발팀'
-                        : '마케팅팀'}
+                        ? '전산팀'
+                        : 'E-BIZ 마케팅팀'}
                     </span>
 
                     {/* 신규: 다부서 복합 이슈 태그 */}
                     {issue.isMultiDeptIssue && (
                       <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-purple-100 text-purple-900 border border-purple-300 flex items-center gap-1 shrink-0">
                         <Layers className="w-3 h-3 text-purple-600" />
-                        <span>다부서 복합 (MD+디자인)</span>
+                        <span>다부서 복합 (기획MD+웹디자인)</span>
                       </span>
                     )}
 
@@ -403,7 +403,7 @@ export default function QcWorkspace({ promotionId, onNavigateToSkuQc }: QcWorksp
                           setIsDraftModalOpen(true);
                         }}
                         className="px-2.5 py-1 bg-purple-600 hover:bg-purple-700 text-white text-[10px] font-bold rounded-md shadow-2xs transition-colors cursor-pointer flex items-center gap-1"
-                        title="MD팀과 디자인팀 2분할 듀얼 메일 작성창 열기"
+                        title="기획MD팀과 웹디자인팀 2분할 듀얼 메일 작성창 열기"
                       >
                         <Mail className="w-3 h-3 text-white" />
                         <span>✉️ 2분할 듀얼 메일 &gt;</span>
@@ -416,7 +416,15 @@ export default function QcWorkspace({ promotionId, onNavigateToSkuQc }: QcWorksp
                         title="해당 부서 메일/슬랙 초안 열기"
                       >
                         <Mail className="w-3 h-3 text-slate-500" />
-                        <span>{dept}팀 조치 요청 &gt;</span>
+                        <span>
+                          {dept === 'MD'
+                            ? '기획MD'
+                            : dept === 'DESIGN'
+                            ? '웹디자인'
+                            : dept === 'DEV'
+                            ? '전산'
+                            : 'E-BIZ마케팅'}팀 조치 요청 &gt;
+                        </span>
                       </button>
                     )}
 
@@ -471,18 +479,18 @@ export default function QcWorkspace({ promotionId, onNavigateToSkuQc }: QcWorksp
                 <span>전체 엑셀</span>
               </button>
               <button
-                onClick={() => exportToExcel([promo], `${promo.id}_MD팀_오류품번`, 'MD')}
+                onClick={() => exportToExcel([promo], `${promo.id}_기획MD팀_오류품번`, 'MD')}
                 className="px-2 py-1 text-[11px] font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded transition-colors cursor-pointer"
-                title="MD팀 확인 대상 엑셀 다운로드"
+                title="기획MD팀 확인 대상 엑셀 다운로드"
               >
-                MD팀용
+                기획MD팀용
               </button>
               <button
-                onClick={() => exportToExcel([promo], `${promo.id}_디자인팀_배너오류`, 'DESIGN')}
+                onClick={() => exportToExcel([promo], `${promo.id}_웹디자인팀_배너오류`, 'DESIGN')}
                 className="px-2 py-1 text-[11px] font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded transition-colors cursor-pointer"
-                title="디자인팀 확인 대상 엑셀 다운로드"
+                title="웹디자인팀 확인 대상 엑셀 다운로드"
               >
-                디자인팀용
+                웹디자인팀용
               </button>
               <button
                 onClick={() => exportToExcel([promo], `${promo.id}_운영팀_URL쿠폰오류`, 'EBIZ_OPS')}

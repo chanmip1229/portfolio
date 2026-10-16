@@ -126,14 +126,16 @@ export default function SlackSettingsModal() {
                 </span>
               </div>
               <p className="text-[11px] text-slate-500">
-                내 Slack 워크스페이스 채널로 긴급 결함 리포트 및 초안을 실시간 전송합니다
+                Slack 알림은 <strong>Incoming Webhook 연동 방식</strong>으로 동작하며, URL 연결 후 실제 워크스페이스 채널로 결함 리포트가 전송됩니다.
               </p>
             </div>
           </div>
 
           <button
+            type="button"
             onClick={() => setIsSlackModalOpen(false)}
             className="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-200 transition-colors cursor-pointer"
+            aria-label="Slack 설정 모달 닫기"
           >
             <X className="w-5 h-5" />
           </button>
