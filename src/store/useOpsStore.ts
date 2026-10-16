@@ -441,7 +441,7 @@ export const useOpsStore = create<OpsStore>((set, get) => ({
             dataReceivedAt: nowStr,
           },
           milestones: p.milestones.map((m) =>
-            m.code === 'D_MINUS_2'
+            m.code === 'D_MINUS_5' || m.code === 'D_MINUS_2'
               ? { ...m, isCompleted: true, completedAt: nowStr }
               : m
           ),

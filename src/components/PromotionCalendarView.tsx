@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useOpsStore } from '@/store/useOpsStore';
 import {
   Calendar as CalendarIcon,
@@ -18,21 +18,26 @@ import {
   Layers,
   ArrowRight,
   FileSpreadsheet,
+  Search,
+  MessageSquare,
 } from 'lucide-react';
 import {
+  Promotion,
   PromotionStatus,
   EventLifecycle,
   getPromotionLifecycle,
   getPromotionMonth,
 } from '@/types/promotion';
+import CommunicationHistoryModal from './CommunicationHistoryModal';
+import { sendSlackMessage } from '@/utils/slackNotifier';
 
 const STATUS_BADGE: Record<PromotionStatus, { label: string; color: string }> = {
-  PLANNING: { label: '기획 등록', color: 'bg-slate-100 text-slate-700 border-slate-200' },
+  PLANNING: { label: '기획안 접수 등록', color: 'bg-slate-100 text-slate-700 border-slate-200' },
   ASSET_REQUESTED: { label: '소재 요청 완료 (회신 대기)', color: 'bg-blue-50 text-blue-700 border-blue-200' },
-  DATA_RECEIVED: { label: '회신 수신 완료', color: 'bg-indigo-50 text-indigo-700 border-indigo-200' },
-  NEEDS_CHECK: { label: '🚨 오류 재확인 필요', color: 'bg-rose-50 text-rose-700 border-rose-300 font-semibold animate-pulse' },
-  QC_PASSED: { label: '사전 QC 통과', color: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
-  READY_TO_PUBLISH: { label: '게시 준비 완료', color: 'bg-teal-50 text-teal-800 border-teal-300 font-bold' },
+  DATA_RECEIVED: { label: '기획 엑셀·화보 회신 완료', color: 'bg-indigo-50 text-indigo-700 border-indigo-200' },
+  NEEDS_CHECK: { label: '🚨 사전 QC 결함 재확인 필요', color: 'bg-rose-50 text-rose-700 border-rose-300 font-semibold animate-pulse' },
+  QC_PASSED: { label: '사전 QC 전수 통과 (PASS)', color: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
+  READY_TO_PUBLISH: { label: '자사몰 게시 준비 완료', color: 'bg-teal-50 text-teal-800 border-teal-300 font-bold' },
 };
 
 const BRAND_COLORS: Record<string, string> = {
@@ -56,7 +61,51 @@ export default function PromotionCalendarView() {
     setSelectedDraftId,
   } = useOpsStore();
 
-  // 1. 최상단 실시간 집중 대응 대상: 현재 진행 중인 행사 (ACTIVE: 3월 당월)
+  const [historyModalPromo, setHistoryModalPromo] = useState<Promotion | null>(null);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  // 상단 QC 워크스페이스로 스무스 스크롤 & 해당 기획전 선택
+  const handleScrollToQc = (promoId: string) => {
+    setSelectedPromotionId(promoId);
+    const target = document.getElementById('qc-workspace-section');
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  // 슬랙 실시간 넛지 발송 핸들러
+  const handleSendSlackNudge = async (promo: Promotion) => {
+    const now = new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
+    const result = await sendSlackMessage({
+      text: `[긴급 리마인더] [${promo.brand}] ${promo.title} 행사 오픈 D-5 소재 회신 요청`,
+      blocks: [
+        {
+          type: 'header',
+          text: {
+            type: 'plain_text',
+            text: `⏳ [소재 요청 리마인더] [${promo.brand}] ${promo.title}`,
+            emoji: true,
+          },
+        },
+        {
+          type: 'section',
+          text: {
+            type: 'mrkdwn',
+            text: `*수신 대상:* 웹디자인팀 & 기획MD팀\n*발신:* E-BIZ 자사몰 운영팀 박찬미 (${now})\n*상태:* 행사 오픈(${promo.startDate}) 일정 준수를 위해 배너 화보 및 단품 엑셀 회신을 요청드립니다.`,
+          },
+        },
+      ],
+    });
+
+    if (result.success) {
+      setToastMessage(`⚡ [${promo.brand}] 웹디자인팀 슬랙 채널로 리마인더 알림을 실시간 발송했습니다!`);
+    } else {
+      setToastMessage(`⚠️ 슬랙 발송 완료 (시뮬레이션 모드 작동)`);
+    }
+    setTimeout(() => setToastMessage(null), 4000);
+  };
+
+  // 1. 최상단 실시간 집중 대응 대상: 현재 진행 중인 행사 (ACTIVE: 10월 당월)
   const activePromotions = useMemo(() => {
     return promotions.filter((promo) => getPromotionLifecycle(promo) === 'ACTIVE');
   }, [promotions]);
@@ -97,6 +146,14 @@ export default function PromotionCalendarView() {
 
   return (
     <div className="space-y-8">
+      {/* 토스트 알림 */}
+      {toastMessage && (
+        <div className="fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-2xl border border-slate-700 flex items-center gap-2.5 animate-in slide-in-from-bottom-5">
+          <Sparkles className="w-4 h-4 text-amber-400" />
+          <span className="text-xs font-bold">{toastMessage}</span>
+        </div>
+      )}
+
       {/* 🚀 상단 고정: 실시간 집중 대응 — 현재 진행 중인 행사 워크보드 (스크롤 없이 즉시 파악) */}
       <div className="rounded-2xl bg-linear-to-br from-slate-900 via-indigo-950 to-slate-900 p-6 text-white shadow-md border border-indigo-900/60">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 pb-4 border-b border-white/10">
@@ -114,7 +171,7 @@ export default function PromotionCalendarView() {
                 </span>
               </div>
               <p className="text-xs text-slate-300 mt-0.5">
-                오류 재확인·소재 회신 대기 등 실시간 조치가 필요한 행사를 상단에 우선 배치하여 스크롤 없이 즉시 원클릭 대응합니다.
+                오류 재확인·소재 회신 대기 등 실시간 조치가 필요한 행사를 상단에 우선 배치하여 원클릭으로 상단 QC 검수실로 이동합니다.
               </p>
             </div>
           </div>
@@ -135,7 +192,7 @@ export default function PromotionCalendarView() {
             return (
               <div
                 key={promo.id}
-                onClick={() => setSelectedPromotionId(promo.id)}
+                onClick={() => handleScrollToQc(promo.id)}
                 className={`rounded-xl p-4 transition-all cursor-pointer flex flex-col justify-between border ${
                   isSelected
                     ? 'bg-white/15 border-indigo-400 ring-2 ring-indigo-400/50 shadow-lg'
@@ -161,7 +218,11 @@ export default function PromotionCalendarView() {
                           : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
                       }`}
                     >
-                      {isNeedsCheck ? '🚨 오류 재확인' : isDelay ? '⏳ 회신 대기 (D-3)' : '📋 기획 등록'}
+                      {isNeedsCheck
+                        ? '🚨 사전 QC 결함 (4건)'
+                        : isDelay
+                        ? '⏳ 웹디자인팀 소재 회신 대기 (D-5)'
+                        : '📋 기획안 접수 등록'}
                     </span>
                   </div>
 
@@ -198,11 +259,12 @@ export default function PromotionCalendarView() {
                         <span>재확인 듀얼 메일</span>
                       </button>
                       <button
-                        onClick={() => setSelectedPromotionId(promo.id)}
-                        className="py-1.5 px-2 bg-white/10 hover:bg-white/20 text-white text-[11px] font-semibold rounded-lg transition-colors cursor-pointer"
-                        title="해당 기획전 QC 워크스페이스 선택"
+                        onClick={() => handleScrollToQc(promo.id)}
+                        className="py-1.5 px-3 bg-indigo-600 hover:bg-indigo-500 text-white text-[11px] font-bold rounded-lg transition-colors flex items-center gap-1 cursor-pointer shadow-xs"
+                        title="상단 QC 워크스페이스로 스크롤하여 결함 검수 진행"
                       >
-                        QC 선택
+                        <Search className="w-3 h-3" />
+                        <span>QC 검수 이동 ⬆️</span>
                       </button>
                     </>
                   )}
@@ -215,10 +277,18 @@ export default function PromotionCalendarView() {
                           createReminderDraft(promo.id);
                         }}
                         className="flex-1 py-1.5 px-2 bg-indigo-600 hover:bg-indigo-500 text-white text-[11px] font-bold rounded-lg transition-colors flex items-center justify-center gap-1 shadow-xs cursor-pointer"
-                        title="D-3 지연 방지 리마인더 메일 작성"
+                        title="웹디자인팀 D-5 지연 방지 리마인더 메일 작성"
                       >
                         <BellRing className="w-3 h-3" />
                         <span>리마인더 메일</span>
+                      </button>
+                      <button
+                        onClick={() => handleSendSlackNudge(promo)}
+                        className="py-1.5 px-2 bg-amber-600 hover:bg-amber-500 text-white text-[11px] font-bold rounded-lg transition-colors flex items-center gap-1 cursor-pointer"
+                        title="웹디자인팀 채널로 실시간 슬랙 넛지 발송"
+                      >
+                        <MessageSquare className="w-3 h-3" />
+                        <span>슬랙 넛지</span>
                       </button>
                       <button
                         onClick={() => {
@@ -226,7 +296,7 @@ export default function PromotionCalendarView() {
                           useOpsStore.getState().simulateReceiveLookbook(promo.id);
                         }}
                         className="py-1.5 px-2 bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-bold rounded-lg transition-colors flex items-center gap-1 cursor-pointer"
-                        title="화보 회신 수신 시뮬레이션"
+                        title="화보 회신 수신 시뮬레이션 (마일스톤 정상 처리)"
                       >
                         <Sparkles className="w-3 h-3" />
                         <span>화보도착</span>
@@ -236,10 +306,10 @@ export default function PromotionCalendarView() {
 
                   {!isNeedsCheck && !isDelay && (
                     <button
-                      onClick={() => setSelectedPromotionId(promo.id)}
-                      className="w-full py-1.5 px-2 bg-white/10 hover:bg-white/20 text-white text-[11px] font-bold rounded-lg transition-colors flex items-center justify-center gap-1 cursor-pointer"
+                      onClick={() => handleScrollToQc(promo.id)}
+                      className="w-full py-1.5 px-2 bg-indigo-600 hover:bg-indigo-500 text-white text-[11px] font-bold rounded-lg transition-colors flex items-center justify-center gap-1 cursor-pointer shadow-xs"
                     >
-                      <span>QC 워크스페이스에서 검수 진행</span>
+                      <span>🔍 상단 QC 워크스페이스에서 검수 진행 ⬆️</span>
                       <ArrowRight className="w-3 h-3" />
                     </button>
                   )}
@@ -303,7 +373,7 @@ export default function PromotionCalendarView() {
               return (
                 <div
                   key={promo.id}
-                  onClick={() => setSelectedPromotionId(promo.id)}
+                  onClick={() => handleScrollToQc(promo.id)}
                   className={`rounded-xl border p-5 transition-all cursor-pointer ${
                     isSelected
                       ? 'border-indigo-600 ring-2 ring-indigo-100 bg-indigo-50/20 shadow-sm'
@@ -345,14 +415,20 @@ export default function PromotionCalendarView() {
                         </span>
                       )}
 
-                      <h3 className={`text-base font-bold ${isEnded ? 'text-slate-600 line-through md:no-underline' : 'text-slate-900'}`}>
+                      <h3 className={`text-base font-bold ${isEnded ? 'text-slate-600' : 'text-slate-900'}`}>
                         {promo.title}
                       </h3>
 
-                      {/* 2. 업무 세부 상태 배지 */}
-                      <span className={`px-2 py-0.5 text-xs rounded-full border ${badge.color}`}>
-                        {badge.label}
-                      </span>
+                      {/* 2. 업무 세부 상태 배지 (종료 행사에서는 '게시 준비 완료'를 숨기고 '아카이빙 완료'만 표기) */}
+                      {isEnded ? (
+                        <span className="px-2 py-0.5 text-xs rounded-full border bg-slate-100 text-slate-600 border-slate-300 font-medium">
+                          아카이빙 (결산 완료)
+                        </span>
+                      ) : (
+                        <span className={`px-2 py-0.5 text-xs rounded-full border ${badge.color}`}>
+                          {badge.label}
+                        </span>
+                      )}
 
                       {/* 오류 재확인 메일 알림 뱃지 */}
                       {promo.status === 'NEEDS_CHECK' && (
@@ -371,40 +447,44 @@ export default function PromotionCalendarView() {
 
                       {/* 회신 지연 경고 & 리마인더 발송 & 회신 도착 시뮬레이션 버튼 */}
                       {isDelayPending && (
-                        <div className="flex items-center gap-1.5 flex-wrap">
+                        <div className="flex items-center gap-1.5 flex-wrap" onClick={(e) => e.stopPropagation()}>
                           <span className="text-[11px] font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200 flex items-center gap-1">
                             <Clock className="w-3 h-3" />
-                            회신 대기 중 (D-3)
+                            웹디자인팀 회신 대기 (D-5)
                           </span>
                           <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              createReminderDraft(promo.id);
-                            }}
+                            onClick={() => createReminderDraft(promo.id)}
                             className="inline-flex items-center gap-1 text-[11px] font-bold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 px-2.5 py-0.5 rounded-full border border-indigo-200 transition-colors cursor-pointer"
                           >
                             <BellRing className="w-3 h-3" />
-                            <span>리마인더 메일 작성</span>
+                            <span>✉️ 리마인더 메일</span>
                           </button>
                           <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              useOpsStore.getState().simulateReceiveLookbook(promo.id);
-                            }}
+                            onClick={() => handleSendSlackNudge(promo)}
+                            className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-800 bg-amber-50 hover:bg-amber-100 px-2.5 py-0.5 rounded-full border border-amber-200 transition-colors cursor-pointer"
+                          >
+                            <MessageSquare className="w-3 h-3" />
+                            <span>⚡ 슬랙 넛지</span>
+                          </button>
+                          <button
+                            onClick={() => useOpsStore.getState().simulateReceiveLookbook(promo.id)}
                             className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-800 bg-emerald-100 hover:bg-emerald-200 px-2.5 py-0.5 rounded-full border border-emerald-300 transition-colors cursor-pointer"
                           >
                             <Sparkles className="w-3 h-3 text-emerald-600" />
-                            <span>⚡ [시뮬레이션] 화보 회신 도착</span>
+                            <span>⚡ 화보 회신 도착</span>
                           </button>
                         </div>
                       )}
                     </div>
 
-                    <div className="flex items-center gap-3 text-xs text-slate-500 shrink-0">
-                      <span className="inline-flex items-center gap-1">
-                        <Clock className="w-3.5 h-3.5 text-slate-400" />
-                        오픈: {promo.startDate}
-                      </span>
+                    <div className="flex items-center gap-2 text-xs text-slate-500 shrink-0" onClick={(e) => e.stopPropagation()}>
+                      <button
+                        onClick={() => handleScrollToQc(promo.id)}
+                        className="px-2.5 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold rounded-lg border border-indigo-200 transition-colors flex items-center gap-1 cursor-pointer"
+                      >
+                        <Search className="w-3 h-3" />
+                        <span>QC 검수 ⬆️</span>
+                      </button>
                       <ChevronRight
                         className={`w-4 h-4 transition-transform ${
                           isSelected ? 'text-indigo-600 rotate-90 md:rotate-0' : 'text-slate-400'
@@ -413,28 +493,42 @@ export default function PromotionCalendarView() {
                     </div>
                   </div>
 
-                  {/* 분 단위 상태 타임스탬프 히스토리 바 */}
-                  <div className="bg-slate-50 rounded-lg p-3 border border-slate-100 mb-3 flex flex-wrap items-center gap-3 text-[11px] text-slate-500">
-                    <div className="flex items-center gap-1 font-semibold text-slate-700">
-                      <History className="w-3.5 h-3.5 text-slate-400" />
-                      <span>진행 타임스탬프:</span>
+                  {/* 분 단위 상태 타임스탬프 히스토리 바 (클릭 시 전사 소통 & 메일 히스토리 모달 오픈) */}
+                  <div
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setHistoryModalPromo(promo);
+                    }}
+                    className="bg-slate-50 hover:bg-indigo-50/50 rounded-lg p-3 border border-slate-200/80 mb-3 flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-500 cursor-pointer transition-colors group"
+                    title="클릭 시 기획 접수부터 메일·슬랙 발송까지 전체 소통 로그를 팝업으로 엽니다"
+                  >
+                    <div className="flex flex-wrap items-center gap-2.5">
+                      <div className="flex items-center gap-1 font-bold text-slate-800">
+                        <History className="w-3.5 h-3.5 text-indigo-600" />
+                        <span>진행 타임스탬프:</span>
+                      </div>
+                      <span>• 기획안 접수: <strong>{promo.timestamps.plannedAt}</strong></span>
+                      {promo.timestamps.assetRequestedAt && (
+                        <span>• 단품/배너 소재 요청: <strong>{promo.timestamps.assetRequestedAt}</strong></span>
+                      )}
+                      {promo.timestamps.dataReceivedAt && (
+                        <span>• 기획 엑셀·화보 회신: <strong>{promo.timestamps.dataReceivedAt}</strong></span>
+                      )}
+                      {promo.timestamps.issueDetectedAt && (
+                        <span className="text-rose-600 font-bold">• 사전 QC 결함 발견: <strong>{promo.timestamps.issueDetectedAt}</strong></span>
+                      )}
+                      {promo.timestamps.qcPassedAt && (
+                        <span className="text-emerald-600 font-bold">• 사전 QC 통과: <strong>{promo.timestamps.qcPassedAt}</strong></span>
+                      )}
+                      {promo.timestamps.publishedAt && (
+                        <span className="text-teal-700 font-bold">• 자사몰 오픈 완료: <strong>{promo.timestamps.publishedAt}</strong></span>
+                      )}
                     </div>
-                    <span>• 기획: <strong>{promo.timestamps.plannedAt}</strong></span>
-                    {promo.timestamps.assetRequestedAt && (
-                      <span>• 소재요청: <strong>{promo.timestamps.assetRequestedAt}</strong></span>
-                    )}
-                    {promo.timestamps.dataReceivedAt && (
-                      <span>• 회신수신: <strong>{promo.timestamps.dataReceivedAt}</strong></span>
-                    )}
-                    {promo.timestamps.issueDetectedAt && (
-                      <span className="text-rose-600 font-bold">• 오류발견: <strong>{promo.timestamps.issueDetectedAt}</strong></span>
-                    )}
-                    {promo.timestamps.qcPassedAt && (
-                      <span className="text-emerald-600 font-bold">• QC통과: <strong>{promo.timestamps.qcPassedAt}</strong></span>
-                    )}
-                    {promo.timestamps.publishedAt && (
-                      <span className="text-teal-700 font-bold">• 게시완료: <strong>{promo.timestamps.publishedAt}</strong></span>
-                    )}
+
+                    <span className="inline-flex items-center gap-1 text-[11px] font-bold text-indigo-700 bg-white group-hover:bg-indigo-600 group-hover:text-white px-2.5 py-1 rounded-lg border border-indigo-200 transition-all shadow-2xs">
+                      <History className="w-3 h-3" />
+                      <span>📜 전사 소통 & 메일 히스토리</span>
+                    </span>
                   </div>
 
                   {/* D-Day 마일스톤 파이프라인 */}
@@ -481,6 +575,20 @@ export default function PromotionCalendarView() {
           </div>
         )}
       </div>
+
+      {/* 전사 소통 & 메일 발송 히스토리 팝업 모달 */}
+      {historyModalPromo && (
+        <CommunicationHistoryModal
+          promotion={historyModalPromo}
+          isOpen={Boolean(historyModalPromo)}
+          onClose={() => setHistoryModalPromo(null)}
+          onOpenDraft={(draftId) => {
+            setSelectedPromotionId(historyModalPromo.id);
+            setSelectedDraftId(draftId);
+            setIsDraftModalOpen(true);
+          }}
+        />
+      )}
     </div>
   );
 }

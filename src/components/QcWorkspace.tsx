@@ -122,7 +122,27 @@ export default function QcWorkspace({ promotionId, onNavigateToSkuQc }: QcWorksp
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden mb-8">
+    <div id="qc-workspace-section" className="bg-white rounded-2xl border-2 border-indigo-500 shadow-md overflow-hidden mb-8 scroll-mt-28 transition-all">
+      {/* 선택된 기획전 포커스 안내 바 */}
+      <div className="bg-linear-to-r from-indigo-900 via-indigo-800 to-slate-900 text-white px-5 py-2.5 flex flex-wrap items-center justify-between gap-2 text-xs">
+        <div className="flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span className="font-bold text-amber-300">🔍 현재 사전 QC 검수 대상:</span>
+          <span className="font-extrabold uppercase px-1.5 py-0.2 bg-white/20 rounded text-[10px]">
+            {promo.brand}
+          </span>
+          <span className="font-black text-white">{promo.title}</span>
+          <span className="text-[10px] font-mono text-indigo-200 bg-white/10 px-1.5 py-0.2 rounded">
+            (ID: {promo.id})
+          </span>
+        </div>
+        <div className="flex items-center gap-2 text-[11px] text-slate-300">
+          <span>오픈 예정일: <strong>{promo.startDate}</strong></span>
+          <span>•</span>
+          <span>현재 병목: <strong>[{promo.currentBottleneckDept}팀]</strong></span>
+        </div>
+      </div>
+
       {/* QC 헤더 */}
       <div className="p-5 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-3 bg-slate-50/60">
         <div>
