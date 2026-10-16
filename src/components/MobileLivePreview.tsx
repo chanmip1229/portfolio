@@ -17,9 +17,182 @@ import {
   Pause,
 } from 'lucide-react';
 
+import { ProductItem, Promotion } from '@/types/promotion';
+
 interface MobileLivePreviewProps {
   promotionId: string;
 }
+
+const getFallbackProducts = (promo: Promotion): ProductItem[] => {
+  const discount = promo.targetDiscountRate || 35;
+  return [
+    {
+      id: `${promo.id}-fb-1`,
+      productCode: `${promo.brand.slice(0, 2)}JK26010`,
+      productName: `[${promo.brand}] 시그니처 테일러드 싱글 자켓`,
+      originalPrice: 249000,
+      salePrice: Math.round((249000 * (100 - discount)) / 1000) * 10,
+      displayDiscountRate: discount,
+      detailUrl: `https://www.idfmall.co.kr/product/${promo.brand.slice(0, 2)}JK26010`,
+      isApproved: true,
+      couponApplicable: promo.allowCoupon,
+      category: '자켓',
+      categoryAvgDiscountRate: 30,
+      thumbnailUrl: '/images/products/SWJCKB21020_main.jpg',
+      isLiveWeek: true,
+      applicableCoupons: promo.allowCoupon
+        ? [
+            {
+              id: 'cp-fb-1',
+              name: '10% 스페셜 쿠폰',
+              discountRate: 10,
+              type: 'DOWNLOADABLE',
+              period: '2026-10-01 ~ 2026-10-31',
+            },
+          ]
+        : undefined,
+    },
+    {
+      id: `${promo.id}-fb-2`,
+      productCode: `${promo.brand.slice(0, 2)}CT26020`,
+      productName: `[${promo.brand}] 프리미엄 캐시미어 울 벨티드 코트`,
+      originalPrice: 389000,
+      salePrice: Math.round((389000 * (100 - discount)) / 1000) * 10,
+      displayDiscountRate: discount,
+      detailUrl: `https://www.idfmall.co.kr/product/${promo.brand.slice(0, 2)}CT26020`,
+      isApproved: true,
+      couponApplicable: promo.allowCoupon,
+      category: '코트',
+      categoryAvgDiscountRate: 35,
+      thumbnailUrl: '/images/products/SWBLPB21010_main.jpg',
+      applicableCoupons: promo.allowCoupon
+        ? [
+            {
+              id: 'cp-fb-1',
+              name: '10% 스페셜 쿠폰',
+              discountRate: 10,
+              type: 'DOWNLOADABLE',
+              period: '2026-10-01 ~ 2026-10-31',
+            },
+          ]
+        : undefined,
+    },
+    {
+      id: `${promo.id}-fb-3`,
+      productCode: `${promo.brand.slice(0, 2)}OP26030`,
+      productName: `[${promo.brand}] 플리츠 버튼업 롱 원피스 (품절임박)`,
+      originalPrice: 219000,
+      salePrice: Math.round((219000 * (100 - discount)) / 1000) * 10,
+      displayDiscountRate: discount,
+      detailUrl: `https://www.idfmall.co.kr/product/${promo.brand.slice(0, 2)}OP26030`,
+      isApproved: true,
+      couponApplicable: promo.allowCoupon,
+      category: '원피스',
+      categoryAvgDiscountRate: 25,
+      thumbnailUrl: '/images/products/SWCTKB21030_main.jpg',
+      applicableCoupons: promo.allowCoupon
+        ? [
+            {
+              id: 'cp-fb-1',
+              name: '10% 스페셜 쿠폰',
+              discountRate: 10,
+              type: 'DOWNLOADABLE',
+              period: '2026-10-01 ~ 2026-10-31',
+            },
+          ]
+        : undefined,
+    },
+    {
+      id: `${promo.id}-fb-4`,
+      productCode: `${promo.brand.slice(0, 2)}KT26040`,
+      productName: `[${promo.brand}] 파인 울 케이블 브이넥 니트`,
+      originalPrice: 159000,
+      salePrice: Math.round((159000 * (100 - discount)) / 1000) * 10,
+      displayDiscountRate: discount,
+      detailUrl: `https://www.idfmall.co.kr/product/${promo.brand.slice(0, 2)}KT26040`,
+      isApproved: true,
+      couponApplicable: promo.allowCoupon,
+      category: '니트',
+      categoryAvgDiscountRate: 30,
+      thumbnailUrl: '/images/products/AWWJKQ31060_main.jpg',
+      applicableCoupons: promo.allowCoupon
+        ? [
+            {
+              id: 'cp-fb-1',
+              name: '10% 스페셜 쿠폰',
+              discountRate: 10,
+              type: 'DOWNLOADABLE',
+              period: '2026-10-01 ~ 2026-10-31',
+            },
+          ]
+        : undefined,
+    },
+  ];
+};
+
+const getProductStatusBadge = (prod: ProductItem) => {
+  const calculatedDiscount =
+    prod.originalPrice > 0
+      ? Math.round(((prod.originalPrice - prod.salePrice) / prod.originalPrice) * 100)
+      : 0;
+  const isMathMismatch = calculatedDiscount !== prod.displayDiscountRate;
+  const isBrokenUrl = Boolean(prod.detailUrl && prod.detailUrl.includes('broken-link'));
+  const isUnapproved = !prod.isApproved;
+
+  if (isMathMismatch) {
+    return {
+      type: 'ERROR',
+      label: '🚨 가격불일치',
+      desc: `계산 ${calculatedDiscount}% ≠ 표기 ${prod.displayDiscountRate}%`,
+      bg: 'bg-rose-600 text-white',
+    };
+  }
+  if (isBrokenUrl) {
+    return {
+      type: 'ERROR',
+      label: '🚨 404 URL',
+      desc: '외부 테스트 링크',
+      bg: 'bg-rose-600 text-white',
+    };
+  }
+  if (isUnapproved) {
+    return {
+      type: 'ERROR',
+      label: '⚠️ 미승인 품번',
+      desc: 'MD 사전 승인 누락',
+      bg: 'bg-amber-600 text-white',
+    };
+  }
+  if (prod.hasTrendAnomaly) {
+    return {
+      type: 'WARNING',
+      label: '⚡ 이상치 감지',
+      desc: '카테고리 평균 대비 극단값',
+      bg: 'bg-amber-500 text-white',
+    };
+  }
+  return {
+    type: 'PASS',
+    label: '✓ QC 통과',
+    desc: '사전 정합성 통과',
+    bg: 'bg-emerald-600 text-white',
+  };
+};
+
+const getStockBadge = (prod: ProductItem) => {
+  if (prod.productCode === 'SWCTKB21099' || prod.id.includes('soldout')) {
+    return { label: '일시품절 (SOLDOUT)', bg: 'bg-slate-100 text-slate-500 border-slate-200' };
+  }
+  if (
+    prod.productCode === 'SWCTKB21030' ||
+    prod.id.includes('p3') ||
+    prod.id.includes('p-3') ||
+    prod.id.includes('fb-3')
+  ) {
+    return { label: '⚡ 품절임박 (잔여 3개)', bg: 'bg-amber-50 text-amber-700 border-amber-200' };
+  }
+  return { label: '재고여유 (정상판매)', bg: 'bg-emerald-50 text-emerald-700 border-emerald-200' };
+};
 
 export default function MobileLivePreview({ promotionId }: MobileLivePreviewProps) {
   const { promotions } = useOpsStore();
@@ -39,6 +212,9 @@ export default function MobileLivePreview({ promotionId }: MobileLivePreviewProp
   }, [isAutoRolling]);
 
   if (!promo) return null;
+
+  const displayProducts =
+    promo.products && promo.products.length > 0 ? promo.products : getFallbackProducts(promo);
 
   return (
     <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden mb-8">
@@ -226,45 +402,104 @@ export default function MobileLivePreview({ promotionId }: MobileLivePreviewProp
 
               {/* PC 상품 4열 그리드 */}
               <div className="max-w-5xl mx-auto p-8">
-                <div className="flex items-center justify-between mb-4">
-                  <h4 className="text-base font-bold text-slate-900">{promo.title} 행사 상품 ({promo.products.length}종)</h4>
-                  <span className="text-xs text-slate-500">목표 할인율 {promo.targetDiscountRate}%</span>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+                  <div>
+                    <h4 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                      <span>{promo.title} 행사 상품</span>
+                      <span className="bg-indigo-100 text-indigo-800 text-xs px-2 py-0.5 rounded-full font-mono font-bold">
+                        {displayProducts.length}종
+                      </span>
+                    </h4>
+                    <p className="text-xs text-slate-500 mt-0.5">
+                      사전 QC 룰엔진 검증: 정상가·할인가·쿠폰 적용·재고 상태·정합성 오류 교차 검수
+                    </p>
+                  </div>
+                  <span className="text-xs font-semibold px-2.5 py-1 bg-slate-100 text-slate-700 rounded-lg shrink-0 self-start sm:self-auto">
+                    목표 할인율 {promo.targetDiscountRate}% · {promo.allowCoupon ? '쿠폰 중복 허용' : '쿠폰 제외(특가)'}
+                  </span>
                 </div>
 
-                <div className="grid grid-cols-4 gap-4">
-                  {promo.products.map((prod) => (
-                    <Link
-                      key={prod.id}
-                      href={`/product/${prod.productCode}`}
-                      target="_blank"
-                      className="group bg-white rounded-xl border border-slate-200 overflow-hidden shadow-2xs hover:shadow-md transition-all flex flex-col"
-                    >
-                      <div className="aspect-3/4 bg-slate-100 relative overflow-hidden">
-                        <img
-                          src={prod.thumbnailUrl || '/images/products/SWBLPB21010_main.jpg'}
-                          alt={prod.productName}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform"
-                        />
-                        <span className="absolute top-2 left-2 bg-rose-600 text-white text-xs font-black px-2 py-0.5 rounded">
-                          {prod.displayDiscountRate}%
-                        </span>
-                      </div>
-                      <div className="p-3 space-y-1">
-                        <span className="text-[10px] font-bold text-slate-400">{promo.brand}</span>
-                        <p className="text-xs font-bold text-slate-800 line-clamp-1 group-hover:text-indigo-600">
-                          {prod.productName}
-                        </p>
-                        <div className="flex items-baseline justify-between pt-1">
-                          <span className="text-sm font-black text-slate-900 font-mono">
-                            {prod.salePrice.toLocaleString()}원
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {displayProducts.map((prod) => {
+                    const statusBadge = getProductStatusBadge(prod);
+                    const stockBadge = getStockBadge(prod);
+                    return (
+                      <Link
+                        key={prod.id}
+                        href={`/product/${prod.productCode}`}
+                        target="_blank"
+                        className="group bg-white rounded-xl border border-slate-200 overflow-hidden shadow-2xs hover:shadow-md transition-all flex flex-col"
+                      >
+                        <div className="aspect-3/4 bg-slate-100 relative overflow-hidden">
+                          <img
+                            src={prod.thumbnailUrl || '/images/products/SWBLPB21010_main.jpg'}
+                            alt={prod.productName}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
+                          {/* 할인율 뱃지 */}
+                          <span className="absolute top-2 left-2 bg-rose-600 text-white text-xs font-black px-2 py-0.5 rounded shadow-xs">
+                            {prod.displayDiscountRate}%
                           </span>
-                          <span className="text-[10px] text-slate-300 line-through font-mono">
-                            {prod.originalPrice.toLocaleString()}
+
+                          {/* 정합성 검증 상태 뱃지 (오류/정상) */}
+                          <span
+                            className={`absolute top-2 right-2 text-[10px] font-bold px-2 py-0.5 rounded-full shadow-xs ${statusBadge.bg}`}
+                            title={statusBadge.desc}
+                          >
+                            {statusBadge.label}
                           </span>
+
+                          {/* 라이브위크 뱃지 */}
+                          {prod.isLiveWeek && (
+                            <span className="absolute bottom-2 left-2 bg-slate-900/80 backdrop-blur-xs text-amber-300 text-[10px] font-bold px-2 py-0.5 rounded">
+                              🔥 라이브위크
+                            </span>
+                          )}
                         </div>
-                      </div>
-                    </Link>
-                  ))}
+
+                        <div className="p-3 space-y-1.5 flex-1 flex flex-col justify-between">
+                          <div>
+                            <div className="flex items-center justify-between text-[10px]">
+                              <span className="font-bold text-slate-400">{promo.brand}</span>
+                              <span className="font-mono text-slate-400">{prod.productCode}</span>
+                            </div>
+                            <p className="text-xs font-bold text-slate-800 line-clamp-1 group-hover:text-indigo-600 mt-0.5">
+                              {prod.productName}
+                            </p>
+                          </div>
+
+                          <div className="space-y-1 pt-1 border-t border-slate-100">
+                            {/* 정상가 & 할인가 */}
+                            <div className="flex items-baseline justify-between">
+                              <span className="text-sm font-black text-slate-900 font-mono">
+                                {prod.salePrice.toLocaleString()}원
+                              </span>
+                              <span className="text-[11px] text-slate-400 line-through font-mono">
+                                {prod.originalPrice.toLocaleString()}원
+                              </span>
+                            </div>
+
+                            {/* 쿠폰 & 재고 뱃지 */}
+                            <div className="flex flex-wrap items-center gap-1 pt-1">
+                              {prod.couponApplicable ? (
+                                <span className="text-[9px] font-bold text-blue-700 bg-blue-50 border border-blue-200 px-1.5 py-0.2 rounded">
+                                  쿠폰적용 [10%]
+                                </span>
+                              ) : (
+                                <span className="text-[9px] font-semibold text-slate-500 bg-slate-100 px-1.5 py-0.2 rounded">
+                                  쿠폰제외(특가)
+                                </span>
+                              )}
+
+                              <span className={`text-[9px] font-bold px-1.5 py-0.2 rounded border ${stockBadge.bg}`}>
+                                {stockBadge.label}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </Link>
+                    );
+                  })}
                 </div>
               </div>
             </div>
@@ -444,79 +679,93 @@ export default function MobileLivePreview({ promotionId }: MobileLivePreviewProp
               {/* 5. 행사 상품 2열 그리드 리스트 */}
               <div className="p-3 flex-1">
                 <div className="flex items-center justify-between text-[11px] font-bold text-slate-800 mb-2.5">
-                  <span>기획전 상품 ({promo.products.length})</span>
+                  <div className="flex items-center gap-1.5">
+                    <span>기획전 상품</span>
+                    <span className="bg-indigo-100 text-indigo-800 text-[10px] font-bold px-1.5 py-0.2 rounded-full">
+                      {displayProducts.length}
+                    </span>
+                  </div>
                   <span className="text-[10px] text-slate-400 font-normal">추천순</span>
                 </div>
 
                 <div className="grid grid-cols-2 gap-2.5">
-                  {promo.products.map((prod) => (
-                    <Link
-                      key={prod.id}
-                      href={`/product/${prod.productCode}`}
-                      target="_blank"
-                      className="group flex flex-col bg-white rounded-xl border border-slate-100 overflow-hidden shadow-2xs hover:shadow-xs transition-shadow"
-                    >
-                      {/* 상품 썸네일 */}
-                      <div className="aspect-3/4 bg-slate-100 relative overflow-hidden">
-                        <img
-                          src={prod.thumbnailUrl || '/images/products/SWBLPB21010_main.jpg'}
-                          alt={prod.productName}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                        />
-                        <span className="absolute top-1.5 left-1.5 bg-rose-600 text-white text-[10px] font-black px-1.5 py-0.2 rounded">
-                          {prod.displayDiscountRate}%
-                        </span>
-                      </div>
-
-                      {/* 상품 메타 정보 */}
-                      <div className="p-2 space-y-1">
-                        {prod.isLiveWeek && (
-                          <p className="text-[8px] font-bold text-rose-600 leading-tight flex items-center gap-0.5">
-                            <span>🔥</span>
-                            <span>라이브위크 혜택</span>
-                          </p>
-                        )}
-                        <span className="text-[9px] font-semibold text-slate-400 uppercase">
-                          {promo.brand}
-                        </span>
-                        <p className="text-[10px] font-medium text-slate-800 line-clamp-1 group-hover:text-indigo-600">
-                          {prod.productName}
-                        </p>
-
-                        <div className="flex items-baseline justify-between pt-0.5">
-                          <span className="text-xs font-black text-slate-900 font-mono">
-                            {prod.salePrice.toLocaleString()}원
+                  {displayProducts.map((prod) => {
+                    const statusBadge = getProductStatusBadge(prod);
+                    const stockBadge = getStockBadge(prod);
+                    return (
+                      <Link
+                        key={prod.id}
+                        href={`/product/${prod.productCode}`}
+                        target="_blank"
+                        className="group flex flex-col bg-white rounded-xl border border-slate-100 overflow-hidden shadow-2xs hover:shadow-xs transition-shadow"
+                      >
+                        {/* 상품 썸네일 */}
+                        <div className="aspect-3/4 bg-slate-100 relative overflow-hidden">
+                          <img
+                            src={prod.thumbnailUrl || '/images/products/SWBLPB21010_main.jpg'}
+                            alt={prod.productName}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
+                          {/* 할인율 뱃지 */}
+                          <span className="absolute top-1.5 left-1.5 bg-rose-600 text-white text-[10px] font-black px-1.5 py-0.2 rounded shadow-xs">
+                            {prod.displayDiscountRate}%
                           </span>
-                          <span className="text-[9px] text-slate-300 line-through font-mono">
-                            {prod.originalPrice.toLocaleString()}
-                          </span>
-                        </div>
 
-                        {/* 쿠폰 뱃지 */}
-                        <div className="pt-1 flex flex-wrap gap-1">
-                          {prod.couponApplicable ? (
-                            <>
-                              <span className="inline-block text-[8px] font-bold text-blue-600 bg-blue-50 px-1 py-0.2 rounded border border-blue-200">
-                                쿠폰적용
-                              </span>
-                              {prod.applicableCoupons && prod.applicableCoupons.slice(0, 2).map((c) => (
-                                <span
-                                  key={c.id}
-                                  className="inline-block text-[7px] font-semibold text-indigo-600 bg-indigo-50 px-1 py-0.2 rounded"
-                                >
-                                  {c.discountRate}%
-                                </span>
-                              ))}
-                            </>
-                          ) : (
-                            <span className="inline-block text-[8px] font-semibold text-slate-400 bg-slate-50 px-1 py-0.2 rounded">
-                              쿠폰제외
+                          {/* 정합성 검증 상태 뱃지 (오류/정상) */}
+                          <span
+                            className={`absolute top-1.5 right-1.5 text-[8px] font-extrabold px-1.5 py-0.2 rounded-full shadow-xs ${statusBadge.bg}`}
+                            title={statusBadge.desc}
+                          >
+                            {statusBadge.label}
+                          </span>
+
+                          {/* 라이브위크 뱃지 */}
+                          {prod.isLiveWeek && (
+                            <span className="absolute bottom-1.5 left-1.5 bg-slate-900/80 backdrop-blur-xs text-amber-300 text-[8px] font-bold px-1.5 py-0.2 rounded">
+                              🔥 라이브위크
                             </span>
                           )}
                         </div>
-                      </div>
-                    </Link>
-                  ))}
+
+                        {/* 상품 메타 정보 */}
+                        <div className="p-2 space-y-1">
+                          <div className="flex items-center justify-between text-[8px] text-slate-400">
+                            <span className="font-semibold uppercase">{promo.brand}</span>
+                            <span className="font-mono">{prod.productCode}</span>
+                          </div>
+                          <p className="text-[10px] font-medium text-slate-800 line-clamp-1 group-hover:text-indigo-600">
+                            {prod.productName}
+                          </p>
+
+                          <div className="flex items-baseline justify-between pt-0.5">
+                            <span className="text-xs font-black text-slate-900 font-mono">
+                              {prod.salePrice.toLocaleString()}원
+                            </span>
+                            <span className="text-[9px] text-slate-300 line-through font-mono">
+                              {prod.originalPrice.toLocaleString()}
+                            </span>
+                          </div>
+
+                          {/* 쿠폰 & 재고 뱃지 */}
+                          <div className="pt-1 flex flex-wrap gap-1">
+                            {prod.couponApplicable ? (
+                              <span className="inline-block text-[8px] font-bold text-blue-600 bg-blue-50 px-1 py-0.2 rounded border border-blue-200">
+                                쿠폰10%
+                              </span>
+                            ) : (
+                              <span className="inline-block text-[8px] font-semibold text-slate-400 bg-slate-50 px-1 py-0.2 rounded">
+                                쿠폰제외
+                              </span>
+                            )}
+
+                            <span className={`inline-block text-[8px] font-bold px-1 py-0.2 rounded border ${stockBadge.bg}`}>
+                              {stockBadge.label}
+                            </span>
+                          </div>
+                        </div>
+                      </Link>
+                    );
+                  })}
                 </div>
               </div>
 

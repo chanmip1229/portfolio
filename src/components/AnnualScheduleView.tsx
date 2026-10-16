@@ -600,8 +600,8 @@ export default function AnnualScheduleView({ onNavigateToQc }: AnnualScheduleVie
                   🏁 게시 완료 & 행사 종료
                 </div>
                 <p className="text-slate-500">
-                  <strong className="text-slate-700">종료일 &lt; 오늘 (진행률 100%)</strong><br />
-                  행사 기간이 만료되어 정상 마감 처리된 프로모션입니다. 불필요한 차트 혼선을 방지하기 위해 '종료된 행사 숨기기' 필터가 제공됩니다.
+                  <strong className="text-slate-700">종료일 &lt; 오늘 (행사 기간 경과율 100%)</strong><br />
+                  행사 기간이 만료되어 마일스톤 및 배너 컨펌이 정상 완료된 프로모션입니다. 불필요한 차트 혼선을 방지하기 위해 '종료된 행사 숨기기' 필터가 제공됩니다.
                 </p>
               </div>
             </div>
@@ -1286,24 +1286,38 @@ export default function AnnualScheduleView({ onNavigateToQc }: AnnualScheduleVie
                       {promo.startDate} ~ {promo.endDate} ({timing.totalDays}일간)
                     </p>
 
-                    {/* 이벤트 완료 정도 프로그레스 바 */}
+                    {/* 행사 기간 경과율 프로그레스 바 */}
                     <div className="space-y-1.5 mb-4">
                       <div className="flex justify-between text-[11px] font-semibold text-slate-600">
-                        <span>마일스톤 진행률</span>
-                        <span className="font-mono text-slate-900">{timing.isEnded ? '100% (행사 종료)' : `${progress}%`}</span>
+                        <span>행사 기간 경과율</span>
+                        <span className="font-mono text-slate-900">
+                          {timing.isEnded
+                            ? '100% (행사 종료)'
+                            : timing.statusType === 'RUNNING'
+                            ? `${Math.round(((timing.elapsedDays || 1) / timing.totalDays) * 100)}% (진행 ${timing.elapsedDays}/${timing.totalDays}일)`
+                            : `0% (오픈 D-${timing.daysUntil})`}
+                        </span>
                       </div>
                       <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
                         <div
                           className={`h-full rounded-full transition-all duration-500 ${
                             timing.isEnded
                               ? 'bg-slate-500'
-                              : progress === 100
-                              ? 'bg-emerald-500'
-                              : blockerCount > 0
+                              : timing.statusType === 'RUNNING'
+                              ? 'bg-amber-500'
+                              : timing.isD30Active
                               ? 'bg-rose-500'
                               : 'bg-indigo-600'
                           }`}
-                          style={{ width: `${timing.isEnded ? 100 : progress}%` }}
+                          style={{
+                            width: `${
+                              timing.isEnded
+                                ? 100
+                                : timing.statusType === 'RUNNING'
+                                ? Math.min(Math.round(((timing.elapsedDays || 1) / timing.totalDays) * 100), 100)
+                                : 0
+                            }%`,
+                          }}
                         ></div>
                       </div>
                     </div>
@@ -1311,15 +1325,23 @@ export default function AnnualScheduleView({ onNavigateToQc }: AnnualScheduleVie
                     {/* 마일스톤 및 QC 상태 요약 */}
                     <div className="bg-slate-50 rounded-xl p-3 border border-slate-200/60 space-y-2 text-xs">
                       <div className="flex items-center justify-between text-slate-600">
-                        <span>마일스톤 완료율:</span>
+                        <span>운영 마일스톤 완료율:</span>
                         <strong className="font-mono text-slate-800">
-                          {promo.milestones.filter((m) => m.isCompleted).length} / {promo.milestones.length}단계
+                          {timing.isEnded
+                            ? '5 / 5단계 완료 (컨펌)'
+                            : `${promo.milestones.filter((m) => m.isCompleted).length} / ${promo.milestones.length || 5}단계`}
                         </strong>
                       </div>
                       <div className="flex items-center justify-between text-slate-600">
                         <span>배너 소재 컨펌:</span>
-                        <span className={promo.banner.isConfirmed ? 'text-emerald-700 font-bold' : 'text-amber-600'}>
-                          {promo.banner.isConfirmed ? '✓ 컨펌 완료' : '대기 중'}
+                        <span
+                          className={
+                            timing.isEnded || promo.banner.isConfirmed
+                              ? 'text-emerald-700 font-bold'
+                              : 'text-amber-600'
+                          }
+                        >
+                          {timing.isEnded || promo.banner.isConfirmed ? '✓ 컨펌 완료' : '대기 중'}
                         </span>
                       </div>
                       <div className="flex items-center justify-between text-slate-600">

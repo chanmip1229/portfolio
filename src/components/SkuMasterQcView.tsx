@@ -44,12 +44,16 @@ export default function SkuMasterQcView({ onOpenDualDraftModal }: SkuMasterQcVie
     promotions,
     selectedBrand,
     setSelectedBrand,
+    selectedPromotionId,
     updateProductAndRevalidate,
     runQcValidation,
     setIsDraftModalOpen,
     setSelectedDraftId,
     addPromotions,
   } = useOpsStore();
+
+  const [onlySelectedPromo, setOnlySelectedPromo] = useState<boolean>(false);
+  const selectedPromo = promotions.find((p) => p.id === selectedPromotionId);
 
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState<
@@ -92,6 +96,7 @@ export default function SkuMasterQcView({ onOpenDualDraftModal }: SkuMasterQcVie
     promotions.forEach((promo) => {
       // 브랜드 필터
       if (selectedBrand !== 'ALL' && promo.brand !== selectedBrand) return;
+      if (onlySelectedPromo && selectedPromotionId && promo.id !== selectedPromotionId) return;
 
       promo.products.forEach((prod) => {
         const calculatedDiscount = prod.originalPrice > 0
@@ -132,7 +137,7 @@ export default function SkuMasterQcView({ onOpenDualDraftModal }: SkuMasterQcVie
     });
 
     return list;
-  }, [promotions, selectedBrand, imageLoadErrors]);
+  }, [promotions, selectedBrand, onlySelectedPromo, selectedPromotionId, imageLoadErrors]);
 
   // 검색 및 필터링 적용
   const filteredSkuItems = useMemo(() => {
@@ -416,6 +421,49 @@ export default function SkuMasterQcView({ onOpenDualDraftModal }: SkuMasterQcVie
 
   return (
     <div className="space-y-6">
+      {/* 0. 현재 점검 대상 기획전 포커스 안내 바 */}
+      {selectedPromo && (
+        <div className="bg-gradient-to-r from-indigo-50 via-blue-50 to-indigo-50 border border-indigo-200/80 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs shadow-xs">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="font-extrabold text-indigo-900 flex items-center gap-1.5">
+              <Sparkles className="w-4 h-4 text-indigo-600" />
+              <span>현재 선택된 기획전:</span>
+            </span>
+            <span
+              className={`px-2 py-0.5 rounded text-[11px] font-black ${
+                selectedPromo.brand === 'SHESMISS'
+                  ? 'bg-purple-100 text-purple-800'
+                  : selectedPromo.brand === 'LIST'
+                  ? 'bg-blue-100 text-blue-800'
+                  : 'bg-emerald-100 text-emerald-800'
+              }`}
+            >
+              {selectedPromo.brand}
+            </span>
+            <span className="font-black text-slate-900 text-sm">
+              {selectedPromo.title}
+            </span>
+            <span className="bg-white/90 font-mono text-[11px] text-slate-600 px-2 py-0.5 rounded-md border border-indigo-200 font-bold">
+              ID: {selectedPromo.id}
+            </span>
+            <span className="text-slate-500 font-medium text-[11px]">
+              (등록 품번: {selectedPromo.products.length}종 전수 검사)
+            </span>
+          </div>
+
+          <button
+            onClick={() => setOnlySelectedPromo(!onlySelectedPromo)}
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 ${
+              onlySelectedPromo
+                ? 'bg-indigo-600 text-white shadow-xs'
+                : 'bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 shadow-2xs'
+            }`}
+          >
+            {onlySelectedPromo ? '✓ 이 기획전 품번만 필터링 중' : '이 기획전 품번만 필터링'}
+          </button>
+        </div>
+      )}
+
       {/* 1. 상단 브리핑 & 헤더 */}
       <div className="bg-white rounded-2xl border border-slate-200 shadow-xs p-6">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-6 border-b border-slate-100">

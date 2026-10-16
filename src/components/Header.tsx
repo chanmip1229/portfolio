@@ -1,5 +1,5 @@
-import React from 'react';
-import { Sparkles, Mail, MessageSquare } from 'lucide-react';
+import React, { useState } from 'react';
+import { Sparkles, Mail, MessageSquare, CheckCircle2 } from 'lucide-react';
 import { useOpsStore } from '@/store/useOpsStore';
 
 interface HeaderProps {
@@ -10,6 +10,14 @@ interface HeaderProps {
 
 export default function Header({ onLoadDemo, onOpenDrafts, draftCount }: HeaderProps) {
   const { setIsSlackModalOpen, slackWebhookUrl } = useOpsStore();
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  const handleLoadDemo = () => {
+    onLoadDemo();
+    setIsLoaded(true);
+    setTimeout(() => setIsLoaded(false), 3000);
+  };
+
   const isSlackConnected = Boolean(
     (slackWebhookUrl && slackWebhookUrl.startsWith('https://hooks.slack.com/')) ||
       process.env.NEXT_PUBLIC_SLACK_CONFIGURED === 'true'
@@ -66,11 +74,24 @@ export default function Header({ onLoadDemo, onOpenDrafts, draftCount }: HeaderP
 
           {/* 시연용 원클릭 로드 버튼 */}
           <button
-            onClick={onLoadDemo}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-xs hover:shadow transition-all cursor-pointer"
+            onClick={handleLoadDemo}
+            className={`inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold text-white rounded-lg shadow-xs hover:shadow transition-all cursor-pointer ${
+              isLoaded
+                ? 'bg-emerald-600 hover:bg-emerald-700 ring-2 ring-emerald-300 shadow-md'
+                : 'bg-indigo-600 hover:bg-indigo-700'
+            }`}
           >
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>🚀 시연 시나리오 로드 (26FW LIST)</span>
+            {isLoaded ? (
+              <>
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-200 animate-pulse" />
+                <span>✓ 시연 데이터 로드 완료!</span>
+              </>
+            ) : (
+              <>
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>🚀 시연 시나리오 로드 (26FW LIST)</span>
+              </>
+            )}
           </button>
 
           {/* 메일 임시보관함 알림 버튼 */}
