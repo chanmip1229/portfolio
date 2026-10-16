@@ -1,0 +1,747 @@
+const fs = require('fs');
+const path = require('path');
+const puppeteer = require('puppeteer-core');
+
+const SCREENSHOTS_DIR = path.join(__dirname, '../public/screenshots');
+
+function getBase64(filename) {
+  const filePath = path.join(SCREENSHOTS_DIR, filename);
+  const data = fs.readFileSync(filePath);
+  return `data:image/png;base64,${data.toString('base64')}`;
+}
+
+console.log('Loading screenshots as base64...');
+const img1 = getBase64('01_step1_gantt.png');
+const img2 = getBase64('02_step1_monthly_cards.png');
+const img3 = getBase64('03_step1_brand_filter.png');
+const img4 = getBase64('04_step2_qc_overview.png');
+const img5 = getBase64('05_step2_dual_mail_modal.png');
+const img6 = getBase64('06_step2_sku_table.png');
+const img7 = getBase64('07_step3_mobile_preview.png');
+const img8 = getBase64('08_step3_desktop_preview.png');
+const img9 = getBase64('09_common_grouped_mail.png');
+const img10 = getBase64('10_common_slack_webhook.png');
+
+console.log('Base64 images loaded successfully.');
+
+const htmlContent = `<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IDF E-Biz 운영 보드 포트폴리오 | 박찬미</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+      color: #1f2937;
+      background-color: #e5e7eb;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+    
+    @page {
+      size: A4 portrait;
+      margin: 0;
+    }
+
+    .portfolio-page {
+      background: #ffffff;
+      width: 210mm;
+      height: 297mm;
+      max-height: 297mm;
+      margin: 20px auto;
+      padding: 20mm 22mm 16mm 22mm;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      page-break-after: always;
+      break-after: page;
+      overflow: hidden;
+    }
+
+    @media print {
+      body {
+        background: transparent;
+      }
+      .portfolio-page {
+        margin: 0;
+        box-shadow: none;
+      }
+    }
+
+    .page-header {
+      border-bottom: 2px solid #e5e7eb;
+      padding-bottom: 10px;
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+    .page-header .category {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #4f46e5;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .page-header .page-num {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: #9ca3af;
+    }
+    .page-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: #111827;
+      margin-bottom: 6px;
+      letter-spacing: -0.02em;
+    }
+    .page-subtitle {
+      font-size: 13px;
+      color: #4b5563;
+      margin-bottom: 14px;
+      line-height: 1.45;
+    }
+    .content-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+    }
+    .footer {
+      border-top: 1px solid #f3f4f6;
+      padding-top: 10px;
+      margin-top: 12px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: #9ca3af;
+    }
+    
+    /* Cover Page */
+    .cover-content {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      height: 100%;
+      padding: 30px 0;
+    }
+    .cover-tag {
+      display: inline-block;
+      background: #eef2ff;
+      color: #4338ca;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 5px 12px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+      align-self: flex-start;
+    }
+    .cover-title {
+      font-size: 36px;
+      font-weight: 900;
+      line-height: 1.25;
+      color: #111827;
+      letter-spacing: -0.03em;
+      margin-bottom: 14px;
+    }
+    .cover-desc {
+      font-size: 16px;
+      color: #4b5563;
+      line-height: 1.6;
+      margin-bottom: 32px;
+    }
+    .meta-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 28px;
+    }
+    .meta-table th, .meta-table td {
+      padding: 12px 14px;
+      text-align: left;
+      font-size: 13px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    .meta-table th {
+      background: #f9fafb;
+      color: #374151;
+      font-weight: 700;
+      width: 25%;
+    }
+    .meta-table td {
+      color: #1f2937;
+    }
+    .btn-link {
+      color: #4f46e5;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    /* Common Card Styles */
+    .card {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 15px 18px;
+      margin-bottom: 12px;
+    }
+    .card-title {
+      font-size: 14.5px;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .bullet-list {
+      list-style: none;
+    }
+    .bullet-list li {
+      position: relative;
+      padding-left: 16px;
+      margin-bottom: 7px;
+      font-size: 12.8px;
+      color: #374151;
+      line-height: 1.5;
+    }
+    .bullet-list li::before {
+      content: '•';
+      position: absolute;
+      left: 3px;
+      color: #4f46e5;
+      font-weight: bold;
+      font-size: 15px;
+    }
+    .highlight {
+      font-weight: 700;
+      color: #111827;
+    }
+
+    /* Images */
+    .img-box {
+      width: 100%;
+      margin: 8px 0;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+      background: #f8fafc;
+    }
+    .img-box img {
+      width: 100%;
+      height: auto;
+      max-height: 170mm;
+      object-fit: contain;
+      display: block;
+    }
+    .img-box.compact img {
+      max-height: 75mm;
+    }
+    .img-caption {
+      padding: 5px 10px;
+      font-size: 10.5px;
+      color: #6b7280;
+      background: #f9fafb;
+      border-top: 1px solid #e5e7eb;
+      text-align: right;
+    }
+
+    /* Grid 2 Column */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin: 8px 0;
+    }
+
+    /* Comparison Table */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0;
+      font-size: 12.5px;
+    }
+    .data-table th, .data-table td {
+      padding: 10px 12px;
+      border: 1px solid #e5e7eb;
+      text-align: left;
+    }
+    .data-table th {
+      background: #f3f4f6;
+      font-weight: 700;
+      color: #374151;
+    }
+    .data-table tr.total-row {
+      background: #eef2ff;
+      font-weight: 800;
+      color: #312e81;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PAGE 1: 표지 및 프로젝트 개요 -->
+  <div class="portfolio-page">
+    <div class="cover-content">
+      <span class="cover-tag">E-Commerce Operation Optimization</span>
+      <h1 class="cover-title">IDF E-Biz 운영 보드</h1>
+      <p class="cover-desc">
+        인동FN 자사몰 3대 브랜드(SHESMISS, LIST, SISTINA) 동시 운영 환경을 가정한<br>
+        <strong>프로모션 일정 관제 및 오픈 전 무결점 사전 QC 통합 시스템</strong>
+      </p>
+
+      <table class="meta-table">
+        <tr>
+          <th>프로젝트 구분</th>
+          <td>개인 프로젝트 (실제 운영 시연용 웹 프로토타입)</td>
+        </tr>
+        <tr>
+          <th>기획 및 제작 시기</th>
+          <td>2026.10</td>
+        </tr>
+        <tr>
+          <th>담당 역할</th>
+          <td>
+            <strong>100% 단독 수행</strong><br>
+            • 실무 문제 정의 (디올·닐슨 경험 기반 업무 병목 추출)<br>
+            • 3단계 운영 파이프라인 및 사전 점검 룰(정합성/이상치) 설계<br>
+            • 부서별 확인 요청 체계 및 화면 UI/UX 흐름 기획
+          </td>
+        </tr>
+        <tr>
+          <th>구현 방식</th>
+          <td>Google Antigravity를 활용한 바이브코딩 (Next.js 14, TailwindCSS, TypeScript)</td>
+        </tr>
+        <tr>
+          <th>라이브 시연 링크</th>
+          <td><a href="https://idf-theta.vercel.app/" target="_blank" class="btn-link">https://idf-theta.vercel.app/</a></td>
+        </tr>
+        <tr>
+          <th>GitHub 저장소</th>
+          <td><a href="https://github.com/chanmip1229/portfolio" target="_blank" class="btn-link">github.com/chanmip1229/portfolio</a></td>
+        </tr>
+      </table>
+    </div>
+    <div class="footer">
+      <span>IDF E-Biz 운영 보드 포트폴리오</span>
+      <span>PAGE 01 / 09</span>
+    </div>
+  </div>
+
+  <!-- PAGE 2: 1. 왜 만들었나 (문제 정의) -->
+  <div class="portfolio-page">
+    <div class="page-header">
+      <span class="category">Background & Problem Definition</span>
+      <span class="page-num">PAGE 02 / 09</span>
+    </div>
+    <div class="content-area">
+      <h2 class="page-title">1. 왜 만들었나 (기획 배경)</h2>
+      <p class="page-subtitle">
+        과거 글로벌 리서치(닐슨)와 럭셔리 브랜드(디올) 실무에서 가장 큰 병목은 고난도 분석이 아닌,<br>
+        <strong>불완전한 요청으로 인한 반복적인 확인(되묻기)과 사소한 입력 실수</strong>였습니다.
+      </p>
+
+      <div class="card">
+        <div class="card-title">🔍 실무 경험에서 발견한 공통 문제점</div>
+        <ul class="bullet-list">
+          <li><span class="highlight">디올(Dior) 코스메틱 EDM·이벤트 운영</span>: 매 시즌 다른 부서(MD, PR, 영업)에 상품 SKU 정보, 이미지, 추천 코드를 요청해 취합하고, 받은 데이터가 정확한지 일일이 다시 대조하는 작업이 시즌마다 반복되었습니다.</li>
+          <li><span class="highlight">닐슨(Nielsen) 데이터 딜리버리</span>: 필수 정보가 누락된 요청서 때문에 이메일 핑퐁이 잦았고, 이를 해결하기 위해 <strong>표준 딜리버리 요청서(DRF)</strong>와 <strong>DB 변경 신청서(COF)</strong>를 직접 제정하여 재확인 작업을 획기적으로 줄였습니다.</li>
+        </ul>
+      </div>
+
+      <div class="card" style="margin-top: 14px;">
+        <div class="card-title">👗 인동FN 자사몰 환경에서의 3대 예상 병목</div>
+        <p style="font-size: 13px; color: #4b5563; margin-bottom: 10px;">
+          인동FN 공식몰은 <strong>SHESMISS, LIST, SISTINA 3개 브랜드의 대형 기획전이 동시다발적으로 운영</strong>되며, 가격(MD)·이미지(디자인)·링크(퍼블리셔)가 분업화되어 있어 다음 3대 리스크가 빈번히 발생할 수밖에 없는 구조입니다.
+        </p>
+        <ul class="bullet-list">
+          <li><span class="highlight">가격·할인율 오기입 리스크</span>: 엑셀에서 어드민으로 단가를 옮기다 0이 하나 빠지거나(역마진 사고), 정가와 판매가 계산식에 맞지 않는 표기 할인율 기재</li>
+          <li><span class="highlight">타 부서 자료 지연 및 단계 누락</span>: D-7 소재 요청부터 D-Day 오픈까지 거쳐야 할 검수 단계(배너 확정, 링크 검증)가 누락되어 런칭 당일 오류 발생</li>
+          <li><span class="highlight">커뮤니케이션 피로도</span>: 오류가 났을 때 어떤 부서에 확인을 요청해야 하는지 일일이 파악해 건건이 메일을 쓰느라 소모되는 운영 시간</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer">
+      <span>IDF E-Biz 운영 보드 포트폴리오</span>
+      <span>PAGE 02 / 09</span>
+    </div>
+  </div>
+
+  <!-- PAGE 3: 2. 무엇을 만들었나 (파이프라인 설계) -->
+  <div class="portfolio-page">
+    <div class="page-header">
+      <span class="category">System Architecture & Pipeline</span>
+      <span class="page-num">PAGE 03 / 09</span>
+    </div>
+    <div class="content-area">
+      <h2 class="page-title">2. 무엇을 만들었나 (운영 파이프라인)</h2>
+      <p class="page-subtitle">
+        자사몰 운영 실무자가 오픈 준비의 모든 과정을 직관적으로 관제할 수 있도록<br>
+        <strong>화면 상단에 '3단계 파이프라인 (STEP 01 ➔ STEP 02 ➔ STEP 03)' 구조</strong>를 구축했습니다.
+      </p>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">STEP 01. 프로모션 기획 & 로드맵</div>
+          <ul class="bullet-list">
+            <li>연간 기획 엑셀 파일 원클릭 일괄 등록</li>
+            <li>3개 브랜드 간트차트 및 월별 캘린더 자동 배치</li>
+            <li>D-30 집중 준비 체계로 마감 임박 행사 선별</li>
+            <li>5단계 마일스톤(D-7~D-Day) 진행률 관제</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title">STEP 02. 정합성 통합 검증 (QC 센터)</div>
+          <ul class="bullet-list">
+            <li>정가·판매가·할인율 3단 수식 1:1 자동 계산</li>
+            <li>카테고리 평균(30%) 대비 80% 이상치 경고</li>
+            <li>404 링크 및 저해상도 이미지 엑스박스 적발</li>
+            <li>테이블 내 인라인 즉시 수정 & 실시간 재검산</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">STEP 03. 최종 전시 & 배너 프리뷰</div>
+          <ul class="bullet-list">
+            <li>실제 자사몰 고객 화면 모바일/PC 실시간 뷰어</li>
+            <li>배너 헤드카피, 서브카피, 할인 뱃지 일치 검수</li>
+            <li>오픈 직전 디바이스별 레이아웃 깨짐 사전 방지</li>
+          </ul>
+        </div>
+        <div class="card" style="border-color: #c7d2fe; background: #f5f7ff;">
+          <div class="card-title" style="color: #4338ca;">공통 기능. 협업 소통 자동화</div>
+          <ul class="bullet-list">
+            <li>오류 품번별 원클릭 2분할 듀얼 메일 (MD/디자인)</li>
+            <li>부서별 건건이 아닌 '1통 취합 메일' 발송 체계</li>
+            <li>Slack #qc 채널 웹훅 연동 실시간 요약 브리핑</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top: 6px; background: #fff; border-left: 4px solid #4f46e5;">
+        <p style="font-size: 13px; color: #374151;">
+          <strong>💡 운영 철학: "찾고 정리하는 일은 도구가 하고, 판단과 결정은 사람이 한다"</strong><br>
+          시스템이 모든 것을 자동으로 처리하다 예외를 놓치지 않도록, 80%와 같은 이상치는 '경고'로 띄워 사람이 확인하게 하고, 확인 메일도 AI 초안을 실무자가 검토한 후 승인 발송하도록 설계했습니다.
+        </p>
+      </div>
+    </div>
+    <div class="footer">
+      <span>IDF E-Biz 운영 보드 포트폴리오</span>
+      <span>PAGE 03 / 09</span>
+    </div>
+  </div>
+
+  <!-- PAGE 4: STEP 01 프로모션 기획 & 로드맵 -->
+  <div class="portfolio-page">
+    <div class="page-header">
+      <span class="category">STEP 01 — Planning & Timeline</span>
+      <span class="page-num">PAGE 04 / 09</span>
+    </div>
+    <div class="content-area">
+      <h2 class="page-title">[STEP 01] 프로모션 기획 & 연간 로드맵</h2>
+      <p class="page-subtitle">
+        엑셀 파일 한 번으로 1년 치 프로모션을 등록하고, 브랜드별 일정과 오픈 마감 임박 행사를 한눈에 파악합니다.
+      </p>
+
+      <div class="img-box compact">
+        <img src="${img1}" alt="연간 프로모션 간트차트 로드맵">
+        <div class="img-caption">▲ 연간 프로모션 간트차트 뷰 및 상단 D-30 오픈 집중 준비 관제 영역</div>
+      </div>
+
+      <div class="grid-2">
+        <div class="img-box compact">
+          <img src="${img2}" alt="월별 카드 뷰">
+          <div class="img-caption">▲ 월별 캘린더 카드 뷰 (월별 행사 목록 직관적 파악)</div>
+        </div>
+        <div class="img-box compact">
+          <img src="${img3}" alt="브랜드 필터링">
+          <div class="img-caption">▲ LIST 브랜드 전용 필터 적용 (6개 행사 정밀 타겟팅)</div>
+        </div>
+      </div>
+
+      <ul class="bullet-list">
+        <li><span class="highlight">D-30 집중 준비 체계</span>: 전체 18개 행사를 \`오픈 집중 준비(D-30 이내)\`, \`편성 대기\`, \`진행 중(라이브)\`, \`종료\` 4단계로 자동 분류해 마감이 임박한 행사를 상단에 고정합니다.</li>
+        <li><span class="highlight">5단계 마일스톤 관제</span>: \`D-7(소재 요청) ➔ D-5(기획서 수령) ➔ D-3(배너 확정) ➔ D-2(전수 점검) ➔ D-Day(오픈)\` 공정을 체크해 부서 간 누락을 방지합니다.</li>
+      </ul>
+    </div>
+    <div class="footer">
+      <span>IDF E-Biz 운영 보드 포트폴리오</span>
+      <span>PAGE 04 / 09</span>
+    </div>
+  </div>
+
+  <!-- PAGE 5: STEP 02 정합성 통합 검증 (단품 전수 QC) -->
+  <div class="portfolio-page">
+    <div class="page-header">
+      <span class="category">STEP 02 — Product & Formula QC</span>
+      <span class="page-num">PAGE 05 / 09</span>
+    </div>
+    <div class="content-area">
+      <h2 class="page-title">[STEP 02] 오픈 전 무결점 사전 QC (가격 & 단품)</h2>
+      <p class="page-subtitle">
+        기획전 단품(SKU)의 가격 계산식, 0 누락, 카테고리 이상치, 404 링크를 전수 검사하고 현장에서 즉시 수정합니다.
+      </p>
+
+      <div class="img-box compact">
+        <img src="${img4}" alt="QC 센터 전체 개요">
+        <div class="img-caption">▲ QC 센터 상단 4대 KPI 요약 카드 및 부서별 사전 리포트 탭</div>
+      </div>
+
+      <div class="img-box compact">
+        <img src="${img6}" alt="단품 SKU 마스터 전수 검증 테이블">
+        <div class="img-caption">▲ 3단 가격 계산 검증, 80% 오기입 이상치 경고 및 인라인 즉시 수정 테이블</div>
+      </div>
+
+      <ul class="bullet-list">
+        <li><span class="highlight">3단 가격 수식 자동 검증</span>: \`(정가 - 판매가) / 정가 = 표기 할인율\` 공식을 1:1 전수 비교하여 계산이 어긋난 품번을 실시간으로 적발합니다.</li>
+        <li><span class="highlight">트렌드 이상치(80% 오기입) 사전 감지</span>: 계산식은 맞아도 카테고리 평균(30%) 대비 비정상적인 80% 할인은 담당자 오기입(0 누락 등) 의심 경고를 띄웁니다.</li>
+        <li><span class="highlight">인라인 즉시 수정 & 실시간 재검산</span>: 테이블에서 잘못된 단가를 직접 수정하면 즉시 재계산되어 정상(초록색)으로 전환됩니다.</li>
+      </ul>
+    </div>
+    <div class="footer">
+      <span>IDF E-Biz 운영 보드 포트폴리오</span>
+      <span>PAGE 05 / 09</span>
+    </div>
+  </div>
+
+  <!-- PAGE 6: STEP 02 & 공통 협업 소통 자동화 -->
+  <div class="portfolio-page">
+    <div class="page-header">
+      <span class="category">Collaboration & Communication</span>
+      <span class="page-num">PAGE 06 / 09</span>
+    </div>
+    <div class="content-area">
+      <h2 class="page-title">[STEP 02 & 공통] 부서별 협업 소통 자동화</h2>
+      <p class="page-subtitle">
+        오류 품번마다 메일을 수십 통씩 보내 담당자를 지치게 하지 않고, 부서별 분기 및 일괄 취합 발송을 지원합니다.
+      </p>
+
+      <div class="grid-2">
+        <div class="img-box compact">
+          <img src="${img5}" alt="원클릭 2분할 듀얼 메일 모달">
+          <div class="img-caption">▲ 원클릭 2분할 듀얼 메일 초안 (MD/디자인 동시 분기)</div>
+        </div>
+        <div class="img-box compact">
+          <img src="${img9}" alt="부서별 1통 취합 메일 임시보관함">
+          <div class="img-caption">▲ 부서별 오류를 하나의 표로 묶은 1통 취합 메일</div>
+        </div>
+      </div>
+
+      <div class="img-box compact">
+        <img src="${img10}" alt="Slack 실시간 브리핑 웹훅">
+        <div class="img-caption">▲ Slack #qc 채널 웹훅 연동 실시간 점검 브리핑 (결함 건수 및 마감 시한 요약)</div>
+      </div>
+
+      <ul class="bullet-list">
+        <li><span class="highlight">원클릭 [2분할 듀얼 메일]</span>: 한 품번에 가격 오류(MD)와 썸네일 규격 미달(디자인)이 겹쳤을 때, 클릭 한 번으로 양쪽 초안을 나란히 분할 작성합니다.</li>
+        <li><span class="highlight">부서별 1통 취합 메일</span>: 담당자에게 메일이 쏟아지지 않도록, 부서별 오류 품번을 표로 정리한 일괄 취합 메일을 제공합니다.</li>
+        <li><span class="highlight">Slack 실시간 웹훅 브리핑</span>: 메일 확인 전 채널에서 결함 건수와 심각도(BLOCKER/WARNING)를 즉시 공유합니다.</li>
+      </ul>
+    </div>
+    <div class="footer">
+      <span>IDF E-Biz 운영 보드 포트폴리오</span>
+      <span>PAGE 06 / 09</span>
+    </div>
+  </div>
+
+  <!-- PAGE 7: STEP 03 최종 전시 프리뷰 & 배너 검수 -->
+  <div class="portfolio-page">
+    <div class="page-header">
+      <span class="category">STEP 03 — Live Storefront Preview</span>
+      <span class="page-num">PAGE 07 / 09</span>
+    </div>
+    <div class="content-area">
+      <h2 class="page-title">[STEP 03] 최종 전시 프리뷰 & 배너 검수</h2>
+      <p class="page-subtitle">
+        실제 고객이 접속했을 때 보게 될 자사몰 모바일/PC 전시 화면을 사전에 미리 검수하고 최종 런칭을 확정합니다.
+      </p>
+
+      <div class="grid-2">
+        <div class="img-box" style="height: 125mm; display: flex; flex-direction: column; justify-content: space-between;">
+          <img src="${img7}" alt="모바일 뷰어 프리뷰" style="height: 108mm; width: 100%; object-fit: contain; margin: auto 0;">
+          <div class="img-caption">▲ 모바일 디바이스 실시간 전시 화면 뷰어</div>
+        </div>
+        <div class="img-box" style="height: 125mm; display: flex; flex-direction: column; justify-content: space-between;">
+          <img src="${img8}" alt="데스크톱 PC 뷰어 프리뷰" style="height: 108mm; width: 100%; object-fit: contain; margin: auto 0;">
+          <div class="img-caption">▲ PC 와이드 화면 뷰어 및 배너 카피 대조</div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top: 10px;">
+        <div class="card-title">🔍 전시 전 3대 최종 크로스 체크</div>
+        <ul class="bullet-list">
+          <li><span class="highlight">배너 타이틀 & 헤드카피 일치</span>: 기획서에 명시된 메인 카피와 실제 제작된 배너 이미지 속 텍스트가 100% 일치하는지 대조</li>
+          <li><span class="highlight">할인율 뱃지 정합성</span>: 배너에 기재된 'UP TO 50%'와 실제 기획전에 진열된 상품들의 최고 할인율이 맞는지 검증</li>
+          <li><span class="highlight">모바일/PC 반응형 레이아웃</span>: 기기별 해상도 차이로 인한 배너 잘림이나 상품 진열 깨짐 현상 사전 방지</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer">
+      <span>IDF E-Biz 운영 보드 포트폴리오</span>
+      <span>PAGE 07 / 09</span>
+    </div>
+  </div>
+
+  <!-- PAGE 8: 기대 효과 (정량 성과 추론) -->
+  <div class="portfolio-page">
+    <div class="page-header">
+      <span class="category">Business Impact & Metrics</span>
+      <span class="page-num">PAGE 08 / 09</span>
+    </div>
+    <div class="content-area">
+      <h2 class="page-title">3. 도입 기대 효과 (소요 시간 절감 추론)</h2>
+      <p class="page-subtitle">
+        약 50개 품번(SKU)이 포함된 대형 프로모션 1건을 오픈할 때의 실무 소요 시간을 비교 분석한 추론치입니다.
+      </p>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>업무 단계</th>
+            <th>기존 수작업 방식</th>
+            <th>운영 보드 활용 시</th>
+            <th>시간 절감 효과</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>1. 프로모션 & 상품 등록</strong></td>
+            <td>어드민에 일일이 복사·붙여넣기 (약 60분)</td>
+            <td>엑셀 업로드로 일괄 자동 등록 (약 2분)</td>
+            <td><span style="color: #dc2626; font-weight: 700;">약 58분 단축 (96%↓)</span></td>
+          </tr>
+          <tr>
+            <td><strong>2. 단품 가격·링크·이미지 점검</strong></td>
+            <td>엑셀 수식 대조 및 링크 수작업 클릭 (약 90분)</td>
+            <td>룰 엔진 자동 검증 및 인라인 수정 (약 10분)</td>
+            <td><span style="color: #dc2626; font-weight: 700;">약 80분 단축 (88%↓)</span></td>
+          </tr>
+          <tr>
+            <td><strong>3. 부서별 오류 확인 요청</strong></td>
+            <td>오류 품번 취합 및 부서별 메일 작성 (약 40분)</td>
+            <td>원클릭 분할 메일 초안 & 슬랙 브리핑 (약 5분)</td>
+            <td><span style="color: #dc2626; font-weight: 700;">약 35분 단축 (87%↓)</span></td>
+          </tr>
+          <tr class="total-row">
+            <td><strong>전체 소요 시간 합계</strong></td>
+            <td>약 3시간 10분 소요 (190분)</td>
+            <td>약 17분 소요 (17분)</td>
+            <td><strong>총 소요 시간 약 91% 절감 (173분 단축)</strong></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="card" style="margin-top: 14px;">
+        <div class="card-title">📈 정성적 비즈니스 가치</div>
+        <ul class="bullet-list">
+          <li><span class="highlight">단순 반복 작업 제거</span>: 행사 1건당 약 2시간 50분의 수작업 시간을 절약하여 기획전 성과 분석과 시즌 프로모션 기획 등 본질 업무에 집중할 수 있습니다.</li>
+          <li><span class="highlight">치명적 가격 사고(역마진) 원천 차단</span>: 피로도가 높은 심야/주말 오픈 전, 사람이 육안으로 놓치기 쉬운 0 누락(198,000원 ➔ 19,800원) 사고를 시스템이 100% 방어합니다.</li>
+          <li><span class="highlight">부서 간 핑퐁 및 감정 소모 최소화</span>: 상대 부서의 역할을 정확히 나눈 분할 메일과 취합 표를 제공해 커뮤니케이션 피로도를 획기적으로 낮춥니다.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer">
+      <span>IDF E-Biz 운영 보드 포트폴리오</span>
+      <span>PAGE 08 / 09</span>
+    </div>
+  </div>
+
+  <!-- PAGE 9: 한계 및 회고 -->
+  <div class="portfolio-page">
+    <div class="page-header">
+      <span class="category">Limitations & Reflection</span>
+      <span class="page-num">PAGE 09 / 09</span>
+    </div>
+    <div class="content-area">
+      <h2 class="page-title">4. 한계 및 만들면서 생각한 것</h2>
+      <p class="page-subtitle">
+        프로젝트를 완성하며 정리한 솔직한 한계점과 실무자로서의 운영 철학입니다.
+      </p>
+
+      <div class="card">
+        <div class="card-title">⚠️ 본 프로젝트의 솔직한 한계</div>
+        <ul class="bullet-list">
+          <li>인동FN의 실제 내부 ERP/어드민 시스템과 API로 연동되어 있지 않으며, 데이터와 점검 기준, 확인 요청 대상 부서는 외부에서 관찰하여 가정한 가상 데이터입니다.</li>
+          <li>점검 로직은 환각이 없는 <strong>정밀한 규칙 기반(Rule-based) 엔진</strong>이며, AI가 개입하는 영역은 부서별 상황을 반영해 문맥에 맞게 작성하는 <strong>확인 요청 메일 초안 작성</strong>입니다.</li>
+        </ul>
+      </div>
+
+      <div class="card" style="margin-top: 14px; border-left: 4px solid #4f46e5;">
+        <div class="card-title" style="color: #4338ca;">💬 만들면서 생각한 것 (실무자 회고)</div>
+        <p style="font-size: 13px; color: #374151; margin-bottom: 10px; line-height: 1.6;">
+          과거 닐슨과 디올에서 근무하며 저를 가장 힘들게 했던 것은 어려운 데이터 분석이 아니라, <strong>같은 확인을 반복하느라 소모되는 시간과 그 과정에서 발생하는 사소한 실수</strong>였습니다. 이런 일은 명확한 기준이 정해져 있기 때문에 도구의 도움을 받기에 가장 적합한 영역이라고 생각했습니다.
+        </p>
+        <p style="font-size: 13px; color: #374151; margin-bottom: 10px; line-height: 1.6;">
+          하지만 도구나 AI가 실무자의 판단을 100% 대체할 수는 없습니다. 복잡한 패션 이커머스 환경에는 수많은 예외가 존재하기 때문입니다. 그래서 저는 80% 할인처럼 의심스러운 값을 무조건 오류로 단정 짓지 않고 <strong>'경고(Warning)'</strong>로 분류하여 기대값과 현재값을 함께 보여주고, 최종 발송 전 <strong>사람이 검토하고 승인하는 Human-in-the-loop 구조</strong>를 고수했습니다.
+        </p>
+        <p style="font-size: 13px; color: #111827; font-weight: 700; line-height: 1.6;">
+          "찾고 정리하는 일은 도구가 하고, 판단과 책임은 사람이 진다."<br>
+          이 원칙을 실무에 적용한다면 팀원들의 피로도는 줄어들고, 브랜드의 가치와 매출을 지키는 든든한 운영 안전망이 될 것이라 확신합니다.
+        </p>
+      </div>
+    </div>
+    <div class="footer">
+      <span>IDF E-Biz 운영 보드 포트폴리오</span>
+      <span>PAGE 09 / 09</span>
+    </div>
+  </div>
+
+</body>
+</html>
+`;
+
+const htmlPath = path.join(__dirname, '../public/portfolio_presentation.html');
+fs.writeFileSync(htmlPath, htmlContent, 'utf-8');
+console.log('portfolio_presentation.html updated with embedded Base64 images.');
+
+(async () => {
+  const browser = await puppeteer.launch({
+    executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+    headless: true,
+    args: ['--no-sandbox', '--disable-setuid-sandbox', '--allow-file-access-from-files', '--disable-web-security']
+  });
+
+  const page = await browser.newPage();
+  await page.setContent(htmlContent, { waitUntil: 'load' });
+  await new Promise(r => setTimeout(r, 1000));
+
+  // Check image loading in DOM
+  const imgStatus = await page.evaluate(() => {
+    return Array.from(document.querySelectorAll('img')).map(img => ({
+      alt: img.alt,
+      complete: img.complete,
+      naturalWidth: img.naturalWidth,
+      naturalHeight: img.naturalHeight
+    }));
+  });
+  console.log('Image render status:', imgStatus);
+
+  const pdfPath = path.join(__dirname, '../IDF_포트폴리오_박찬미.pdf');
+  await page.pdf({
+    path: pdfPath,
+    format: 'A4',
+    printBackground: true,
+    margin: { top: '0mm', bottom: '0mm', left: '0mm', right: '0mm' }
+  });
+
+  console.log('PDF rendered to:', pdfPath);
+
+  // Take a verification screenshot of Page 7
+  const p7 = await page.evaluateHandle(() => document.querySelectorAll('.portfolio-page')[6]);
+  await p7.screenshot({ path: path.join(__dirname, '../public/page7_verification.png') });
+  console.log('Page 7 verification screenshot saved.');
+
+  await browser.close();
+})();
