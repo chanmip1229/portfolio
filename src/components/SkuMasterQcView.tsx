@@ -421,32 +421,32 @@ export default function SkuMasterQcView({ onOpenDualDraftModal }: SkuMasterQcVie
 
   return (
     <div className="space-y-6">
-      {/* 0. 현재 점검 대상 기획전 포커스 안내 바 */}
+      {/* 0. 현재 점검 대상 기획전 포커스 안내 바 (IDF Mall 테마) */}
       {selectedPromo && (
-        <div className="bg-gradient-to-r from-indigo-50 via-blue-50 to-indigo-50 border border-indigo-200/80 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs shadow-xs">
+        <div className="bg-[#FAF9F5] border border-[#E8E4DA] rounded-md p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs shadow-xs">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="font-extrabold text-indigo-900 flex items-center gap-1.5">
-              <Sparkles className="w-4 h-4 text-indigo-600" />
+            <span className="font-bold text-[#8C6D3B] flex items-center gap-1.5">
+              <Sparkles className="w-4 h-4 text-[#B69F76]" />
               <span>현재 선택된 기획전:</span>
             </span>
             <span
               className={`px-2 py-0.5 rounded text-[11px] font-black ${
                 selectedPromo.brand === 'SHESMISS'
-                  ? 'bg-purple-100 text-purple-800'
+                  ? 'bg-[#881337]/10 text-[#881337]'
                   : selectedPromo.brand === 'LIST'
-                  ? 'bg-blue-100 text-blue-800'
-                  : 'bg-emerald-100 text-emerald-800'
+                  ? 'bg-[#14532D]/10 text-[#14532D]'
+                  : 'bg-[#0F172A]/10 text-[#0F172A]'
               }`}
             >
               {selectedPromo.brand}
             </span>
-            <span className="font-black text-slate-900 text-sm">
+            <span className="font-bold text-[#111111] text-sm">
               {selectedPromo.title}
             </span>
-            <span className="bg-white/90 font-mono text-[11px] text-slate-600 px-2 py-0.5 rounded-md border border-indigo-200 font-bold">
+            <span className="bg-white font-mono text-[11px] text-zinc-600 px-2 py-0.5 rounded border border-[#E8E4DA] font-semibold">
               ID: {selectedPromo.id}
             </span>
-            <span className="text-indigo-900 font-bold text-[11px] bg-white px-2 py-0.5 rounded border border-indigo-200">
+            <span className="text-[#8C6D3B] font-bold text-[11px] bg-white px-2 py-0.5 rounded border border-[#E8E4DA]">
               QC 센터 동기화: 등록 품번 {selectedPromo.products.length}종 전수 검사
             </span>
           </div>
@@ -454,10 +454,10 @@ export default function SkuMasterQcView({ onOpenDualDraftModal }: SkuMasterQcVie
           <button
             type="button"
             onClick={() => setOnlySelectedPromo(!onlySelectedPromo)}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 ${
+            className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all cursor-pointer shrink-0 ${
               onlySelectedPromo
-                ? 'bg-indigo-600 text-white shadow-xs'
-                : 'bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 shadow-2xs'
+                ? 'bg-[#111111] text-white shadow-xs border border-zinc-800'
+                : 'bg-white hover:bg-zinc-50 text-zinc-700 border border-zinc-300 shadow-2xs'
             }`}
           >
             {onlySelectedPromo

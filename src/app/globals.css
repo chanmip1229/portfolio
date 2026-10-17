@@ -1,26 +1,201 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;0,800;1,600&display=swap');
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --idf-black: #111111;
+  --idf-dark: #18181b;
+  --idf-stone-dark: #27272a;
+  --idf-gold: #b69f76;
+  --idf-gold-dark: #9a7b4f;
+  --idf-gold-light: #f7f4ee;
+  --idf-gold-border: #e6dcce;
+  --idf-bg: #f8f8fa;
+  --idf-card: #ffffff;
+  --idf-border: #e4e4e7;
+  --idf-border-subtle: #f4f4f5;
+  --brand-shesmiss: #881337;
+  --brand-list: #14532d;
+  --brand-sistina: #0f172a;
+  --font-brand: 'Montserrat', sans-serif;
+  --font-sans: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--idf-bg);
+  color: var(--idf-black);
+  font-family: var(--font-sans);
+  letter-spacing: -0.015em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* IDF Mall Typography Classes */
+.font-brand {
+  font-family: var(--font-brand);
+}
+
+.font-sans {
+  font-family: var(--font-sans);
+}
+
+/* IDF Mall Architectural Cards & Boxes */
+.idf-box {
+  background-color: #ffffff;
+  border: 1px solid #e4e4e7;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02), 0 4px 16px rgba(0, 0, 0, 0.03);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.idf-box-hover:hover {
+  border-color: #d4d4d8;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+  transform: translateY(-1px);
+}
+
+/* IDF Mall Signature Buttons */
+.idf-btn-primary {
+  background-color: #111111;
+  color: #ffffff;
+  border: 1px solid #111111;
+  border-radius: 6px;
+  font-weight: 600;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.idf-btn-primary:hover {
+  background-color: #27272a;
+  border-color: #27272a;
+  transform: translateY(-0.5px);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+}
+
+.idf-btn-primary:active {
+  transform: scale(0.98);
+}
+
+.idf-btn-gold {
+  background-color: #b69f76;
+  color: #ffffff;
+  border: 1px solid #b69f76;
+  border-radius: 6px;
+  font-weight: 600;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.idf-btn-gold:hover {
+  background-color: #a38b62;
+  border-color: #a38b62;
+  transform: translateY(-0.5px);
+  box-shadow: 0 3px 10px rgba(182, 159, 118, 0.25);
+}
+
+.idf-btn-outline {
+  background-color: #ffffff;
+  color: #18181b;
+  border: 1px solid #e4e4e7;
+  border-radius: 6px;
+  font-weight: 600;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.idf-btn-outline:hover {
+  background-color: #f8f8fa;
+  border-color: #d4d4d8;
+  color: #111111;
+}
+
+/* IDF Mall Brand Badges */
+.badge-shesmiss {
+  background-color: #fff1f2;
+  color: #881337;
+  border: 1px solid #fecdd3;
+  font-family: var(--font-brand);
+  letter-spacing: 0.05em;
+  font-weight: 700;
+}
+
+.badge-list {
+  background-color: #f0fdf4;
+  color: #14532d;
+  border: 1px solid #bbf7d0;
+  font-family: var(--font-brand);
+  letter-spacing: 0.05em;
+  font-weight: 700;
+}
+
+.badge-sistina {
+  background-color: #f8fafc;
+  color: #0f172a;
+  border: 1px solid #e2e8f0;
+  font-family: var(--font-brand);
+  letter-spacing: 0.05em;
+  font-weight: 700;
+}
+
+.badge-gold {
+  background-color: #f7f4ee;
+  color: #9a7b4f;
+  border: 1px solid #e6dcce;
+  font-family: var(--font-brand);
+  letter-spacing: 0.05em;
+  font-weight: 700;
+}
+
+/* Fashion UP TO Discount Badge */
+.badge-discount {
+  background-color: #e11d48;
+  color: #ffffff;
+  font-family: var(--font-brand);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+/* Custom Scrollbars */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Keyframe Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Safe Area Padding for Mobile Bottom Bar */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .safe-area-bottom {
+    padding-bottom: calc(0.5rem + env(safe-area-inset-bottom));
+  }
 }

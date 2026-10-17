@@ -609,42 +609,42 @@ E-BIZ 자사몰 운영팀
 
   return (
     <>
-      <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+      <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4">
         <div
-          className={`bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-h-[94vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-150 transition-all ${
+          className={`bg-white rounded-md shadow-2xl border border-zinc-200 w-full max-h-[94vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-150 transition-all max-sm:h-full max-sm:max-h-full max-sm:rounded-none ${
             showDualSplit || viewMode === 'SUMMARY' ? 'max-w-6xl' : 'max-w-4xl'
           }`}
         >
           {/* 상단 헤더 & 모드 스위처 */}
-          <div className="px-6 py-3.5 border-b border-slate-200 flex flex-col md:flex-row md:items-center justify-between gap-3 bg-slate-50">
+          <div className="px-4 sm:px-6 py-3 border-b border-zinc-200 flex flex-col md:flex-row md:items-center justify-between gap-3 bg-zinc-50/80">
             <div className="flex items-center gap-2.5">
-              <span className="p-2 bg-indigo-100 text-indigo-700 rounded-lg shrink-0">
+              <span className="p-2 bg-[#F7F4EE] text-[#9A7B4F] border border-[#E6DCCE] rounded-md shrink-0">
                 <Mail className="w-5 h-5" />
               </span>
               <div>
                 <div className="flex items-center gap-2 flex-wrap">
-                  <h3 className="text-base font-bold text-slate-900">메일 임시보관함 (Outbox Drafts)</h3>
+                  <h3 className="text-sm sm:text-base font-bold text-[#111111]">메일 임시보관함 (Outbox Drafts)</h3>
                   {viewMode === 'SUMMARY' ? (
-                    <span className="text-[11px] font-bold bg-rose-100 text-rose-900 border border-rose-200 px-2 py-0.5 rounded-full flex items-center gap-1">
+                    <span className="text-[10px] sm:text-[11px] font-bold bg-rose-50 text-rose-800 border border-rose-200 px-2 py-0.5 rounded-sm flex items-center gap-1">
                       <Table className="w-3 h-3 text-rose-600" />
                       부서별 종합 취합 모드 (표 요약 발송)
                     </span>
                   ) : showDualSplit ? (
-                    <span className="text-[11px] font-bold bg-purple-100 text-purple-900 border border-purple-200 px-2 py-0.5 rounded-full flex items-center gap-1">
-                      <Columns className="w-3 h-3 text-purple-600" />
+                    <span className="text-[10px] sm:text-[11px] font-bold bg-[#F7F4EE] text-[#9A7B4F] border border-[#E6DCCE] px-2 py-0.5 rounded-sm flex items-center gap-1 font-brand">
+                      <Columns className="w-3 h-3 text-[#9A7B4F]" />
                       부서별 듀얼 뷰
                     </span>
                   ) : (
-                    <span className="text-[11px] font-bold bg-blue-100 text-blue-900 border border-blue-200 px-2 py-0.5 rounded-full flex items-center gap-1">
-                      <ListFilter className="w-3 h-3 text-blue-600" />
+                    <span className="text-[10px] sm:text-[11px] font-bold bg-zinc-100 text-zinc-800 border border-zinc-200 px-2 py-0.5 rounded-sm flex items-center gap-1">
+                      <ListFilter className="w-3 h-3 text-zinc-600" />
                       건별 개별 초안 검토 모드
                     </span>
                   )}
-                  <span className="text-[11px] font-bold bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full">
+                  <span className="text-[10px] sm:text-[11px] font-bold bg-amber-50 text-amber-800 border border-amber-200 px-2 py-0.5 rounded-sm">
                     Human-in-the-Loop 검토 대기
                   </span>
                 </div>
-                <p className="text-xs text-slate-500 mt-0.5">
+                <p className="text-xs text-zinc-500 mt-0.5">
                   부서 담당자의 메일 피로도를 방지하기 위해 <strong>하나의 종합 메일에 케이스별 표로 취합</strong>하여 발송하거나, 건별 개별 초안을 검토합니다.
                 </p>
               </div>
@@ -652,14 +652,14 @@ E-BIZ 자사몰 운영팀
 
             {/* 모드 전환 스위처 & 닫기 버튼 */}
             <div className="flex items-center gap-2 shrink-0">
-              <div className="flex items-center bg-slate-200/80 p-0.5 rounded-xl border border-slate-300/80 text-xs font-bold">
+              <div className="flex items-center bg-zinc-200/80 p-0.5 rounded-md border border-zinc-300/80 text-xs font-bold">
                 <button
                   type="button"
                   onClick={() => setViewMode('INDIVIDUAL')}
-                  className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer flex items-center gap-1.5 ${
+                  className={`px-3 py-1.5 rounded-sm transition-all cursor-pointer flex items-center gap-1.5 ${
                     viewMode === 'INDIVIDUAL'
-                      ? 'bg-white text-indigo-700 shadow-2xs'
-                      : 'text-slate-600 hover:text-slate-900'
+                      ? 'bg-[#111111] text-white shadow-2xs'
+                      : 'text-zinc-600 hover:text-zinc-900'
                   }`}
                   title="개별 품번/이슈별 단건 초안을 검토합니다"
                 >
@@ -669,16 +669,16 @@ E-BIZ 자사몰 운영팀
                 <button
                   type="button"
                   onClick={() => setViewMode('SUMMARY')}
-                  className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer flex items-center gap-1.5 ${
+                  className={`px-3 py-1.5 rounded-sm transition-all cursor-pointer flex items-center gap-1.5 ${
                     viewMode === 'SUMMARY'
-                      ? 'bg-white text-rose-700 shadow-2xs'
-                      : 'text-slate-600 hover:text-slate-900'
+                      ? 'bg-[#111111] text-white shadow-2xs'
+                      : 'text-zinc-600 hover:text-zinc-900'
                   }`}
                   title="한 팀에 메일이 과다 발송되지 않도록 전체 결함을 하나의 표로 취합하여 발송합니다"
                 >
                   <Table className="w-3.5 h-3.5" />
                   <span>부서별 종합 취합 (표 요약)</span>
-                  <span className="text-[9px] bg-rose-600 text-white font-extrabold px-1 rounded">
+                  <span className="text-[9px] bg-[#E11D48] text-white font-extrabold px-1 rounded-sm font-brand">
                     추천
                   </span>
                 </button>

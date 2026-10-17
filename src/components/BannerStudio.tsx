@@ -328,19 +328,19 @@ export default function BannerStudio({ promotionId }: BannerStudioProps) {
   const currentImage = activeTab === 'PC' ? currentPcImage : currentMoImage;
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden mb-8">
+    <div className="bg-white rounded-md border border-zinc-200 shadow-sm overflow-hidden mb-6 sm:mb-8">
       {/* 상단 헤더 */}
-      <div className="p-5 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-3 bg-slate-50/60">
+      <div className="p-4 sm:p-5 border-b border-zinc-100 flex flex-col md:flex-row md:items-center justify-between gap-3 bg-zinc-50/70">
         <div>
           <div className="flex items-center gap-2">
-            <span className="p-1.5 bg-indigo-50 text-indigo-600 rounded-lg">
+            <span className="p-1.5 bg-[#F7F4EE] text-[#9A7B4F] border border-[#E6DCCE] rounded-md">
               <Sparkles className="w-4 h-4" />
             </span>
-            <h3 className="text-base font-bold text-slate-900">
+            <h3 className="text-base font-bold text-[#111111]">
               배너 스튜디오 (실시간 카피 합성 & 이미지 직접 업로드)
             </h3>
           </div>
-          <p className="text-xs text-slate-500 mt-1">
+          <p className="text-xs text-zinc-500 mt-1">
             원하는 화보 사진을 직접 업로드하거나 공식 룩북 위에 브랜드 타이틀·할인율을 실시간으로 합성하고 검수합니다.
           </p>
         </div>
@@ -348,17 +348,17 @@ export default function BannerStudio({ promotionId }: BannerStudioProps) {
         {/* 컨펌 상태 뱃지 및 액션 */}
         <div className="flex items-center gap-2">
           {promo.banner.isConfirmed ? (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-emerald-800 bg-emerald-100 rounded-lg border border-emerald-200">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-emerald-800 bg-emerald-50 rounded-md border border-emerald-300">
               <CheckCircle2 className="w-4 h-4 text-emerald-600" />
               배너 컨펌 완료 ({promo.banner.confirmedAt})
             </span>
           ) : (
             <button
               onClick={handleConfirm}
-              className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-xs hover:shadow transition-all animate-pulse cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-bold text-white bg-[#111111] hover:bg-[#27272a] border border-[#B69F76]/40 hover:border-[#B69F76] rounded-md shadow-xs transition-all cursor-pointer"
             >
-              <CheckCircle2 className="w-4 h-4" />
-              <span>👍 배너 원클릭 컨펌 & 적용</span>
+              <CheckCircle2 className="w-4 h-4 text-[#B69F76]" />
+              <span>배너 원클릭 컨펌 & 적용</span>
             </button>
           )}
         </div>

@@ -217,31 +217,31 @@ export default function MobileLivePreview({ promotionId }: MobileLivePreviewProp
     promo.products && promo.products.length > 0 ? promo.products : getFallbackProducts(promo);
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden mb-8">
+    <div className="bg-white rounded-md border border-zinc-200 shadow-sm overflow-hidden mb-6 sm:mb-8">
       {/* 헤더 */}
-      <div className="p-5 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-3 bg-slate-50/60">
+      <div className="p-4 sm:p-5 border-b border-zinc-100 flex flex-col md:flex-row md:items-center justify-between gap-3 bg-zinc-50/70">
         <div>
           <div className="flex items-center gap-2">
-            <span className="p-1.5 bg-indigo-50 text-indigo-600 rounded-lg">
+            <span className="p-1.5 bg-[#F7F4EE] text-[#9A7B4F] border border-[#E6DCCE] rounded-md">
               <Smartphone className="w-5 h-5" />
             </span>
-            <h3 className="text-base font-bold text-slate-900">
+            <h3 className="text-base font-bold text-[#111111]">
               IDF몰 앱/웹 실시간 라이브 프리뷰 (Live Multi-Device Viewer)
             </h3>
           </div>
-          <p className="text-xs text-slate-500 mt-1">
+          <p className="text-xs text-zinc-500 mt-1">
             아이폰(iOS), 갤럭시(안드로이드), 데스크톱 PC 웹 환경별로 배너 노출과 쿠폰 적용 상품 진열을 실시간 교차 검수합니다.
           </p>
         </div>
 
         {/* 디바이스 전환 컨트롤러 */}
         <div className="flex items-center gap-2">
-          <div className="flex items-center bg-slate-200/80 p-1 rounded-xl text-xs font-bold text-slate-600">
+          <div className="flex items-center bg-zinc-200/80 p-1 rounded-md text-xs font-bold text-zinc-600">
             <button
               type="button"
               onClick={() => setDeviceType('IPHONE')}
-              className={`px-3 py-1.5 rounded-lg transition-colors cursor-pointer flex items-center gap-1.5 ${
-                deviceType === 'IPHONE' ? 'bg-white text-slate-950 shadow-2xs font-extrabold' : 'hover:text-slate-950'
+              className={`px-3 py-1.5 rounded-sm transition-all cursor-pointer flex items-center gap-1.5 ${
+                deviceType === 'IPHONE' ? 'bg-[#111111] text-white shadow-2xs font-extrabold' : 'hover:text-[#111111]'
               }`}
             >
               <span>🍎 iPhone (iOS)</span>
@@ -249,8 +249,8 @@ export default function MobileLivePreview({ promotionId }: MobileLivePreviewProp
             <button
               type="button"
               onClick={() => setDeviceType('GALAXY')}
-              className={`px-3 py-1.5 rounded-lg transition-colors cursor-pointer flex items-center gap-1.5 ${
-                deviceType === 'GALAXY' ? 'bg-white text-emerald-800 shadow-2xs font-extrabold' : 'hover:text-slate-950'
+              className={`px-3 py-1.5 rounded-sm transition-all cursor-pointer flex items-center gap-1.5 ${
+                deviceType === 'GALAXY' ? 'bg-[#111111] text-white shadow-2xs font-extrabold' : 'hover:text-[#111111]'
               }`}
             >
               <span>🤖 Galaxy (Android)</span>
@@ -258,15 +258,15 @@ export default function MobileLivePreview({ promotionId }: MobileLivePreviewProp
             <button
               type="button"
               onClick={() => setDeviceType('DESKTOP')}
-              className={`px-3 py-1.5 rounded-lg transition-colors cursor-pointer flex items-center gap-1.5 ${
-                deviceType === 'DESKTOP' ? 'bg-white text-indigo-900 shadow-2xs font-extrabold' : 'hover:text-slate-950'
+              className={`px-3 py-1.5 rounded-sm transition-all cursor-pointer flex items-center gap-1.5 ${
+                deviceType === 'DESKTOP' ? 'bg-[#111111] text-white shadow-2xs font-extrabold' : 'hover:text-[#111111]'
               }`}
             >
               <span>💻 데스크톱 PC 웹</span>
             </button>
           </div>
 
-          <span className="px-2.5 py-1 bg-slate-900 text-white font-bold rounded-lg text-[11px] shrink-0">
+          <span className="px-2.5 py-1 bg-[#111111] text-[#B69F76] font-brand tracking-wider font-bold rounded-md text-[11px] shrink-0 border border-zinc-800">
             {promo.brand} MALL
           </span>
         </div>
@@ -546,33 +546,38 @@ export default function MobileLivePreview({ promotionId }: MobileLivePreviewProp
                 deviceType === 'IPHONE' ? 'rounded-[38px]' : 'rounded-[26px]'
               }`}
             >
-              {/* 1. 모바일 앱 상단 헤더 */}
+              {/* 1. 모바일 앱 상단 헤더 (IDF MALL 공식몰 스타일) */}
               <div
-                className={`sticky top-0 bg-white/95 backdrop-blur-xs border-b border-slate-100 z-30 pb-2.5 px-4 flex items-center justify-between ${
+                className={`sticky top-0 bg-white/98 backdrop-blur-xs border-b border-zinc-200 z-30 pb-2 px-3.5 flex items-center justify-between ${
                   deviceType === 'IPHONE' ? 'pt-7' : 'pt-5'
                 }`}
               >
-                <div className="text-sm font-black tracking-tight text-slate-900">
-                  {promo.brand} <span className="text-[10px] font-normal text-slate-400">
-                    {deviceType === 'GALAXY' ? 'Android App' : 'IDF App'}
+                <div className="flex items-center gap-1.5">
+                  <span className="font-brand font-black text-xs tracking-wider text-[#111111]">
+                    IDF MALL
+                  </span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#B69F76]"></span>
+                  <span className="text-[10px] font-brand font-bold text-zinc-500 uppercase tracking-wider ml-1">
+                    {promo.brand}
                   </span>
                 </div>
-                <div className="flex items-center gap-2 text-slate-700">
+                <div className="flex items-center gap-2.5 text-zinc-800">
                   <ShoppingBag className="w-4 h-4" />
                 </div>
               </div>
 
               {/* 2. 브랜드 카테고리 탭 */}
-              <div className="px-3 py-2 flex items-center gap-3 border-b border-slate-100 text-[11px] font-semibold text-slate-500 overflow-x-auto shrink-0 scrollbar-none">
-                <span className="text-slate-950 font-bold border-b-2 border-slate-950 pb-1">기획전</span>
+              <div className="px-3 py-2 flex items-center gap-3 border-b border-zinc-100 text-[11px] font-semibold text-zinc-500 overflow-x-auto shrink-0 scrollbar-none">
+                <span className="text-[#111111] font-bold border-b-2 border-[#111111] pb-1">기획전</span>
                 <span>베스트</span>
                 <span>신상품</span>
-                <span>아우터</span>
-                <span>원피스</span>
+                <span>아울렛</span>
+                <span>컬렉션</span>
+                <span>LOOKBOOK</span>
               </div>
 
               {/* 3. 모바일 메인 룩북 롤링 배너 영역 */}
-              <div className="w-full relative aspect-4/5 bg-slate-900 overflow-hidden shrink-0 group">
+              <div className="w-full relative aspect-4/5 bg-zinc-900 overflow-hidden shrink-0 group">
                 <div
                   className="w-full h-full flex transition-transform duration-700 ease-in-out"
                   style={{ transform: `translateX(-${currentSlide * 100}%)` }}
@@ -586,28 +591,28 @@ export default function MobileLivePreview({ promotionId }: MobileLivePreviewProp
                     />
                   </div>
                   {/* 모바일 슬라이드 2 */}
-                  <div className="w-full h-full shrink-0 relative bg-slate-800">
+                  <div className="w-full h-full shrink-0 relative bg-zinc-800">
                     <img
                       src="/images/products/SWBLPB21010_detail_profile.jpg"
                       alt="모바일 배너 슬라이드 2"
                       className="w-full h-full object-cover"
                     />
                     <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center p-4 text-center text-white">
-                      <span className="text-[10px] tracking-widest uppercase text-amber-400 font-bold mb-1">LOOKBOOK #2</span>
-                      <h4 className="text-sm font-black">{promo.brand} SIGNATURE OUTER</h4>
+                      <span className="text-[10px] font-brand tracking-widest uppercase text-[#B69F76] font-bold mb-1">LOOKBOOK #2</span>
+                      <h4 className="text-sm font-black font-brand">{promo.brand} SIGNATURE OUTER</h4>
                       <p className="text-[10px] text-white/80 mt-1">10% 추가 쿠폰팩 혜택</p>
                     </div>
                   </div>
                   {/* 모바일 슬라이드 3 */}
-                  <div className="w-full h-full shrink-0 relative bg-slate-800">
+                  <div className="w-full h-full shrink-0 relative bg-zinc-800">
                     <img
                       src="/images/products/SWBLPB21010_detail_fabric.jpg"
                       alt="모바일 배너 슬라이드 3"
                       className="w-full h-full object-cover"
                     />
                     <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center p-4 text-center text-white">
-                      <span className="text-[10px] tracking-widest uppercase text-indigo-400 font-bold mb-1">LOOKBOOK #3</span>
-                      <h4 className="text-sm font-black">HIGH-END TAILORED</h4>
+                      <span className="text-[10px] font-brand tracking-widest uppercase text-[#B69F76] font-bold mb-1">LOOKBOOK #3</span>
+                      <h4 className="text-sm font-black font-brand">HIGH-END TAILORED</h4>
                       <p className="text-[10px] text-white/80 mt-1">프리미엄 원단 단독 라인업</p>
                     </div>
                   </div>
@@ -636,8 +641,8 @@ export default function MobileLivePreview({ promotionId }: MobileLivePreviewProp
                   <span
                     className={`text-[9px] font-bold px-2 py-0.5 rounded-full backdrop-blur-md shadow-xs ${
                       promo.banner.isConfirmed
-                        ? 'bg-emerald-500/90 text-white'
-                        : 'bg-amber-500/90 text-white'
+                        ? 'bg-emerald-600/90 text-white'
+                        : 'bg-amber-600/90 text-white'
                     }`}
                   >
                     {promo.banner.isConfirmed ? '✓ 컨펌 배너' : '시안 검토'}
@@ -653,7 +658,7 @@ export default function MobileLivePreview({ promotionId }: MobileLivePreviewProp
                     className="bg-black/75 hover:bg-black/90 backdrop-blur-md text-white text-[9px] font-mono font-bold px-2 py-0.5 rounded-full border border-white/20 flex items-center gap-1 shadow-md cursor-pointer select-none"
                   >
                     <span>0{currentSlide + 1} / 03</span>
-                    <span className="text-slate-400">|</span>
+                    <span className="text-zinc-400">|</span>
                     {isAutoRolling ? <Pause className="w-2 h-2 text-amber-400" /> : <Play className="w-2 h-2 text-emerald-400" />}
                   </button>
                 </div>
@@ -675,27 +680,27 @@ export default function MobileLivePreview({ promotionId }: MobileLivePreviewProp
               </div>
 
               {/* 4. 행사 타이틀 및 기획전 인트로 */}
-              <div className="p-3.5 border-b border-slate-100 bg-slate-50/60">
-                <div className="flex items-center justify-between text-[10px] text-slate-400 mb-1">
-                  <span className="font-semibold text-indigo-600">SEASON SPECIAL</span>
-                  <span>{promo.startDate} ~ {promo.endDate}</span>
+              <div className="p-3.5 border-b border-zinc-100 bg-zinc-50/70">
+                <div className="flex items-center justify-between text-[10px] text-zinc-400 mb-1 font-brand">
+                  <span className="font-bold text-[#B69F76] tracking-wider">SEASON SPECIAL</span>
+                  <span className="font-mono">{promo.startDate} ~ {promo.endDate}</span>
                 </div>
-                <h4 className="text-xs font-bold text-slate-900 leading-snug">{promo.title}</h4>
-                <p className="text-[10px] text-slate-500 mt-0.5">
+                <h4 className="text-xs font-bold text-[#111111] leading-snug">{promo.title}</h4>
+                <p className="text-[10px] text-zinc-500 mt-0.5">
                   {promo.allowCoupon ? '쿠폰 중복 사용 가능' : '특가전 (쿠폰 적용 제외)'}
                 </p>
               </div>
 
               {/* 5. 행사 상품 2열 그리드 리스트 */}
               <div className="p-3 flex-1">
-                <div className="flex items-center justify-between text-[11px] font-bold text-slate-800 mb-2.5">
+                <div className="flex items-center justify-between text-[11px] font-bold text-zinc-800 mb-2.5">
                   <div className="flex items-center gap-1.5">
                     <span>기획전 상품</span>
-                    <span className="bg-indigo-100 text-indigo-800 text-[10px] font-bold px-1.5 py-0.2 rounded-full">
+                    <span className="bg-zinc-100 text-zinc-800 text-[10px] font-bold px-1.5 py-0.2 rounded-full font-mono">
                       {displayProducts.length}
                     </span>
                   </div>
-                  <span className="text-[10px] text-slate-400 font-normal">추천순</span>
+                  <span className="text-[10px] text-zinc-400 font-normal">추천순</span>
                 </div>
 
                 <div className="grid grid-cols-2 gap-2.5">
@@ -707,17 +712,17 @@ export default function MobileLivePreview({ promotionId }: MobileLivePreviewProp
                         key={prod.id}
                         href={`/product/${prod.productCode}`}
                         target="_blank"
-                        className="group flex flex-col bg-white rounded-xl border border-slate-100 overflow-hidden shadow-2xs hover:shadow-xs transition-shadow"
+                        className="group flex flex-col bg-white rounded-md border border-zinc-200 overflow-hidden shadow-2xs hover:shadow-xs transition-shadow"
                       >
                         {/* 상품 썸네일 */}
-                        <div className="aspect-3/4 bg-slate-100 relative overflow-hidden">
+                        <div className="aspect-3/4 bg-zinc-100 relative overflow-hidden">
                           <img
                             src={prod.thumbnailUrl || '/images/products/SWBLPB21010_main.jpg'}
                             alt={prod.productName}
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                           />
-                          {/* 할인율 뱃지 */}
-                          <span className="absolute top-1.5 left-1.5 bg-rose-600 text-white text-[10px] font-black px-1.5 py-0.2 rounded shadow-xs">
+                          {/* 할인율 뱃지 (IDF Mall Vivid Red) */}
+                          <span className="absolute top-1.5 left-1.5 bg-[#E11D48] text-white text-[10px] font-black px-1.5 py-0.2 rounded-sm shadow-xs font-brand">
                             {prod.displayDiscountRate}%
                           </span>
 
@@ -731,27 +736,27 @@ export default function MobileLivePreview({ promotionId }: MobileLivePreviewProp
 
                           {/* 라이브위크 뱃지 */}
                           {prod.isLiveWeek && (
-                            <span className="absolute bottom-1.5 left-1.5 bg-slate-900/80 backdrop-blur-xs text-amber-300 text-[8px] font-bold px-1.5 py-0.2 rounded">
-                              🔥 라이브위크
+                            <span className="absolute bottom-1.5 left-1.5 bg-black/80 backdrop-blur-xs text-[#B69F76] text-[8px] font-bold px-1.5 py-0.2 rounded font-brand">
+                              LIVE WEEK
                             </span>
                           )}
                         </div>
 
                         {/* 상품 메타 정보 */}
                         <div className="p-2 space-y-1">
-                          <div className="flex items-center justify-between text-[8px] text-slate-400">
-                            <span className="font-semibold uppercase">{promo.brand}</span>
+                          <div className="flex items-center justify-between text-[8px] text-zinc-400 font-brand">
+                            <span className="font-bold uppercase tracking-wider text-zinc-600">{promo.brand}</span>
                             <span className="font-mono">{prod.productCode}</span>
                           </div>
-                          <p className="text-[10px] font-medium text-slate-800 line-clamp-1 group-hover:text-indigo-600">
+                          <p className="text-[10px] font-medium text-zinc-900 line-clamp-1 group-hover:text-[#B69F76] transition-colors">
                             {prod.productName}
                           </p>
 
-                          <div className="flex items-baseline justify-between pt-0.5">
-                            <span className="text-xs font-black text-slate-900 font-mono">
+                          <div className="flex items-baseline justify-between pt-0.5 font-brand">
+                            <span className="text-xs font-bold text-[#111111]">
                               {prod.salePrice.toLocaleString()}원
                             </span>
-                            <span className="text-[9px] text-slate-300 line-through font-mono">
+                            <span className="text-[9px] text-zinc-400 line-through">
                               {prod.originalPrice.toLocaleString()}
                             </span>
                           </div>
@@ -759,16 +764,16 @@ export default function MobileLivePreview({ promotionId }: MobileLivePreviewProp
                           {/* 쿠폰 & 재고 뱃지 */}
                           <div className="pt-1 flex flex-wrap gap-1">
                             {prod.couponApplicable ? (
-                              <span className="inline-block text-[8px] font-bold text-blue-600 bg-blue-50 px-1 py-0.2 rounded border border-blue-200">
+                              <span className="inline-block text-[8px] font-bold text-[#9A7B4F] bg-[#F7F4EE] border border-[#E6DCCE] px-1 py-0.2 rounded-sm">
                                 쿠폰10%
                               </span>
                             ) : (
-                              <span className="inline-block text-[8px] font-semibold text-slate-400 bg-slate-50 px-1 py-0.2 rounded">
+                              <span className="inline-block text-[8px] font-medium text-zinc-400 bg-zinc-100 px-1 py-0.2 rounded-sm">
                                 쿠폰제외
                               </span>
                             )}
 
-                            <span className={`inline-block text-[8px] font-bold px-1 py-0.2 rounded border ${stockBadge.bg}`}>
+                            <span className={`inline-block text-[8px] font-bold px-1 py-0.2 rounded-sm border ${stockBadge.bg}`}>
                               {stockBadge.label}
                             </span>
                           </div>
@@ -780,11 +785,11 @@ export default function MobileLivePreview({ promotionId }: MobileLivePreviewProp
               </div>
 
               {/* 6. 모바일 하단 네비게이션 바 */}
-              <div className="sticky bottom-0 bg-white/95 backdrop-blur-xs border-t border-slate-100 py-2 px-6 flex items-center justify-between text-[10px] text-slate-400">
-                <span className="text-slate-900 font-bold">홈</span>
+              <div className="sticky bottom-0 bg-white/98 backdrop-blur-xs border-t border-zinc-200 py-2 px-6 flex items-center justify-between text-[10px] text-zinc-400 font-brand font-medium">
+                <span className="text-[#111111] font-bold">홈</span>
                 <span>카테고리</span>
                 <span>검색</span>
-                <span>마이</span>
+                <span>MY</span>
               </div>
 
               {/* 안드로이드 전용 소프트웨어 네비게이션 키 (||| ▢ <) */}

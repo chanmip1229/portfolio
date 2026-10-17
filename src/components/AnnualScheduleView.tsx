@@ -931,7 +931,7 @@ export default function AnnualScheduleView({ onNavigateToQc }: AnnualScheduleVie
 
                       {/* 2. 📅 5~12월 연간 기획 편성 구간 시작 구분 헤더 */}
                       {isFirstPlanned && (
-                        <div className="bg-slate-100/90 border-y border-slate-200/90 px-4 py-2 my-2 flex items-center justify-between text-xs z-20 relative rounded-l-xl text-slate-700">
+                        <div className="bg-slate-100/90 border border-slate-200 px-4 py-2 my-2 flex items-center justify-between text-xs z-20 relative rounded-lg text-slate-700">
                           <div className="flex items-center gap-2">
                             <span className="w-2.5 h-2.5 rounded-sm bg-indigo-500"></span>
                             <span className="font-bold text-slate-800 flex items-center gap-1.5">
@@ -947,17 +947,17 @@ export default function AnnualScheduleView({ onNavigateToQc }: AnnualScheduleVie
                         </div>
                       )}
 
-                      {/* 간트 차트 행 (D-30 집중 준비 행은 로즈 틴트 박스 + 볼드 강조 스타일링) */}
+                      {/* 간트 차트 행 (D-30 집중 준비 행은 로즈 틴트 배경 + 좌측 인디케이터 + 통일감 있는 보더) */}
                       <div
                         onClick={() => handleSelectPromotion(promo.id)}
                         className={`flex items-center py-3.5 transition-all group cursor-pointer relative z-10 ${
                           promo.id === selectedPromotionId
                             ? 'ring-2 ring-indigo-500 bg-indigo-50/60 shadow-xs pl-3 rounded-lg'
                             : timing.statusType === 'UPCOMING_ACTIVE'
-                            ? `bg-rose-50/70 hover:bg-rose-100/80 border-l-4 border-l-rose-500 border-r-2 border-r-rose-400 pl-3 pr-2 ${
-                                isFirstActivePrep ? 'border-t-2 border-t-rose-400 rounded-t-xl' : ''
+                            ? `bg-rose-50/50 hover:bg-rose-100/70 border-l-4 border-l-rose-500 pl-3 pr-3 ${
+                                isFirstActivePrep ? 'rounded-t-lg' : ''
                               } ${
-                                isLastActivePrep ? 'border-b-2 border-b-rose-400 rounded-b-xl shadow-xs' : ''
+                                isLastActivePrep ? 'rounded-b-lg' : ''
                               }`
                             : timing.isEnded
                             ? 'opacity-70 bg-slate-50/40 hover:bg-slate-100/60 border-l-4 border-transparent pl-3'
@@ -1157,9 +1157,9 @@ export default function AnnualScheduleView({ onNavigateToQc }: AnnualScheduleVie
                         </div>
                       </div>
 
-                      {/* D-30 구간 마감 선 */}
+                      {/* D-30 구간 마감 선 (구분 여백) */}
                       {isLastActivePrep && (
-                        <div className="border-b-2 border-dashed border-rose-300 my-0.5 opacity-80" />
+                        <div className="h-1 bg-gradient-to-r from-rose-200 via-rose-100 to-transparent my-1 rounded-full opacity-60" />
                       )}
                     </React.Fragment>
                   );
