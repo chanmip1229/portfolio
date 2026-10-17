@@ -334,85 +334,208 @@ const htmlContent = `<!DOCTYPE html>
   <!-- PAGE 1: 표지 -->
   <div class="portfolio-page">
     <div class="cover-content">
-      <span class="cover-tag">E-Commerce Promotion Operations Tool</span>
+      <span class="cover-tag">E-BIZ STOREFRONT OPERATIONS · CRM · DATA ANALYTICS</span>
       <h1 class="cover-title">IDF E-Biz 운영 보드</h1>
-      <div class="cover-subtitle">인동FN 자사몰 프로모션 일정·점검 솔루션</div>
+      <div class="cover-subtitle">인동FN 자사몰 프로모션 관제·사전 QC 솔루션 & 실무 경력 포트폴리오</div>
       <p class="cover-desc">
-        인동FN 자사몰을 가정해, 프로모션 일정을 등록하고 진행 상황을 관리하며<br>
-        오픈 전에 가격·이미지·링크·배너를 점검하는 운영 도구를 구축했습니다.<br>
-        반복 확인과 소통 병목에 드는 시간과 실무 피로를 덜어내고자 했습니다.
+        크리스챤 디올 꾸뛰르(CRM·이커머스 세일즈 분석)와 닐슨코리아(옴니채널 데이터·SOP 표준화)에서<br>
+        8년간 검증한 <strong>데이터 기반 매출 개선·CRM 리텐션·유관부서 협업 노하우</strong>를 바탕으로,<br>
+        인동FN 자사몰(SHESMISS·LIST·SISTINA)의 상품·프로모션·쿠폰·배너 운영을 표준화한 실무형 솔루션입니다.
       </p>
 
       <table class="meta-table">
         <tr>
-          <th>프로젝트 구분</th>
-          <td>개인 실무 기획 프로젝트 (인동FN 자사몰 가정 시연용 가상 데이터)</td>
+          <th>지원 직무 / 성명</th>
+          <td><strong>인동FN 영업본부 E-BIZ (자사몰) 경력직 — 박찬미</strong> (010-8991-1229 / chanmip1229@gmail.com)</td>
         </tr>
         <tr>
-          <th>담당 역할</th>
+          <th>보유 경력 요약</th>
           <td>
-            <strong>기획 및 운영 프로세스 설계 100% (단독 수행)</strong><br>
-            • 실무 문제 정의 (디올·닐슨 경험 기반 커뮤니케이션 및 확인 병목 도출)<br>
-            • 연간 일정 관제 및 오픈 전 3단계 무결점 점검 파이프라인 설계<br>
-            • 점검 기준(수식 검증, 트렌드 이상치, 쿠폰 정책, 데드링크, 규격) 및 협업 체계 수립
+            <strong>총 8년 4개월 (데이터 기반 매출 개선 · CRM 캠페인 · 유관부서 SOP 표준화)</strong><br>
+            • <strong>크리스챤 디올 꾸뛰르 코리아 (2년 3개월)</strong>: 이커머스 재고·결제(LinkPay) 분석, Salesforce CRM (Top Client +45%)<br>
+            • <strong>닐슨코리아 (6년 1개월)</strong>: POS·이커머스·패널 결합 매출·전환율 분석, 전사 요청양식(DRF·COF) 및 200p SOP 구축
           </td>
         </tr>
         <tr>
-          <th>구현 방식</th>
-          <td>Google Antigravity 바이브코딩 (Next.js 16 App Router, TypeScript, Tailwind CSS, Zustand)</td>
+          <th>대표 프로젝트 역할</th>
+          <td>
+            <strong>인동FN 자사몰 타겟 『IDF E-Biz 운영 보드』 기획·설계·구현 100% (단독 수행)</strong><br>
+            • 브랜드별 연간 프로모션 일정 관제(D-30) 및 오픈 전 3단계 무결점 사전 QC 파이프라인 설계<br>
+            • 단가·할인율 수식 검증, 시즌 트렌드 이상치 감지, 쿠폰 중복/역마진 방지, 유관부서 듀얼·취합 소통 체계 구현
+          </td>
         </tr>
         <tr>
-          <th>라이브 데모</th>
-          <td><a href="https://idf-theta.vercel.app/" target="_blank" class="btn-link">https://idf-theta.vercel.app/</a></td>
+          <th>라이브 서비스</th>
+          <td><a href="https://idf-theta.vercel.app/" target="_blank" class="btn-link">https://idf-theta.vercel.app/</a> <span style="font-size: 11.5px; color: #666666; margin-left: 6px;">(PC · 모바일 반응형 실시간 작동)</span></td>
         </tr>
       </table>
 
-      <div class="card" style="background: #FAF9F5; border-left: 3px solid #8C6D3B; margin-top: 14px; padding: 18px 22px;">
-        <div class="card-title" style="color: #111111; font-size: 15px;">
-          <span style="color: #8C6D3B; font-weight: 800;">[기획 의도]</span>
-          <span>"도구는 찾고 정리하고, 판단과 결정은 사람이 한다"</span>
+      <div class="card" style="background: #FAF9F5; border-left: 3px solid #8C6D3B; margin-top: 10px; padding: 16px 20px;">
+        <div class="card-title" style="color: #111111; font-size: 14.5px; margin-bottom: 6px;">
+          <span style="color: #8C6D3B; font-weight: 800;">[핵심 밸류]</span>
+          <span>"표준화된 시스템으로 운영 오류를 막고, 데이터와 CRM으로 매출 성장을 견인합니다"</span>
         </div>
-        <p style="font-size: 13.5px; color: #444444; line-height: 1.65;">
-          반복 확인과 데이터 누락은 실무자의 집중력을 떨어뜨리고 피로도를 가중시킵니다. 시스템이 룰 기반으로 정합성을 1차 자동 검증하고, 사람은 예외 사항 검토와 최종 승인에 집중하는 협업 체계를 구현하고자 했습니다.
+        <p style="font-size: 13px; color: #444444; line-height: 1.6;">
+          자사몰 프로모션 오픈 전 반복되는 수기 대조와 부서 간 재확인 병목을 룰 기반 사전 검증으로 자동화하여 휴먼 에러(역마진·링크 단절)를 원천 차단하고, 확보된 리소스를 매출·전환율·객단가 데이터 분석과 CRM 리텐션 고도화에 집중 투자하고자 합니다.
         </p>
       </div>
 
-      <div class="notice-box" style="margin-top: 18px;">
-        ※ 본 프로젝트는 시연용 가상 데이터가 포함된 개인 프로젝트이며, 실제 인동FN 임직원 정보나 운영 데이터를 사용하지 않았습니다.
+      <div class="notice-box" style="margin-top: 12px;">
+        ※ 본 포트폴리오의 『IDF E-Biz 운영 보드』에 수록된 상품 단가 및 일정은 기업 보안 준수를 위해 구성한 시뮬레이션 데이터입니다.
       </div>
     </div>
     <div class="footer">
-      <span>IDF E-Biz 운영 보드 포트폴리오</span>
-      <span>PAGE 01 / 09</span>
+      <span>IDF E-Biz 운영 보드 & 경력 포트폴리오 | 박찬미</span>
+      <span>PAGE 01 / 10</span>
     </div>
   </div>
 
-  <!-- PAGE 2: 시작점 (예상한 문제 6가지) -->
-  <div class="portfolio-page">
-    <div class="page-header" style="margin-bottom: 14px; padding-bottom: 8px;">
-      <span class="category">Background & Problem Definition</span>
-      <span class="page-num">PAGE 02 / 09</span>
+  <!-- PAGE 2: 인동FN E-BIZ(자사몰) 직무 요건 1:1 매칭 & 핵심 경력 성과 -->
+  <div class="portfolio-page" style="padding: 13mm 22mm 11mm 22mm;">
+    <div class="page-header" style="margin-bottom: 10px; padding-bottom: 7px;">
+      <span class="category">Career Highlights & JD Fit</span>
+      <span class="page-num">PAGE 02 / 10</span>
     </div>
     <div class="content-area">
-      <h2 class="page-title" style="margin-bottom: 6px; font-size: 22px;">되묻고 다시 확인하는 일이 가장 오래 걸렸습니다</h2>
-      <p class="page-subtitle" style="margin-bottom: 12px; font-size: 13px; line-height: 1.5;">
-        이 프로젝트는 특정 회사의 실제 시스템을 재현한 것이 아닙니다.<br>
-        이전 업무에서 반복해서 겪은 확인 과정을 바탕으로, 이커머스 운영 프로세스를 가정해 만든 프로젝트입니다.
+      <h2 class="page-title" style="margin-bottom: 3px; font-size: 21px;">인동FN E-BIZ(자사몰) 직무 요건 1:1 매칭 및 핵심 경력</h2>
+      <p class="page-subtitle" style="margin-bottom: 8px; font-size: 12.4px; line-height: 1.45;">
+        크리스챤 디올 꾸뛰르와 닐슨코리아에서 8년간 검증한 <strong>데이터 기반 매출 개선·CRM·유관부서 협업 역량</strong>과<br>
+        인동FN 자사몰 운영 프로세스를 직접 구현한 <strong>『IDF E-Biz 운영 보드』</strong>로 채용 공고의 5대 핵심 업무를 완벽히 수행합니다.
+      </p>
+
+      <div style="font-size: 13px; font-weight: 800; color: #111111; margin: 0 0 5px 0;">
+        📌 인동FN [E-BIZ(자사몰) 경력 채용] 담당업무 & 우대사항 1:1 매칭
+      </div>
+
+      <table class="data-table" style="margin: 0 0 9px 0; font-size: 11px; line-height: 1.4;">
+        <thead>
+          <tr>
+            <th style="width: 34%; padding: 5px 9px;">인동FN E-BIZ(자사몰) 공고 요건</th>
+            <th style="width: 66%; padding: 5px 9px;">보유 경력 성과 및 대표 프로젝트 검증 내역</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding: 4.5px 9px; font-weight: 700; color: #111111;">
+              1. 매출·전환율·객단가 분석 및 성과 개선<br>
+              <span style="font-size: 10px; color: #8C6D3B; font-weight: 700;">[우대] 데이터 기반 매출 개선 경험</span>
+            </td>
+            <td style="padding: 4.5px 9px;">
+              • <strong style="color:#111111;">[디올 꾸뛰르]</strong> 이커머스팀과 일일 데이터 공유 및 재고 가용성·LinkPay 결제 이탈 분석을 통한 세일즈 전환 전략 제안<br>
+              • <strong style="color:#111111;">[닐슨코리아]</strong> 오프라인(POS)·이커머스·소비자 패널(CPS) 결합 카테고리 매출·객단가·전환율 인사이트 도출 (6년)
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 4.5px 9px; font-weight: 700; color: #111111;">
+              2. 회원·쿠폰·리텐션 등 CRM 운영 및<br>고객 경험 개선
+            </td>
+            <td style="padding: 4.5px 9px;">
+              • <strong style="color:#111111;">[디올 꾸뛰르]</strong> Salesforce 기반 구매주기·세그먼트 타겟팅 CRM 캠페인 운영으로 <strong style="color:#8C6D3B;">Top Client 45%·전체 고객 30% 증가</strong><br>
+              • <strong style="color:#111111;">[디올 꾸뛰르]</strong> 디올 성수 팝업 인앱 예약·고객 여정 설계 및 VIP 초청 행사 기획 (<strong style="color:#8C6D3B;">APAC 유일 타겟 달성</strong>)
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 4.5px 9px; font-weight: 700; color: #111111;">
+              3. 물류·마케팅·디자인 등 유관부서 협업<br>및 운영 관리
+            </td>
+            <td style="padding: 4.5px 9px;">
+              • <strong style="color:#111111;">[닐슨코리아]</strong> 부서 간 딜리버리 요청서(DRF)·구조변경서(COF) 신설 및 <strong style="color:#8C6D3B;">200p 규모 End-to-End 표준 SOP</strong> 구축<br>
+              • <strong style="color:#111111;">[디올 꾸뛰르]</strong> PR·MD·이커머스·부티크 간 시즌 캠페인 에셋 및 재고 가용성 교차 검증·협업 리드
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 4.5px 9px; font-weight: 700; color: #111111;">
+              4. 브랜드별 자사몰 상품 등록·진열·재고<br>및 시즌 운영 관리
+            </td>
+            <td style="padding: 4.5px 9px;">
+              • <strong style="color:#111111;">[IDF 운영 보드]</strong> SHESMISS·LIST·SISTINA 3대 브랜드 상품 엑셀 일괄 등록 및 단품(SKU) 마스터 전수 검증 구현<br>
+              • <strong style="color:#111111;">[운영 호환성]</strong> 카페24 등 자사몰 솔루션의 상품·단가·재고·상세링크(404) 표준 엑셀 구조와 즉시 호환 설계
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 4.5px 9px; font-weight: 700; color: #111111;">
+              5. 프로모션·기획전·이벤트 및<br>콘텐츠 기획·운영
+            </td>
+            <td style="padding: 4.5px 9px;">
+              • <strong style="color:#111111;">[IDF 운영 보드]</strong> 연간 프로모션 간트 로드맵, D-30 집중 관제, 쿠폰 중복/역마진 정책 검수 및 PC·모바일 배너 스튜디오 구축<br>
+              • <strong style="color:#111111;">[사전 QC 자동화]</strong> 행사 1건(50 SKU) 기준 사전 검수 및 부서 소통 소요 시간 <strong style="color:#8C6D3B;">약 91% 단축 (190분 ➔ 17분)</strong>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div style="font-size: 13px; font-weight: 800; color: #111111; margin: 2px 0 5px 0;">
+        💼 주요 경력 상세 (총 8년 4개월)
+      </div>
+
+      <div class="grid-2" style="gap: 10px; margin: 0 0 7px 0;">
+        <div class="card" style="margin-bottom: 0; padding: 9px 12px; background: #FAF9F5; border: 1px solid #E8E4DA;">
+          <div class="card-title" style="color: #111111; font-size: 12.2px; margin-bottom: 2px; justify-content: space-between; white-space: nowrap;">
+            <span><strong style="color: #8C6D3B;">01</strong> 크리스챤 디올 꾸뛰르 코리아</span>
+            <span style="font-size: 10px; color: #777777; font-weight: 600;">2021.04~2023.06 (2년 3개월)</span>
+          </div>
+          <div style="font-size: 10.5px; color: #8C6D3B; font-weight: 700; margin-bottom: 5px;">CSC Business Analyst & Client Marketing Analyst</div>
+          <ul class="bullet-list">
+            <li style="margin-bottom: 3px; font-size: 11px; line-height: 1.4;"><span class="highlight">이커머스 연계 세일즈 전략 제안</span>: 이커머스팀과 일일 데이터 공유 및 주간 미팅을 통해 재고 가용성·LinkPay 결제 이슈를 분석하고 판매 전환 전략 제안</li>
+            <li style="margin-bottom: 3px; font-size: 11px; line-height: 1.4;"><span class="highlight">데이터 기반 CRM 캠페인</span>: Salesforce 기반 고객 세그먼트 타겟팅 캠페인 운영으로 <span class="highlight">Top Client 45% 증가, 전체 고객 30% 증가</span> 견인</li>
+            <li style="margin-bottom: 3px; font-size: 11px; line-height: 1.4;"><span class="highlight">디올 성수 팝업 & VIP 이벤트</span>: 고객 데이터 기반 타겟 분석, 인앱 방문 예약 여정 설계 및 성과 리포팅 전담 (APAC 유일 타겟 달성)</li>
+            <li style="font-size: 11px; line-height: 1.4;"><span class="highlight">글로벌 표준 리포팅 신설</span>: 성과·커미션·볼륨 리포트를 최초 기획/구축하여 APAC 센트럴팀 및 타 국가 표준 양식으로 채택</li>
+          </ul>
+        </div>
+
+        <div class="card" style="margin-bottom: 0; padding: 9px 12px; background: #FAF9F5; border: 1px solid #E8E4DA;">
+          <div class="card-title" style="color: #111111; font-size: 12.2px; margin-bottom: 2px; justify-content: space-between; white-space: nowrap;">
+            <span><strong style="color: #8C6D3B;">02</strong> 닐슨코리아 (Nielsen Korea)</span>
+            <span style="font-size: 10px; color: #777777; font-weight: 600;">2015.04~2021.04 (6년 1개월)</span>
+          </div>
+          <div style="font-size: 10.5px; color: #8C6D3B; font-weight: 700; margin-bottom: 5px;">Data Analyst (Global Client) & Operation (Output & RD)</div>
+          <ul class="bullet-list">
+            <li style="margin-bottom: 3px; font-size: 11px; line-height: 1.4;"><span class="highlight">옴니채널 매출·전환 분석</span>: POS·이커머스·소비자 패널(CPS) 데이터를 결합한 브랜드별 성과 분석 및 성장 전략 도출</li>
+            <li style="margin-bottom: 3px; font-size: 11px; line-height: 1.4;"><span class="highlight">전사 협업 양식(DRF·COF) 표준화</span>: 부서 간 요청 누락과 재확인 병목을 해결하기 위해 표준 요청 양식을 신규 개발해 전사 정착</li>
+            <li style="margin-bottom: 3px; font-size: 11px; line-height: 1.4;"><span class="highlight">200p 표준 매뉴얼(SOP) 구축</span>: 팀 통합 후 업무 전 과정(End-to-End)을 집대성한 200p+ 표준 가이드 제작 및 교육 전담</li>
+            <li style="font-size: 11px; line-height: 1.4;"><span class="highlight">SQL 자동화 & 글로벌 어워드</span>: SQL 스크립트로 셋업률 월 30% 향상·작업 월 240분 단축 / 2020 Nielsen USA 'Thank You Award' 수상</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card" style="background: #F7F4EE; border-left: 3px solid #8C6D3B; border-color: #E2D7C3; padding: 8px 13px; margin-top: 0; margin-bottom: 0;">
+        <p style="font-size: 11.4px; color: #222222; font-weight: 700; line-height: 1.45;">
+          <span style="color: #8C6D3B;">✦</span> 다음 페이지(03~10p)에서는 위 8년의 CRM·데이터 정합성·SOP 표준화 노하우를 인동FN 3대 브랜드 자사몰 운영 환경에 직접 이식해 구현한 대표 프로젝트 『IDF E-Biz 운영 보드』의 설계 과정과 핵심 기능을 상세히 소개합니다.
+        </p>
+      </div>
+    </div>
+    <div class="footer" style="margin-top: 6px; padding-top: 6px;">
+      <span>IDF E-Biz 운영 보드 & 경력 포트폴리오 | 박찬미</span>
+      <span>PAGE 02 / 10</span>
+    </div>
+  </div>
+
+  <!-- PAGE 3: 시작점 (예상한 문제 6가지) -->
+  <div class="portfolio-page">
+    <div class="page-header" style="margin-bottom: 14px; padding-bottom: 8px;">
+      <span class="category">Project Background & Problem Definition</span>
+      <span class="page-num">PAGE 03 / 10</span>
+    </div>
+    <div class="content-area">
+      <h2 class="page-title" style="margin-bottom: 6px; font-size: 22px;">현업에서 검증한 '정합성 검증과 협업 표준화'를 자사몰에 이식하다</h2>
+      <p class="page-subtitle" style="margin-bottom: 12px; font-size: 12.6px; line-height: 1.5;">
+        크리스챤 디올 꾸뛰르와 닐슨코리아에서 반복적인 확인 병목과 데이터 오류를 표준 양식(SOP)으로 해결했던 경험을 바탕으로,<br>
+        인동FN 3대 브랜드(SHESMISS·LIST·SISTINA) 자사몰 프로모션 운영의 6대 핵심 리스크를 선제적으로 차단하는 솔루션을 설계했습니다.
       </p>
 
       <div class="card" style="margin-bottom: 10px; padding: 12px 16px; background: #FAF9F5; border: 1px solid #E8E4DA;">
         <div class="card-title" style="font-size: 14px; margin-bottom: 6px; color: #111111;">
-          <span style="color: #8C6D3B; font-weight: 800;">🔍</span> 이전 업무 경험에서 출발한 문제의식
+          <span style="color: #8C6D3B; font-weight: 800;">🔍</span> 8년 실무 경험에서 출발한 자사몰 운영 문제의식
         </div>
         <ul class="bullet-list">
-          <li style="margin-bottom: 5px; font-size: 12.3px; line-height: 1.48;"><span class="highlight">크리스챤 디올 꾸뛰르(Christian Dior Couture) 프로모션·이벤트</span>: 백화점 행사와 시즌 프로모션을 준비하며 PR팀에 공식 노출 이미지를 요청하고, MD·이커머스팀에 상품 정보와 이미지를 받아 다시 확인하는 일이 시즌마다 반복됐습니다.</li>
-          <li style="margin-bottom: 5px; font-size: 12.3px; line-height: 1.48;"><span class="highlight">닐슨(Nielsen) 데이터 딜리버리</span>: 필수 정보가 빠진 요청 때문에 되묻는 메일이 자주 오가며 업무가 지연되는 경우가 많았습니다.</li>
-          <li style="font-size: 12.3px; line-height: 1.48;"><span class="highlight">인동FN 가상 적용</span>: 이커머스 현업 경험은 없지만, 인동FN 자사몰 관련 업무를 한다고 생각했을 때 이와 유사한 확인 과정을 겪을 수 있다고 가정했습니다.</li>
+          <li style="margin-bottom: 5px; font-size: 12.2px; line-height: 1.48;"><span class="highlight">크리스챤 디올 꾸뛰르(Christian Dior Couture) 프로모션·이커머스 협업</span>: 백화점·부티크 행사와 시즌 캠페인을 준비하며 PR팀에 공식 노출 이미지를 요청하고, MD·이커머스팀과 상품 정보·재고 가용성을 교차 확인하는 과정이 매 시즌 반복됐습니다.</li>
+          <li style="margin-bottom: 5px; font-size: 12.2px; line-height: 1.48;"><span class="highlight">닐슨코리아(Nielsen) 데이터 정합성 & SOP 표준화</span>: 필수 정보가 누락된 요청으로 인해 되묻는 메일이 오가며 리드타임이 지연되었고, 이를 표준 요청 양식(DRF·COF)과 사전 검증 체계로 해결해 재확인 오류를 획기적으로 줄였습니다.</li>
+          <li style="font-size: 12.2px; line-height: 1.48;"><span class="highlight">인동FN 자사몰(IDF몰) 프로세스 적용</span>: 다브랜드 시즌 기획전과 수백 개 단품(SKU)·쿠폰·배너가 동시 운영되는 자사몰 환경에서도, 오픈 전 원천 데이터 검증과 부서 간 요청 표준화가 곧 매출 손실(역마진·고객 이탈) 방지와 직결된다고 판단했습니다.</li>
         </ul>
       </div>
 
       <div style="font-size: 14px; font-weight: 800; color: #111111; margin: 10px 0 8px 0;">
-        📌 이커머스 프로모션 운영 시 예상한 6가지 핵심 문제
+        📌 자사몰 프로모션 운영 시 해결하고자 한 6가지 핵심 문제
       </div>
 
       <div class="grid-2" style="gap: 10px; margin-bottom: 8px;">
@@ -479,16 +602,16 @@ const htmlContent = `<!DOCTYPE html>
       </div>
     </div>
     <div class="footer">
-      <span>IDF E-Biz 운영 보드 포트폴리오</span>
-      <span>PAGE 02 / 09</span>
+      <span>IDF E-Biz 운영 보드 & 경력 포트폴리오 | 박찬미</span>
+      <span>PAGE 03 / 10</span>
     </div>
   </div>
 
-  <!-- PAGE 3: 해결 방향 -->
+  <!-- PAGE 4: 해결 방향 -->
   <div class="portfolio-page">
     <div class="page-header">
       <span class="category">Solution & Operation Flow</span>
-      <span class="page-num">PAGE 03 / 09</span>
+      <span class="page-num">PAGE 04 / 10</span>
     </div>
     <div class="content-area">
       <h2 class="page-title">일정 등록부터 오픈 전 확인까지, 한 흐름으로 연결했습니다</h2>
@@ -546,15 +669,15 @@ const htmlContent = `<!DOCTYPE html>
     </div>
     <div class="footer">
       <span>IDF E-Biz 운영 보드 포트폴리오</span>
-      <span>PAGE 03 / 09</span>
+      <span>PAGE 04 / 10</span>
     </div>
   </div>
 
-  <!-- PAGE 4: STEP 1 연간 일정 -->
+  <!-- PAGE 5: STEP 1 연간 일정 -->
   <div class="portfolio-page">
     <div class="page-header">
       <span class="category">STEP 01 — Annual Schedule</span>
-      <span class="page-num">PAGE 04 / 09</span>
+      <span class="page-num">PAGE 05 / 10</span>
     </div>
     <div class="content-area">
       <h2 class="page-title">연간 프로모션 일정을 한곳에서 관리합니다</h2>
@@ -592,15 +715,15 @@ const htmlContent = `<!DOCTYPE html>
     </div>
     <div class="footer">
       <span>IDF E-Biz 운영 보드 포트폴리오</span>
-      <span>PAGE 04 / 09</span>
+      <span>PAGE 05 / 10</span>
     </div>
   </div>
 
-  <!-- PAGE 5: STEP 2 오류 확인 (기획전 & 부서별 사전 점검) -->
+  <!-- PAGE 6: STEP 2 오류 확인 (기획전 & 부서별 사전 점검) -->
   <div class="portfolio-page">
     <div class="page-header">
       <span class="category">STEP 02 — Pre-launch Promotion QC</span>
-      <span class="page-num">PAGE 05 / 09</span>
+      <span class="page-num">PAGE 06 / 10</span>
     </div>
     <div class="content-area">
       <h2 class="page-title">오류를 찾으면, 누가 무엇을 확인할지 보입니다</h2>
@@ -613,7 +736,6 @@ const htmlContent = `<!DOCTYPE html>
         <div class="img-caption">▲ QC 센터 4대 KPI 요약 카드 및 부서별(MD/디자인/퍼블리셔) 사전 점검 리포트 탭</div>
       </div>
 
-      <!-- 위쪽으로 쏠린 느낌 없도록 한줄~두줄 정도(22px) 간격과 넉넉한 내부 패딩 적용 -->
       <div class="card" style="margin-top: 22px; margin-bottom: 0; padding: 22px 24px;">
         <div class="card-title" style="font-size: 15px; margin-bottom: 14px;">
           <span style="color: #8C6D3B; font-weight: 800;">🔍</span> 사전 점검 항목 3가지 & 역할별 분기 기준
@@ -631,22 +753,21 @@ const htmlContent = `<!DOCTYPE html>
         </ul>
       </div>
 
-      <!-- 위쪽으로 쏠린 느낌 없도록 한줄~두줄 정도(20px) 간격 확보 -->
       <div class="notice-box" style="margin-top: 20px; padding: 13px 18px; font-size: 12.5px;">
         ※ 확인하는 부서와 역할은 실제 인동FN의 조직도가 아니라, 이 프로젝트에서 설정한 가상의 협업 역할(MD, 디자인, 퍼블리셔 등)입니다.
       </div>
     </div>
     <div class="footer">
       <span>IDF E-Biz 운영 보드 포트폴리오</span>
-      <span>PAGE 05 / 09</span>
+      <span>PAGE 06 / 10</span>
     </div>
   </div>
 
-  <!-- PAGE 6: 상품 단위 점검 -->
+  <!-- PAGE 7: 상품 단위 점검 -->
   <div class="portfolio-page">
     <div class="page-header">
       <span class="category">STEP 02 — SKU Master Table & Inline QC</span>
-      <span class="page-num">PAGE 06 / 09</span>
+      <span class="page-num">PAGE 07 / 10</span>
     </div>
     <div class="content-area">
       <h2 class="page-title">행사 전체에서 상품 하나까지 확인합니다</h2>
@@ -659,7 +780,6 @@ const htmlContent = `<!DOCTYPE html>
         <div class="img-caption">▲ SKU 마스터 테이블: 3단 수식 검증, 트렌드 이상치 경고, 인라인 즉시 수정 및 엑셀 다운로드</div>
       </div>
 
-      <!-- 위쪽으로 쏠린 느낌 없도록 한줄~두줄 정도(22px) 간격과 넉넉한 내부 패딩 적용 -->
       <div class="card" style="margin-top: 22px; margin-bottom: 0; padding: 22px 24px;">
         <div class="card-title" style="font-size: 15px; margin-bottom: 14px;">
           <span style="color: #8C6D3B; font-weight: 800;">📌</span> 단품 전수 점검 핵심 기능 & 운영 효율화
@@ -672,22 +792,21 @@ const htmlContent = `<!DOCTYPE html>
         </ul>
       </div>
 
-      <!-- 위쪽으로 쏠린 느낌 없도록 한줄~두줄 정도(20px) 간격 확보 -->
       <div class="notice-box" style="margin-top: 20px; padding: 13px 18px; font-size: 12.5px;">
         💡 잘못된 수치를 어드민에 다시 들어가지 않고 점검 화면 표에서 바로 고칠 수 있어, 사소한 수치 정정으로 인한 왕복 소통 시간을 최소화했습니다.
       </div>
     </div>
     <div class="footer">
       <span>IDF E-Biz 운영 보드 포트폴리오</span>
-      <span>PAGE 06 / 09</span>
+      <span>PAGE 07 / 10</span>
     </div>
   </div>
 
-  <!-- PAGE 7: 확인 요청 & 소통 히스토리 -->
+  <!-- PAGE 8: 확인 요청 & 소통 히스토리 -->
   <div class="portfolio-page">
     <div class="page-header">
       <span class="category">Collaboration & Communication History</span>
-      <span class="page-num">PAGE 07 / 09</span>
+      <span class="page-num">PAGE 08 / 10</span>
     </div>
     <div class="content-area">
       <h2 class="page-title">점검한 내용을 담당자에게 보내기 쉽게 정리합니다</h2>
@@ -732,15 +851,15 @@ const htmlContent = `<!DOCTYPE html>
     </div>
     <div class="footer">
       <span>IDF E-Biz 운영 보드 포트폴리오</span>
-      <span>PAGE 07 / 09</span>
+      <span>PAGE 08 / 10</span>
     </div>
   </div>
 
-  <!-- PAGE 8: STEP 3 전시 미리보기 -->
+  <!-- PAGE 9: STEP 3 전시 미리보기 -->
   <div class="portfolio-page">
     <div class="page-header">
       <span class="category">STEP 03 — Live Storefront Preview</span>
-      <span class="page-num">PAGE 08 / 09</span>
+      <span class="page-num">PAGE 09 / 10</span>
     </div>
     <div class="content-area">
       <h2 class="page-title">오픈 전에 실제 고객 화면을 미리 봅니다</h2>
@@ -773,115 +892,114 @@ const htmlContent = `<!DOCTYPE html>
     </div>
     <div class="footer">
       <span>IDF E-Biz 운영 보드 포트폴리오</span>
-      <span>PAGE 08 / 09</span>
+      <span>PAGE 09 / 10</span>
     </div>
   </div>
 
-  <!-- PAGE 9: 마무리 & 포부 -->
-  <div class="portfolio-page" style="padding: 14mm 22mm 12mm 22mm;">
-    <div class="page-header" style="margin-bottom: 12px; padding-bottom: 8px;">
-      <span class="category">Reflection & Aspirations</span>
-      <span class="page-num">PAGE 09 / 09</span>
+  <!-- PAGE 10: 마무리 & E-BIZ 경력직 기여 계획 -->
+  <div class="portfolio-page" style="padding: 13mm 22mm 11mm 22mm;">
+    <div class="page-header" style="margin-bottom: 10px; padding-bottom: 7px;">
+      <span class="category">Impact & Post-Hire Roadmap</span>
+      <span class="page-num">PAGE 10 / 10</span>
     </div>
     <div class="content-area">
-      <h2 class="page-title" style="font-size: 21px; margin-bottom: 4px;">프로젝트를 마치며</h2>
-      <p class="page-subtitle" style="font-size: 12.5px; margin-bottom: 10px; line-height: 1.45;">
-        반복되는 확인 업무를 줄이고 업무 퀄리티를 높이기 위해 고민하고 구현한 과정의 기록입니다.
+      <h2 class="page-title" style="font-size: 20.5px; margin-bottom: 3px;">운영 리드타임 91% 단축 및 입사 후 기여 계획</h2>
+      <p class="page-subtitle" style="font-size: 12px; margin-bottom: 8px; line-height: 1.4;">
+        단순 반복 검수를 자동화하여 확보한 시간으로, 자사몰 매출·전환율 개선과 CRM 고도화에 집중합니다.
       </p>
 
-      <div class="grid-2" style="gap: 10px; margin: 0 0 8px 0;">
-        <div class="card" style="margin-bottom: 0; padding: 10px 14px;">
-          <div class="card-title" style="color: #111111; font-size: 13.5px; margin-bottom: 4px;">
-            <span style="color: #8C6D3B; font-weight: 800;">👤</span> 제가 한 일
+      <div class="grid-2" style="gap: 10px; margin: 0 0 7px 0;">
+        <div class="card" style="margin-bottom: 0; padding: 9px 13px;">
+          <div class="card-title" style="color: #111111; font-size: 13px; margin-bottom: 4px;">
+            <span style="color: #8C6D3B; font-weight: 800;">👤</span> 프로젝트 설계 및 구현 범위 (100% 단독 수행)
           </div>
           <ul class="bullet-list">
-            <li style="margin-bottom: 3px; font-size: 11.5px; line-height: 1.4;"><span class="highlight">문제 정의</span>: 디올·닐슨 경험에서 출발한 업무 병목 분석</li>
-            <li style="margin-bottom: 3px; font-size: 11.5px; line-height: 1.4;"><span class="highlight">운영 흐름 설계</span>: 일정 관리와 오픈 전 3단계 점검 흐름 수립</li>
-            <li style="margin-bottom: 3px; font-size: 11.5px; line-height: 1.4;"><span class="highlight">점검 기준 정하기</span>: 가격 계산식, 트렌드 이상치 경고, 쿠폰 중복/역마진 방지, 링크/이미지 규격</li>
-            <li style="margin-bottom: 3px; font-size: 11.5px; line-height: 1.4;"><span class="highlight">확인 요청 체계</span>: MD, 디자인 등 역할별 분할 및 취합 메일 기획</li>
-            <li style="font-size: 11.5px; line-height: 1.4;"><span class="highlight">구현 방식</span>: Google Antigravity 바이브코딩 활용 (기획·설계 주도 및 AI 프롬프트 구현)</li>
+            <li style="margin-bottom: 2px; font-size: 11px; line-height: 1.38;"><span class="highlight">문제 정의</span>: 디올·닐슨 8년 실무 경험에서 도출한 프로모션·소통 병목 분석</li>
+            <li style="margin-bottom: 2px; font-size: 11px; line-height: 1.38;"><span class="highlight">운영 설계</span>: 연간 일정 관제(STEP 1) ➔ 3단 QC(STEP 2) ➔ 프리뷰(STEP 3)</li>
+            <li style="margin-bottom: 2px; font-size: 11px; line-height: 1.38;"><span class="highlight">검증 규칙</span>: 가격 수식, 트렌드 이상치 경고, 쿠폰 중복·역마진 방지, 404/이미지</li>
+            <li style="margin-bottom: 2px; font-size: 11px; line-height: 1.38;"><span class="highlight">협업 표준화</span>: MD/디자인/퍼블리셔 역할별 AI 분할·1통 취합 및 Slack 연동</li>
+            <li style="font-size: 11px; line-height: 1.38;"><span class="highlight">AI-Native 구현</span>: 비즈니스 로직·UI/UX 직접 설계 및 Google Antigravity 구현</li>
           </ul>
         </div>
-        <div class="card" style="margin-bottom: 0; padding: 10px 14px;">
-          <div class="card-title" style="color: #111111; font-size: 13.5px; margin-bottom: 4px;">
-            <span style="color: #8C6D3B; font-weight: 800;">⚠️</span> 프로젝트의 한계
+        <div class="card" style="margin-bottom: 0; padding: 9px 13px;">
+          <div class="card-title" style="color: #111111; font-size: 13px; margin-bottom: 4px;">
+            <span style="color: #8C6D3B; font-weight: 800;">📌</span> 실무 확장성 및 운영 기준 (카페24 등 호환 설계)
           </div>
           <ul class="bullet-list">
-            <li style="margin-bottom: 4px; font-size: 11.5px; line-height: 1.45;">실제 인동FN 시스템과 연동되어 있지 않으며, 데이터와 점검 기준, 업무 프로세스, 확인 요청 부서는 가정한 것입니다.</li>
-            <li style="margin-bottom: 4px; font-size: 11.5px; line-height: 1.45;">사전 점검은 정해진 규칙(Rule-based)으로 동작하며, AI는 메일 초안 작성에만 사용하였습니다.</li>
-            <li style="font-size: 11.5px; line-height: 1.45;">시연 날짜 또한 10월 15일로 고정하여 구성하였습니다.</li>
+            <li style="margin-bottom: 3px; font-size: 11px; line-height: 1.4;"><span class="highlight">솔루션 호환성</span>: 카페24(Cafe24) 등 표준 이커머스 어드민의 상품·기획전 엑셀 일괄 업로드/다운로드 스키마와 즉시 호환되도록 데이터 구조를 설계했습니다.</li>
+            <li style="margin-bottom: 3px; font-size: 11px; line-height: 1.4;"><span class="highlight">Human-in-the-Loop</span>: 사전 점검은 정밀한 규칙(Rule-based)으로 동작하며, 이상치 경고와 AI 메일 초안은 실무자가 최종 확인 후 발송하도록 안전망을 두었습니다.</li>
+            <li style="font-size: 11px; line-height: 1.4;">※ 본 시연 버전은 10월 15일 기준 가상 프로모션 데이터로 동작합니다.</li>
           </ul>
         </div>
       </div>
 
-      <!-- 소요 시간 절감 표: 전체소요시간합계 -> 합계 한줄 표기, 괄호 부분은 줄바꿈 처리 -->
-      <div class="card" style="margin-top: 0; margin-bottom: 8px; padding: 10px 14px;">
-        <div class="card-title" style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px;">
-          <span style="font-size: 13.5px;">⏱️ 소요 시간 절감 효과 추론 (행사 1건 기준)</span>
-          <span style="font-size: 10.5px; font-weight: normal; color: #888888;">※ 실제 측정값이 아닌, 인동FN 행사 규모(약 50 SKU) 가상 시나리오 기반 추론치</span>
+      <!-- 소요 시간 절감 표 -->
+      <div class="card" style="margin-top: 0; margin-bottom: 7px; padding: 9px 13px;">
+        <div class="card-title" style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 3px;">
+          <span style="font-size: 13px;">⏱️ 소요 시간 절감 효과 추론 (행사 1건 기준)</span>
+          <span style="font-size: 10px; font-weight: normal; color: #888888;">※ 인동FN 시즌 기획전 규모(약 50 SKU) 실무 시나리오 기반 추론치</span>
         </div>
-        <table class="data-table" style="margin: 4px 0; font-size: 11.5px;">
+        <table class="data-table" style="margin: 3px 0; font-size: 11px;">
           <thead>
             <tr>
-              <th style="padding: 5px 8px; width: 28%;">업무 단계</th>
-              <th style="padding: 5px 8px; width: 26%;">기존 수작업 방식</th>
-              <th style="padding: 5px 8px; width: 26%;">운영 보드 활용 시</th>
-              <th style="padding: 5px 8px; width: 20%;">절감 효과</th>
+              <th style="padding: 4px 8px; width: 28%;">업무 단계</th>
+              <th style="padding: 4px 8px; width: 26%;">기존 수작업 방식</th>
+              <th style="padding: 4px 8px; width: 26%;">운영 보드 활용 시</th>
+              <th style="padding: 4px 8px; width: 20%;">절감 효과</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td style="padding: 5px 8px;">프로모션 및 상품 등록</td>
-              <td style="padding: 5px 8px;">어드민 복사·붙여넣기<br><span style="font-size: 10.5px; color: #777777;">(약 60분)</span></td>
-              <td style="padding: 5px 8px;">엑셀 일괄 자동 등록<br><span style="font-size: 10.5px; color: #777777;">(약 2분)</span></td>
-              <td style="padding: 5px 8px;"><span style="color: #8C6D3B; font-weight: 700;">약 58분 단축<br><span style="font-size: 10.5px;">(96%↓)</span></span></td>
+              <td style="padding: 4px 8px;">프로모션 및 상품 등록</td>
+              <td style="padding: 4px 8px;">어드민 복사·붙여넣기<br><span style="font-size: 10px; color: #777777;">(약 60분)</span></td>
+              <td style="padding: 4px 8px;">엑셀 일괄 자동 등록<br><span style="font-size: 10px; color: #777777;">(약 2분)</span></td>
+              <td style="padding: 4px 8px;"><span style="color: #8C6D3B; font-weight: 700;">약 58분 단축<br><span style="font-size: 10px;">(96%↓)</span></span></td>
             </tr>
             <tr>
-              <td style="padding: 5px 8px;">가격·쿠폰·단품 전수 점검</td>
-              <td style="padding: 5px 8px;">수식 대조 & 링크 클릭<br><span style="font-size: 10.5px; color: #777777;">(약 90분)</span></td>
-              <td style="padding: 5px 8px;">자동 검증 & 인라인 수정<br><span style="font-size: 10.5px; color: #777777;">(약 10분)</span></td>
-              <td style="padding: 5px 8px;"><span style="color: #8C6D3B; font-weight: 700;">약 80분 단축<br><span style="font-size: 10.5px;">(88%↓)</span></span></td>
+              <td style="padding: 4px 8px;">가격·쿠폰·단품 전수 점검</td>
+              <td style="padding: 4px 8px;">수식 대조 & 링크 클릭<br><span style="font-size: 10px; color: #777777;">(약 90분)</span></td>
+              <td style="padding: 4px 8px;">자동 검증 & 인라인 수정<br><span style="font-size: 10px; color: #777777;">(약 10분)</span></td>
+              <td style="padding: 4px 8px;"><span style="color: #8C6D3B; font-weight: 700;">약 80분 단축<br><span style="font-size: 10px;">(88%↓)</span></span></td>
             </tr>
             <tr>
-              <td style="padding: 5px 8px;">부서별 확인 요청 & 공유</td>
-              <td style="padding: 5px 8px;">오류 취합 & 개별 작성<br><span style="font-size: 10.5px; color: #777777;">(약 40분)</span></td>
-              <td style="padding: 5px 8px;">AI 분할 & 취합 리포트<br><span style="font-size: 10.5px; color: #777777;">(약 5분)</span></td>
-              <td style="padding: 5px 8px;"><span style="color: #8C6D3B; font-weight: 700;">약 35분 단축<br><span style="font-size: 10.5px;">(87%↓)</span></span></td>
+              <td style="padding: 4px 8px;">부서별 확인 요청 & 공유</td>
+              <td style="padding: 4px 8px;">오류 취합 & 개별 작성<br><span style="font-size: 10px; color: #777777;">(약 40분)</span></td>
+              <td style="padding: 4px 8px;">AI 분할 & 취합 리포트<br><span style="font-size: 10px; color: #777777;">(약 5분)</span></td>
+              <td style="padding: 4px 8px;"><span style="color: #8C6D3B; font-weight: 700;">약 35분 단축<br><span style="font-size: 10px;">(87%↓)</span></span></td>
             </tr>
             <tr class="total-row">
-              <td style="padding: 6px 8px; font-weight: 800;">합계</td>
-              <td style="padding: 6px 8px;"><strong>약 3시간 10분<br><span style="font-size: 10.5px; font-weight: normal; color: #666666;">(190분)</span></strong></td>
-              <td style="padding: 6px 8px;"><strong>약 17분<br><span style="font-size: 10.5px; font-weight: normal; color: #666666;">(17분)</span></strong></td>
-              <td style="padding: 6px 8px;"><strong><span style="color: #8C6D3B; font-weight: 800;">약 91% 절감<br><span style="font-size: 10.5px;">(173분 단축)</span></span></strong></td>
+              <td style="padding: 5px 8px; font-weight: 800;">합계</td>
+              <td style="padding: 5px 8px;"><strong>약 3시간 10분<br><span style="font-size: 10px; font-weight: normal; color: #666666;">(190분)</span></strong></td>
+              <td style="padding: 5px 8px;"><strong>약 17분<br><span style="font-size: 10px; font-weight: normal; color: #666666;">(17분)</span></strong></td>
+              <td style="padding: 5px 8px;"><strong><span style="color: #8C6D3B; font-weight: 800;">약 91% 절감<br><span style="font-size: 10px;">(173분 단축)</span></span></strong></td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      <!-- 만들면서 생각한 것 & 입사 후 포부: 인동FN 골드 및 웜 아이보리 톤 적용 (초록색 제거) -->
-      <div class="card" style="border-left: 3px solid #8C6D3B; background: #FAF9F5; border-color: #E8E4DA; margin-top: 0; margin-bottom: 8px; padding: 11px 15px;">
-        <div class="card-title" style="color: #111111; font-size: 13.5px; margin-bottom: 5px;">
-          <span style="color: #8C6D3B; font-weight: 800;">💬</span> 만들면서 생각한 것 & 입사 후 포부
+      <!-- 인동FN E-BIZ(자사몰) 경력직 입사 후 3대 기여 계획 -->
+      <div class="card" style="border-left: 3px solid #8C6D3B; background: #FAF9F5; border-color: #E8E4DA; margin-top: 0; margin-bottom: 7px; padding: 10px 14px;">
+        <div class="card-title" style="color: #111111; font-size: 13px; margin-bottom: 5px;">
+          <span style="color: #8C6D3B; font-weight: 800;">🚀</span> 인동FN E-BIZ(자사몰) 경력직 입사 후 3대 기여 계획
         </div>
-        <p style="font-size: 11.5px; color: #333333; line-height: 1.5; margin-bottom: 6px;">
-          "찾고 정리하는 일은 도구가 하고, 판단과 결정은 사람이 한다." 같은 확인을 반복하느라 드는 시간과 실수가 가장 힘들었던 경험에서 출발했습니다. 트렌드 대비 튀는 숫자는 오류로 단정 짓지 않고 경고로 보여주며, 메일도 사람이 확인한 뒤 발송하도록 설계했습니다. 또한 소통 히스토리 기록과 Slack 리마인더로 바쁜 업무 속에서도 메일과 요청을 놓치지 않도록 안전망을 만들었습니다.
-        </p>
-        <p style="font-size: 11.5px; color: #222222; background: #F7F4EE; border: 1px solid #E2D7C3; padding: 7px 11px; border-radius: 4px; line-height: 1.5;">
-          <strong style="color: #8C6D3B; font-weight: 800;">[입사 후 기대]</strong> 단순 반복 확인 시간을 줄여 프로모션 기획 분석과 고객 경험 개선 등 본질적인 업무에 더 집중할 수 있습니다. 인동FN에 입사하게 된다면 이처럼 반복 업무의 비효율을 적극 발굴하고, 팀원들의 실질적인 업무 부담을 덜어주는 맞춤형 운영 도구와 표준 프로세스를 구축하여 비즈니스 성장에 기여하겠습니다.
-        </p>
+        <div style="font-size: 11.2px; color: #222222; line-height: 1.48;">
+          <div style="margin-bottom: 4px;"><strong style="color: #8C6D3B;">① 무결점 시즌·프로모션 운영 & 유관부서 SOP 표준화</strong>: SHESMISS·LIST·SISTINA 브랜드별 시즌 상품 등록·진열·기획전 오픈 전 과정을 체계화하고, MD·디자인·마케팅·물류 간 요청 양식을 표준화해 오기재 0건과 리드타임 단축을 실현하겠습니다.</div>
+          <div style="margin-bottom: 4px;"><strong style="color: #8C6D3B;">② 데이터 기반 매출·전환율·객단가 개선</strong>: 닐슨과 디올에서 검증한 퍼널 분석 역량으로 기획전 유입 ➔ 상세페이지 조회 ➔ 장바구니 ➔ 결제 전환 지표를 상시 트래킹하고, 진열 순서·배너 카피·세트 구성을 기민하게 최적화하겠습니다.</div>
+          <div><strong style="color: #8C6D3B;">③ 회원·쿠폰·리텐션 CRM 고도화</strong>: 디올 상위 고객 비중 45% 확대 경험을 바탕으로, IDF몰 회원 등급·구매 주기·시즌별 이탈 방지 시나리오와 쿠폰 수익성(역마진 방지) 정합성을 정교하게 관리하여 자사몰 충성 고객의 LTV를 극대화하겠습니다.</div>
+        </div>
       </div>
 
-      <!-- 하단 기술 스택 및 라이브 데모: 라이브 데모 URL을 다음 줄로 분리하여 줄바꿈 끊김 방지 -->
-      <div class="card" style="background: #FAF9F5; border: 1px solid #E8E4DA; margin-bottom: 0; padding: 7px 14px;">
-        <div style="font-size: 11px; color: #444444; line-height: 1.55;">
+      <!-- 하단 기술 스택 및 라이브 데모 -->
+      <div class="card" style="background: #FAF9F5; border: 1px solid #E8E4DA; margin-bottom: 0; padding: 6px 13px;">
+        <div style="font-size: 10.8px; color: #444444; line-height: 1.5;">
           <div><strong style="color: #111111;">기술 스택:</strong> Next.js 16 (App Router), TypeScript, Tailwind CSS, Zustand, SheetJS, Slack Webhook</div>
-          <div style="margin-top: 3px;"><strong style="color: #111111;">라이브 데모:</strong> <a href="https://idf-theta.vercel.app/" target="_blank" class="btn-link">https://idf-theta.vercel.app/</a></div>
+          <div style="margin-top: 2px;"><strong style="color: #111111;">라이브 데모:</strong> <a href="https://idf-theta.vercel.app/" target="_blank" class="btn-link">https://idf-theta.vercel.app/</a></div>
         </div>
       </div>
     </div>
-    <div class="footer" style="margin-top: 8px; padding-top: 8px;">
+    <div class="footer" style="margin-top: 6px; padding-top: 6px;">
       <span>IDF E-Biz 운영 보드 포트폴리오</span>
-      <span>PAGE 09 / 09</span>
+      <span>PAGE 10 / 10</span>
     </div>
   </div>
 
@@ -905,7 +1023,7 @@ console.log('portfolio_presentation.html updated with embedded Base64 images.');
   await page.setContent(htmlContent, { waitUntil: 'domcontentloaded', timeout: 0 });
   await new Promise(r => setTimeout(r, 2000));
 
-  // Verify page overflow for all 9 pages
+  // Verify page overflow for all 10 pages
   const pageMeasurements = await page.evaluate(() => {
     const pages = Array.from(document.querySelectorAll('.portfolio-page'));
     return pages.map((p, idx) => ({
@@ -924,7 +1042,7 @@ console.log('portfolio_presentation.html updated with embedded Base64 images.');
   if (hasOverflow) {
     console.error('WARNING: Some pages are overflowing! Adjust padding or image sizes.');
   } else {
-    console.log('SUCCESS: All 9 pages fit perfectly with 0px overflow!');
+    console.log('SUCCESS: All 10 pages fit perfectly with 0px overflow!');
   }
 
   // Take screenshots of each page to verify visually
@@ -932,11 +1050,7 @@ console.log('portfolio_presentation.html updated with embedded Base64 images.');
   for (let i = 0; i < pagesList.length; i++) {
     await pagesList[i].screenshot({ path: path.join(__dirname, `../public/page_previews/page_${i + 1}.png`) });
   }
-  console.log('Saved all 9 page previews to public/page_previews/');
-
-  // Also save specific previews for quick inspection
-  await pagesList[4].screenshot({ path: path.join(__dirname, '../public/page5_preview.png') });
-  await pagesList[8].screenshot({ path: path.join(__dirname, '../public/page9_preview.png') });
+  console.log('Saved all 10 page previews to public/page_previews/');
 
   const pdfPath = path.join(__dirname, '../IDF_포트폴리오_박찬미.pdf');
   await page.pdf({
@@ -951,3 +1065,4 @@ console.log('portfolio_presentation.html updated with embedded Base64 images.');
 
   await browser.close();
 })();
+

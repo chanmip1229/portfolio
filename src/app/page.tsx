@@ -133,10 +133,10 @@ export default function Home() {
               <span className="w-2 h-2 rounded-full bg-[#B69F76] animate-pulse shrink-0"></span>
               <div className="flex items-center gap-2 flex-wrap min-w-0">
                 <span className="text-[10px] sm:text-[11px] font-brand font-bold tracking-widest uppercase text-[#8C6D3B] bg-[#F0EBE1] border border-[#DDD5C5] px-2 py-0.5 rounded-sm">
-                  PORTFOLIO BRIEFING
+                  E-BIZ OPERATIONS & CRM PORTFOLIO
                 </span>
                 <span className="text-xs font-bold text-zinc-700 truncate">
-                  인동FN E-Biz 프로모션 운영 보드 · 1인 단독 기획/개발 (100%)
+                  인동FN 자사몰(E-BIZ) 프로모션 운영 보드 · 박찬미 (디올 꾸뛰르·닐슨 경력 8년+)
                 </span>
               </div>
             </div>
@@ -169,14 +169,14 @@ export default function Home() {
               {/* 프로젝트 헤드라인 */}
               <div>
                 <h2 className="text-base sm:text-lg font-bold tracking-tight text-[#111111] flex items-center gap-2 font-brand">
-                  <span>인동FN 자사몰 프로모션 오픈 전 사전 검수 & 운영 솔루션</span>
+                  <span>인동FN 자사몰(E-BIZ) 프로모션 운영 관제 & 사전 무결점 QC 솔루션</span>
                 </h2>
                 <p className="text-xs text-zinc-600 mt-1 leading-relaxed max-w-4xl font-medium">
-                  인동FN 자사몰(SHESMISS·LIST·SISTINA)을 가상으로 설정해 제작한 프로모션 오픈 전 사전 점검 도구입니다. 엑셀 업로드 한 번으로 가격·이미지·링크 오류를 자동 검사하고, 부서별(MD·디자인) 수정 요청 메일 초안을 스마트하게 작성합니다.
+                  크리스챤 디올 꾸뛰르(CRM 캠페인·이커머스 세일즈 분석)와 닐슨코리아(옴니채널 데이터·전사 SOP 표준화)에서 8년간 검증한 실무 노하우를 바탕으로, 인동FN 3대 브랜드(SHESMISS·LIST·SISTINA)의 상품 등록·프로모션·쿠폰·배너 검수 및 유관부서 협업을 표준화하기 위해 직접 기획·구현한 솔루션입니다.
                 </p>
               </div>
 
-              {/* 4대 핵심 요약 카드 그리드 (화이트 배경 + 파스텔 테마 헤더 + 또렷한 블랙/차콜 텍스트) */}
+              {/* 4대 핵심 요약 카드 그리드 */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3 text-xs">
                 {/* 1. 문제 정의 */}
                 <div className="bg-white border border-rose-200/80 rounded-md p-3 space-y-1.5 shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:border-rose-300 transition-all">
@@ -185,7 +185,7 @@ export default function Home() {
                     <span>1. 해결한 문제 (Problem)</span>
                   </div>
                   <p className="text-[11px] text-zinc-600 leading-relaxed">
-                    행사 오픈 직전까지 엑셀 수기로 가격·할인율을 맞추다 생기는 역마진 사고, 잘못 들어간 404 테스트 링크, 배너 사이즈 불일치, 부서 간 요청 누락
+                    시즌 행사 오픈 전 수기 등록·대조 과정에서 발생하는 단가·할인율 역마진 사고, 쿠폰 중복 적용 오류, 404 링크·배너 규격 불일치 및 유관부서 재확인 병목
                   </p>
                 </div>
 
@@ -196,19 +196,19 @@ export default function Home() {
                     <span>2. 해결 방식 (Solution)</span>
                   </div>
                   <p className="text-[11px] text-zinc-600 leading-relaxed">
-                    엑셀만 올리면 6가지 핵심 기준(가격·쿠폰·이미지·배너 등)으로 즉시 전수 검사하고, 오류가 난 부서별로 수정 요청 메일을 딱 맞춰 자동 작성
+                    기획 엑셀 업로드 한 번으로 가격 수식·트렌드 이상치·쿠폰 정책·링크·배너를 전수 검증하고, 역할별(MD·디자인·마케팅) 요청 메일과 히스토리를 자동화
                   </p>
                 </div>
 
-                {/* 3. 본인 역할 */}
+                {/* 3. 본인 역할 및 경력 매칭 */}
                 <div className="bg-white border border-indigo-200/80 rounded-md p-3 space-y-1.5 shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:border-indigo-300 transition-all">
                   <div className="flex items-center gap-1.5 font-bold text-indigo-700">
                     <span className="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
-                    <span>3. 담당 역할 (Role & Contrib)</span>
+                    <span>3. 경력 역량 & 담당 역할 (JD Fit)</span>
                   </div>
                   <p className="text-[11px] text-zinc-600 leading-relaxed">
-                    <strong className="text-zinc-900">1인 단독 기획·설계·개발 (기여도 100%)</strong><br />
-                    자사몰 프로모션 운영 워크플로우 정의부터 화면 UI 설계, 프론트엔드/백엔드 로직 구현 및 슬랙 연동까지 혼자 완성
+                    <strong className="text-zinc-900">디올·닐슨 8년 경력 + 1인 단독 설계·구현 (100%)</strong><br />
+                    데이터 기반 매출·전환 분석, CRM 리텐션(Top Client +45%), 전사 SOP 표준화 경력을 자사몰 워크플로우로 구현
                   </p>
                 </div>
 
@@ -217,15 +217,15 @@ export default function Home() {
                   <div className="flex items-center justify-between gap-1 flex-wrap">
                     <div className="flex items-center gap-1.5 font-bold text-emerald-700">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                      <span>4. 개선 성과 (Impact)</span>
+                      <span>4. 기대 효과 (Operational Impact)</span>
                     </div>
                     <span className="text-[9px] bg-emerald-50 text-emerald-700 border border-emerald-200 px-1.5 py-0.2 rounded font-bold">
                       시연 데이터 기준
                     </span>
                   </div>
                   <p className="text-[11px] text-zinc-600 leading-relaxed">
-                    사전 검수 소요시간 <strong className="text-zinc-900">91% 단축</strong> (기존 190분 ➔ 17분), 오픈 당일 치명적 결함 <strong className="text-zinc-900">0건 달성</strong>, 부서 간 확인 소통 리드타임 50% 단축
-                    <span className="block mt-1 text-[10px] text-emerald-600 font-medium">※ 시연 시나리오 데이터 측정 기준</span>
+                    사전 검수 소요시간 <strong className="text-zinc-900">91% 단축</strong> (기존 190분 ➔ 17분), 절감된 리소스를 <strong className="text-zinc-900">매출·전환율·객단가 분석 및 CRM 고도화</strong>에 집중 투자
+                    <span className="block mt-1 text-[10px] text-emerald-600 font-medium">※ 50 SKU 프로모션 시나리오 추론 기준</span>
                   </p>
                 </div>
               </div>
