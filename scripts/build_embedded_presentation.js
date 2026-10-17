@@ -31,8 +31,10 @@ const htmlContent = `<!DOCTYPE html>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>IDF E-Biz 운영 보드 포트폴리오 | 박찬미</title>
-  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap">
   <style>
     * {
       box-sizing: border-box;
@@ -41,7 +43,7 @@ const htmlContent = `<!DOCTYPE html>
     }
     body {
       font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
-      color: #1f2937;
+      color: #111111;
       background-color: #e5e7eb;
       line-height: 1.6;
       -webkit-font-smoothing: antialiased;
@@ -80,24 +82,26 @@ const htmlContent = `<!DOCTYPE html>
     }
 
     .page-header {
-      border-bottom: 2px solid #e5e7eb;
-      padding-bottom: 12px;
-      margin-bottom: 22px;
+      border-bottom: 2px solid #111111;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
     }
     .page-header .category {
-      font-size: 12px;
-      font-weight: 700;
-      color: #4f46e5;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 11px;
+      font-weight: 800;
+      color: #8C6D3B;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.08em;
     }
     .page-header .page-num {
-      font-size: 12px;
-      font-weight: 600;
-      color: #9ca3af;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      color: #6b7280;
     }
     .page-title {
       font-size: 24px;
