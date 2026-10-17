@@ -133,10 +133,10 @@ export default function Home() {
               <span className="w-2 h-2 rounded-full bg-[#B69F76] animate-pulse shrink-0"></span>
               <div className="flex items-center gap-2 flex-wrap min-w-0">
                 <span className="text-[10px] sm:text-[11px] font-brand font-bold tracking-widest uppercase text-[#8C6D3B] bg-[#F0EBE1] border border-[#DDD5C5] px-2 py-0.5 rounded-sm">
-                  E-BIZ OPERATIONS & CRM PORTFOLIO
+                  E-BIZ OPERATIONS PORTFOLIO
                 </span>
                 <span className="text-xs font-bold text-zinc-700 truncate">
-                  인동FN 자사몰(E-BIZ) 프로모션 운영 보드 · 박찬미 (디올 꾸뛰르·닐슨 경력 8년+)
+                  인동FN 자사몰(E-BIZ) 프로모션 운영 보드 · 박찬미
                 </span>
               </div>
             </div>
@@ -172,7 +172,7 @@ export default function Home() {
                   <span>인동FN 자사몰(E-BIZ) 프로모션 운영 관제 & 사전 무결점 QC 솔루션</span>
                 </h2>
                 <p className="text-xs text-zinc-600 mt-1 leading-relaxed max-w-4xl font-medium">
-                  크리스챤 디올 꾸뛰르(CRM 캠페인·이커머스 세일즈 분석)와 닐슨코리아(옴니채널 데이터·전사 SOP 표준화)에서 8년간 검증한 실무 노하우를 바탕으로, 인동FN 3대 브랜드(SHESMISS·LIST·SISTINA)의 상품 등록·프로모션·쿠폰·배너 검수 및 유관부서 협업을 표준화하기 위해 직접 기획·구현한 솔루션입니다.
+                  인동FN 3대 브랜드(SHESMISS·LIST·SISTINA) 자사몰의 연간 프로모션 일정 관리부터 단품(SKU) 가격·할인율·쿠폰 정책·상세링크·배너 규격 사전 검수 및 유관부서 협업을 표준화하기 위해 직접 기획·설계·구현한 웹 솔루션입니다.
                 </p>
               </div>
 
@@ -200,15 +200,15 @@ export default function Home() {
                   </p>
                 </div>
 
-                {/* 3. 본인 역할 및 경력 매칭 */}
+                {/* 3. 담당 역할 */}
                 <div className="bg-white border border-indigo-200/80 rounded-md p-3 space-y-1.5 shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:border-indigo-300 transition-all">
                   <div className="flex items-center gap-1.5 font-bold text-indigo-700">
                     <span className="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
-                    <span>3. 경력 역량 & 담당 역할 (JD Fit)</span>
+                    <span>3. 담당 역할 (My Role)</span>
                   </div>
                   <p className="text-[11px] text-zinc-600 leading-relaxed">
-                    <strong className="text-zinc-900">디올·닐슨 8년 경력 + 1인 단독 설계·구현 (100%)</strong><br />
-                    데이터 기반 매출·전환 분석, CRM 리텐션(Top Client +45%), 전사 SOP 표준화 경력을 자사몰 워크플로우로 구현
+                    <strong className="text-zinc-900">1인 단독 프로젝트 (기여도 100%)</strong><br />
+                    문제 정의, 3단계 운영 프로세스 및 사전 QC 규칙 설계, UI/UX 구성 및 프롬프트 엔지니어링 기반 구현 주도
                   </p>
                 </div>
 
