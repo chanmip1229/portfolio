@@ -344,18 +344,18 @@ E-BIZ 자사몰 운영팀
         <td style="padding: 10px 12px; text-align: center; border: 1px solid #cbd5e1;">
           <span style="display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; ${
             issue.severity === 'BLOCKER'
-              ? 'background-color: #ffe4e6; color: #9f1239; border: 1px solid #fecdd3;'
-              : 'background-color: #fef3c7; color: #92400e; border: 1px solid #fde68a;'
+              ? 'background-color: #FDF4F5; color: #881337; border: 1px solid #ECC7CE;'
+              : 'background-color: #FAF8F3; color: #70562E; border: 1px solid #E5D8C1;'
           }">${issue.severity}</span>
         </td>
         <td style="padding: 10px 12px; border: 1px solid #cbd5e1;">
-          <strong style="color: #4338ca; font-family: monospace;">${issue.targetCode}</strong><br/>
+          <strong style="color: #8C6D3B; font-family: monospace;">${issue.targetCode}</strong><br/>
           <span style="font-size: 11px; color: #475569;">${issue.targetName}</span>
         </td>
         <td style="padding: 10px 12px; font-weight: 600; color: #1e293b; border: 1px solid #cbd5e1;">${issue.issueType}</td>
         <td style="padding: 10px 12px; color: #334155; border: 1px solid #cbd5e1;">
           <div style="font-weight: 500; margin-bottom: 4px;">${issue.description}</div>
-          <div style="font-size: 11px; color: #4338ca; font-weight: 600; background-color: #eef2ff; padding: 3px 8px; border-radius: 4px; display: inline-block;">➔ ${issue.requestAction}</div>
+          <div style="font-size: 11px; color: #8C6D3B; font-weight: 600; background-color: #FAF8F3; padding: 3px 8px; border-radius: 4px; display: inline-block;">➔ ${issue.requestAction}</div>
         </td>
       </tr>
     `
@@ -366,7 +366,7 @@ E-BIZ 자사몰 운영팀
       <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Apple SD Gothic Neo', sans-serif; font-size: 13px; line-height: 1.6; color: #1e293b;">
         <p style="margin: 0 0 12px 0;">안녕하세요, <strong>${s.recipientName}</strong>님.<br/>E-BIZ 운영본부 QC 시스템 자동 발송 메일입니다.</p>
         <p style="margin: 0 0 16px 0; color: #334155;">
-          2026 S/S 프로모션 오픈 전 사전 검증 과정에서 [<strong>${s.deptName}</strong>] 담당 영역의 정합성 오류 및 검토 필요 항목 총 <strong>${s.issues.length}건</strong>이 감지되었습니다.<br/>
+          시즌 프로모션 오픈 전 사전 검증 과정에서 [<strong>${s.deptName}</strong>] 담당 영역의 정합성 오류 및 검토 필요 항목 총 <strong>${s.issues.length}건</strong>이 감지되었습니다.<br/>
           실무 담당자 분들의 메일 피로도를 줄이고 전체 결함 현황을 한눈에 파악하실 수 있도록, 개별 메일 대신 <strong>[종합 요약표]</strong>로 취합하여 송부드립니다.
         </p>
         <h4 style="margin: 20px 0 10px 0; font-size: 13px; font-weight: bold; color: #0f172a;">■ ${s.deptName} 조치 필요 결함 요약 (총 ${s.issues.length}건)</h4>
@@ -678,7 +678,7 @@ E-BIZ 자사몰 운영팀
                 >
                   <Table className="w-3.5 h-3.5" />
                   <span>부서별 종합 취합 (표 요약)</span>
-                  <span className="text-[9px] bg-[#E11D48] text-white font-extrabold px-1 rounded-sm font-brand">
+                  <span className="text-[9px] bg-[#8C6D3B] text-white font-extrabold px-1 rounded-sm font-brand">
                     추천
                   </span>
                 </button>
@@ -1304,7 +1304,7 @@ E-BIZ 자사몰 운영팀
                     }`}
                   >
                     <div className="flex items-center gap-2">
-                      <span className="w-5 h-5 rounded bg-[#4A154B] text-white flex items-center justify-center text-xs font-black shrink-0">
+                      <span className="w-5 h-5 rounded bg-[#18181B] text-white flex items-center justify-center text-xs font-black shrink-0">
                         #
                       </span>
                       <span>{slackSendResult.message}</span>
@@ -1366,7 +1366,7 @@ E-BIZ 자사몰 운영팀
                           : 'Slack Webhook URL을 설정하여 실제 채널로 알림을 보냅니다'
                       }
                     >
-                      <span className="w-3.5 h-3.5 rounded bg-[#4A154B] text-white flex items-center justify-center text-[10px] font-black shrink-0">
+                      <span className="w-3.5 h-3.5 rounded bg-[#18181B] text-white flex items-center justify-center text-[10px] font-black shrink-0">
                         #
                       </span>
                       <span>{isSlackSending ? 'Slack 전송 중...' : 'Slack 긴급 요약 발송'}</span>
@@ -1794,7 +1794,7 @@ E-BIZ 자사몰 운영팀
                       }`}
                     >
                       <div className="flex items-center gap-2">
-                        <span className="w-5 h-5 rounded bg-[#4A154B] text-white flex items-center justify-center text-xs font-black shrink-0">
+                        <span className="w-5 h-5 rounded bg-[#18181B] text-white flex items-center justify-center text-xs font-black shrink-0">
                           #
                         </span>
                         <span>{slackSendResult.message}</span>
@@ -1848,7 +1848,7 @@ E-BIZ 자사몰 운영팀
                             : 'Slack Webhook URL을 설정하여 실제 채널로 알림을 보냅니다'
                         }
                       >
-                        <span className="w-3.5 h-3.5 rounded bg-[#4A154B] text-white flex items-center justify-center text-[10px] font-black shrink-0">
+                        <span className="w-3.5 h-3.5 rounded bg-[#18181B] text-white flex items-center justify-center text-[10px] font-black shrink-0">
                           #
                         </span>
                         <span>{isSlackSending ? 'Slack 전송 중...' : 'Slack 알림 발송'}</span>

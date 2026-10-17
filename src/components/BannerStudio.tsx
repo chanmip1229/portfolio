@@ -348,8 +348,8 @@ export default function BannerStudio({ promotionId }: BannerStudioProps) {
         {/* 컨펌 상태 뱃지 및 액션 */}
         <div className="flex items-center gap-2">
           {promo.banner.isConfirmed ? (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-emerald-800 bg-emerald-50 rounded-md border border-emerald-300">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-[#2D4A3E] bg-[#F2F5F3] rounded-md border border-[#C7D6CE]">
+              <CheckCircle2 className="w-4 h-4 text-[#2D4A3E]" />
               배너 컨펌 완료 ({promo.banner.confirmedAt})
             </span>
           ) : (
@@ -364,12 +364,12 @@ export default function BannerStudio({ promotionId }: BannerStudioProps) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-0 divide-y lg:divide-y-0 lg:divide-x divide-slate-200">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-0 divide-y lg:divide-y-0 lg:divide-x divide-zinc-200">
         {/* 좌측: 실시간 텍스트 및 속성 컨트롤러 (4 cols) */}
-        <div className="lg:col-span-4 p-5 space-y-4 bg-slate-50/30">
+        <div className="lg:col-span-4 p-5 space-y-4 bg-[#FAF9F5]/40">
           <div className="flex items-center justify-between gap-2">
-            <span className="text-xs font-bold text-slate-700 flex items-center gap-1.5 truncate">
-              <Sliders className="w-3.5 h-3.5 text-indigo-600" />
+            <span className="text-xs font-bold text-[#111111] flex items-center gap-1.5 truncate">
+              <Sliders className="w-3.5 h-3.5 text-[#8C6D3B]" />
               배너 카피 수정
             </span>
 
@@ -385,10 +385,10 @@ export default function BannerStudio({ promotionId }: BannerStudioProps) {
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="text-[11px] font-bold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 px-2.5 py-1 rounded-lg flex items-center gap-1 cursor-pointer transition-all shadow-2xs"
+                className="text-[11px] font-bold text-[#111111] bg-[#FAF9F5] hover:bg-[#F3EFE6] border border-[#D6C7B2] px-2.5 py-1 rounded-md flex items-center gap-1 cursor-pointer transition-all shadow-2xs"
                 title="내 PC에서 새로운 배너 사진 직접 업로드 (긴급 화보 교체)"
               >
-                <Upload className="w-3 h-3 text-indigo-600" />
+                <Upload className="w-3 h-3 text-[#8C6D3B]" />
                 <span>사진 직접 업로드</span>
               </button>
               <button
@@ -397,12 +397,12 @@ export default function BannerStudio({ promotionId }: BannerStudioProps) {
                 disabled={isRendering}
                 className={`text-[11px] font-semibold flex items-center gap-1 px-2 py-1 rounded-md transition-colors ${
                   isRendering
-                    ? 'text-slate-400 bg-slate-100 cursor-not-allowed'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 cursor-pointer'
+                    ? 'text-zinc-400 bg-zinc-100 cursor-not-allowed'
+                    : 'text-zinc-600 hover:text-[#111111] hover:bg-zinc-100 cursor-pointer'
                 }`}
                 title="배너 캔버스 강제 재합성"
               >
-                <RefreshCw className={`w-3 h-3 ${isRendering ? 'animate-spin text-indigo-500' : ''}`} />
+                <RefreshCw className={`w-3 h-3 ${isRendering ? 'animate-spin text-[#8C6D3B]' : ''}`} />
                 <span>{isRendering ? '합성 중...' : '재렌더링'}</span>
               </button>
             </div>
@@ -412,22 +412,22 @@ export default function BannerStudio({ promotionId }: BannerStudioProps) {
           <div
             onDragOver={(e) => e.preventDefault()}
             onDrop={handleFileDrop}
-            className={`p-3 rounded-xl border text-xs space-y-1.5 transition-all ${
+            className={`p-3 rounded-lg border text-xs space-y-1.5 transition-all ${
               isCustomImage
-                ? 'bg-amber-50/80 border-amber-300 ring-1 ring-amber-200/80 shadow-2xs'
-                : 'bg-white border-slate-200 hover:border-slate-300'
+                ? 'bg-[#FAF8F3] border-[#D1BC98] ring-1 ring-[#E5D8C1] shadow-2xs'
+                : 'bg-white border-zinc-200 hover:border-zinc-300'
             }`}
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1.5">
-                <span className="text-slate-500">배너 적용 화보:</span>
+                <span className="text-zinc-500">배너 적용 화보:</span>
                 {isCustomImage ? (
-                  <span className="font-extrabold text-amber-900 flex items-center gap-1 text-[11px]">
-                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-ping"></span>
+                  <span className="font-extrabold text-[#70562E] flex items-center gap-1 text-[11px]">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#8C6D3B]"></span>
                     직접 업로드 사진 적용 중
                   </span>
                 ) : (
-                  <span className="font-semibold text-slate-800">{promo.brand} 공식 룩북</span>
+                  <span className="font-semibold text-[#111111]">{promo.brand} 공식 룩북</span>
                 )}
               </div>
 
@@ -435,7 +435,7 @@ export default function BannerStudio({ promotionId }: BannerStudioProps) {
                 <button
                   type="button"
                   onClick={handleResetToDefaultImage}
-                  className="text-[10px] text-rose-600 hover:text-rose-800 font-bold underline cursor-pointer flex items-center gap-0.5"
+                  className="text-[10px] text-[#881337] hover:text-[#5A0D24] font-bold underline cursor-pointer flex items-center gap-0.5"
                   title="원래 공식 룩북 이미지로 되돌리기"
                 >
                   <RotateCcw className="w-3 h-3" />
@@ -445,7 +445,7 @@ export default function BannerStudio({ promotionId }: BannerStudioProps) {
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className="text-[10px] text-indigo-600 hover:text-indigo-800 font-semibold cursor-pointer underline"
+                  className="text-[10px] text-[#8C6D3B] hover:text-[#594424] font-semibold cursor-pointer underline"
                 >
                   사진 변경
                 </button>
@@ -453,70 +453,70 @@ export default function BannerStudio({ promotionId }: BannerStudioProps) {
             </div>
 
             <div className="flex items-center justify-between text-[11px]">
-              <p className="text-slate-500 truncate max-w-[210px]" title={promo.banner.sourceImageName || '기본 화보'}>
-                파일명: <span className="font-mono font-semibold text-slate-700">{promo.banner.sourceImageName || 'LIST_26SS_lookbook_trench_main.jpg'}</span>
+              <p className="text-zinc-500 truncate max-w-[210px]" title={promo.banner.sourceImageName || '기본 화보'}>
+                파일명: <span className="font-mono font-semibold text-zinc-700">{promo.banner.sourceImageName || 'LIST_26SS_lookbook_trench_main.jpg'}</span>
               </p>
-              <span className="text-[10px] text-slate-400">드래그&드롭 지원</span>
+              <span className="text-[10px] text-zinc-400">드래그&드롭 지원</span>
             </div>
           </div>
 
           {/* 메인 타이틀 카피 */}
           <div>
-            <label className="text-xs font-bold text-slate-600 mb-1 block">메인 타이틀 카피</label>
+            <label className="text-xs font-bold text-zinc-700 mb-1 block">메인 타이틀 카피</label>
             <input
               type="text"
               value={copyTitle}
               onChange={(e) => setCopyTitle(e.target.value)}
-              className="w-full text-xs font-semibold p-2.5 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full text-xs font-semibold p-2.5 bg-white border border-zinc-200 rounded-md focus:outline-none focus:ring-2 focus:ring-[#8C6D3B]"
               placeholder="행사 대표 타이틀 입력"
             />
           </div>
 
           {/* 서브 카피 */}
           <div>
-            <label className="text-xs font-bold text-slate-600 mb-1 block">서브 카피</label>
+            <label className="text-xs font-bold text-zinc-700 mb-1 block">서브 카피</label>
             <input
               type="text"
               value={copySubtitle}
               onChange={(e) => setCopySubtitle(e.target.value)}
-              className="w-full text-xs font-semibold p-2.5 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full text-xs font-semibold p-2.5 bg-white border border-zinc-200 rounded-md focus:outline-none focus:ring-2 focus:ring-[#8C6D3B]"
               placeholder="서브 설명 문구"
             />
           </div>
 
           {/* 할인율 뱃지 */}
           <div>
-            <label className="text-xs font-bold text-slate-600 mb-1 block">할인율 뱃지 문구</label>
+            <label className="text-xs font-bold text-zinc-700 mb-1 block">할인율 뱃지 문구</label>
             <input
               type="text"
               value={discountBadge}
               onChange={(e) => setDiscountBadge(e.target.value)}
-              className="w-full text-xs font-semibold p-2.5 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full text-xs font-semibold p-2.5 bg-white border border-zinc-200 rounded-md focus:outline-none focus:ring-2 focus:ring-[#8C6D3B]"
               placeholder="예: UP TO 40%"
             />
           </div>
 
           {/* 움직이는 기능 제어 툴킷: 위치 이동 & 자동 롤링 */}
-          <div className="pt-2 border-t border-slate-200/80 space-y-3">
+          <div className="pt-2 border-t border-zinc-200/80 space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-indigo-900 flex items-center gap-1.5">
-                <Move className="w-3.5 h-3.5 text-indigo-600" />
+              <span className="text-xs font-bold text-[#111111] flex items-center gap-1.5">
+                <Move className="w-3.5 h-3.5 text-[#8C6D3B]" />
                 배너 위치 & 움직임 제어
               </span>
-              <span className="text-[10px] text-slate-400 font-medium">실시간 캔버스 합성</span>
+              <span className="text-[10px] text-zinc-400 font-medium">실시간 캔버스 합성</span>
             </div>
 
             {/* 수직 위치 조정 (상 / 중 / 하) */}
             <div>
-              <span className="text-[11px] font-semibold text-slate-500 mb-1.5 block">카피 세로 위치</span>
+              <span className="text-[11px] font-semibold text-zinc-500 mb-1.5 block">카피 세로 위치</span>
               <div className="grid grid-cols-3 gap-1.5 text-xs font-bold">
                 <button
                   type="button"
                   onClick={() => setVerticalPosition('top')}
-                  className={`py-1.5 px-2 rounded-lg border transition-all cursor-pointer ${
+                  className={`py-1.5 px-2 rounded-md border transition-all cursor-pointer ${
                     verticalPosition === 'top'
-                      ? 'bg-indigo-600 text-white border-indigo-600 shadow-2xs'
-                      : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+                      ? 'bg-[#111111] text-white border-[#111111] shadow-2xs'
+                      : 'bg-white text-zinc-600 border-zinc-200 hover:bg-zinc-50'
                   }`}
                 >
                   상단 배치
@@ -524,10 +524,10 @@ export default function BannerStudio({ promotionId }: BannerStudioProps) {
                 <button
                   type="button"
                   onClick={() => setVerticalPosition('middle')}
-                  className={`py-1.5 px-2 rounded-lg border transition-all cursor-pointer ${
+                  className={`py-1.5 px-2 rounded-md border transition-all cursor-pointer ${
                     verticalPosition === 'middle'
-                      ? 'bg-indigo-600 text-white border-indigo-600 shadow-2xs'
-                      : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+                      ? 'bg-[#111111] text-white border-[#111111] shadow-2xs'
+                      : 'bg-white text-zinc-600 border-zinc-200 hover:bg-zinc-50'
                   }`}
                 >
                   중앙 배치
@@ -535,10 +535,10 @@ export default function BannerStudio({ promotionId }: BannerStudioProps) {
                 <button
                   type="button"
                   onClick={() => setVerticalPosition('bottom')}
-                  className={`py-1.5 px-2 rounded-lg border transition-all cursor-pointer ${
+                  className={`py-1.5 px-2 rounded-md border transition-all cursor-pointer ${
                     verticalPosition === 'bottom'
-                      ? 'bg-indigo-600 text-white border-indigo-600 shadow-2xs'
-                      : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+                      ? 'bg-[#111111] text-white border-[#111111] shadow-2xs'
+                      : 'bg-white text-zinc-600 border-zinc-200 hover:bg-zinc-50'
                   }`}
                 >
                   하단 배치
@@ -548,15 +548,15 @@ export default function BannerStudio({ promotionId }: BannerStudioProps) {
 
             {/* 수평 정렬 조정 (좌 / 중 / 우) */}
             <div>
-              <span className="text-[11px] font-semibold text-slate-500 mb-1.5 block">카피 가로 정렬</span>
+              <span className="text-[11px] font-semibold text-zinc-500 mb-1.5 block">카피 가로 정렬</span>
               <div className="grid grid-cols-3 gap-1.5 text-xs font-bold">
                 <button
                   type="button"
                   onClick={() => setHorizontalAlign('left')}
-                  className={`py-1.5 px-2 rounded-lg border transition-all cursor-pointer flex items-center justify-center gap-1 ${
+                  className={`py-1.5 px-2 rounded-md border transition-all cursor-pointer flex items-center justify-center gap-1 ${
                     horizontalAlign === 'left'
-                      ? 'bg-indigo-600 text-white border-indigo-600 shadow-2xs'
-                      : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+                      ? 'bg-[#111111] text-white border-[#111111] shadow-2xs'
+                      : 'bg-white text-zinc-600 border-zinc-200 hover:bg-zinc-50'
                   }`}
                 >
                   <AlignLeft className="w-3 h-3" />
@@ -565,10 +565,10 @@ export default function BannerStudio({ promotionId }: BannerStudioProps) {
                 <button
                   type="button"
                   onClick={() => setHorizontalAlign('center')}
-                  className={`py-1.5 px-2 rounded-lg border transition-all cursor-pointer flex items-center justify-center gap-1 ${
+                  className={`py-1.5 px-2 rounded-md border transition-all cursor-pointer flex items-center justify-center gap-1 ${
                     horizontalAlign === 'center'
-                      ? 'bg-indigo-600 text-white border-indigo-600 shadow-2xs'
-                      : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+                      ? 'bg-[#111111] text-white border-[#111111] shadow-2xs'
+                      : 'bg-white text-zinc-600 border-zinc-200 hover:bg-zinc-50'
                   }`}
                 >
                   <AlignCenter className="w-3 h-3" />
@@ -577,10 +577,10 @@ export default function BannerStudio({ promotionId }: BannerStudioProps) {
                 <button
                   type="button"
                   onClick={() => setHorizontalAlign('right')}
-                  className={`py-1.5 px-2 rounded-lg border transition-all cursor-pointer flex items-center justify-center gap-1 ${
+                  className={`py-1.5 px-2 rounded-md border transition-all cursor-pointer flex items-center justify-center gap-1 ${
                     horizontalAlign === 'right'
-                      ? 'bg-indigo-600 text-white border-indigo-600 shadow-2xs'
-                      : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+                      ? 'bg-[#111111] text-white border-[#111111] shadow-2xs'
+                      : 'bg-white text-zinc-600 border-zinc-200 hover:bg-zinc-50'
                   }`}
                 >
                   <AlignRight className="w-3 h-3" />
@@ -591,8 +591,7 @@ export default function BannerStudio({ promotionId }: BannerStudioProps) {
 
             {/* 모션 효과 토글 */}
             <div className="pt-1 flex items-center justify-between">
-              <span className="text-[11px] font-semibold text-slate-600 flex items-center gap-1">
-                <span>✨</span>
+              <span className="text-[11px] font-semibold text-zinc-600 flex items-center gap-1">
                 <span>숨쉬는 모션(Ken Burns 줌)</span>
               </span>
               <button
@@ -600,8 +599,8 @@ export default function BannerStudio({ promotionId }: BannerStudioProps) {
                 onClick={() => setEnableMotion(!enableMotion)}
                 className={`px-2.5 py-1 rounded-md text-xs font-bold transition-all cursor-pointer ${
                   enableMotion
-                    ? 'bg-amber-100 text-amber-800 border border-amber-300'
-                    : 'bg-slate-100 text-slate-400 border border-slate-200'
+                    ? 'bg-[#FAF8F3] text-[#70562E] border border-[#D1BC98]'
+                    : 'bg-zinc-100 text-zinc-500 border border-zinc-200'
                 }`}
               >
                 {enableMotion ? '모션 활성' : '모션 꺼짐'}
@@ -615,12 +614,12 @@ export default function BannerStudio({ promotionId }: BannerStudioProps) {
           <div>
             {/* 상단 탭: PC vs Mobile & 롤링 컨트롤러 */}
             <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-              <div className="flex items-center gap-1.5 p-1 bg-slate-100 rounded-lg text-xs font-semibold">
+              <div className="flex items-center gap-1.5 p-1 bg-zinc-100 rounded-md text-xs font-semibold">
                 <button
                   type="button"
                   onClick={() => setActiveTab('PC')}
                   className={`px-3 py-1.5 rounded-md flex items-center gap-1.5 transition-all cursor-pointer ${
-                    activeTab === 'PC' ? 'bg-white text-slate-900 shadow-xs font-bold' : 'text-slate-500 hover:text-slate-700'
+                    activeTab === 'PC' ? 'bg-white text-[#111111] shadow-xs font-bold' : 'text-zinc-500 hover:text-zinc-800'
                   }`}
                 >
                   <Monitor className="w-3.5 h-3.5" />
@@ -630,7 +629,7 @@ export default function BannerStudio({ promotionId }: BannerStudioProps) {
                   type="button"
                   onClick={() => setActiveTab('MO')}
                   className={`px-3 py-1.5 rounded-md flex items-center gap-1.5 transition-all cursor-pointer ${
-                    activeTab === 'MO' ? 'bg-white text-slate-900 shadow-xs font-bold' : 'text-slate-500 hover:text-slate-700'
+                    activeTab === 'MO' ? 'bg-white text-[#111111] shadow-xs font-bold' : 'text-zinc-500 hover:text-zinc-800'
                   }`}
                 >
                   <Smartphone className="w-3.5 h-3.5" />
@@ -640,17 +639,17 @@ export default function BannerStudio({ promotionId }: BannerStudioProps) {
 
               {/* 정적 편집 안내 & 다운로드 */}
               <div className="flex items-center gap-2">
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-xs font-semibold bg-slate-50 text-slate-600 border-slate-200">
-                  <Eye className="w-3.5 h-3.5 text-slate-400" />
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border text-xs font-semibold bg-zinc-50 text-zinc-600 border-zinc-200">
+                  <Eye className="w-3.5 h-3.5 text-zinc-400" />
                   <span>정적 편집 모드</span>
                 </span>
 
                 <a
                   href={currentImage}
                   download={`${promo.brand}_${promo.title}_slide${currentSlide + 1}_${activeTab}.png`}
-                  className="inline-flex items-center gap-1 text-xs font-semibold text-slate-600 hover:text-slate-900 px-2.5 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors cursor-pointer"
+                  className="inline-flex items-center gap-1 text-xs font-semibold text-zinc-700 hover:text-[#111111] px-2.5 py-1.5 rounded-md border border-zinc-200 hover:bg-zinc-50 transition-colors cursor-pointer"
                 >
-                  <Download className="w-3.5 h-3.5" />
+                  <Download className="w-3.5 h-3.5 text-[#8C6D3B]" />
                   <span>PNG 다운로드</span>
                 </a>
               </div>
@@ -660,20 +659,20 @@ export default function BannerStudio({ promotionId }: BannerStudioProps) {
             <div
               onDragOver={(e) => e.preventDefault()}
               onDrop={handleFileDrop}
-              className="relative rounded-2xl border border-slate-300 overflow-hidden bg-slate-950 flex items-center justify-center p-2 min-h-[280px] max-h-[420px] group"
+              className="relative rounded-xl border border-zinc-300 overflow-hidden bg-[#141416] flex items-center justify-center p-2 min-h-[280px] max-h-[420px] group"
               title="사진 파일을 직접 드래그해서 올려놓으면 배너 배경으로 즉시 교체됩니다"
             >
               {currentImage ? (
-                <div className="relative w-full h-full flex items-center justify-center overflow-hidden rounded-xl">
+                <div className="relative w-full h-full flex items-center justify-center overflow-hidden rounded-lg">
                   <img
                     src={currentImage}
                     alt={`${slidesMeta[currentSlide].badgeName} 프리뷰`}
-                    className={`object-contain rounded-xl shadow-lg transition-all duration-700 ease-out ${
+                    className={`object-contain rounded-lg shadow-lg transition-all duration-700 ease-out ${
                       activeTab === 'PC' ? 'w-full h-auto max-h-[350px]' : 'h-[350px] w-auto'
                     } ${enableMotion ? 'scale-[1.02] hover:scale-105 transition-transform duration-1000' : ''}`}
                   />
 
-                  {/* 슬라이드 좌우 수동 이동 화살표 (Hover 시 선명하게 노출) */}
+                  {/* 슬라이드 좌우 수동 이동 화살표 */}
                   <button
                     type="button"
                     onClick={handlePrevSlide}
@@ -695,51 +694,51 @@ export default function BannerStudio({ promotionId }: BannerStudioProps) {
 
                   {/* 상단 좌측: 배너 상태 인디케이터 */}
                   <div className="absolute top-4 left-4 z-20 flex items-center gap-2">
-                    <span className="bg-slate-900/80 backdrop-blur-md text-white text-[11px] font-bold px-2.5 py-1 rounded-full border border-white/20 flex items-center gap-1.5 shadow-sm">
-                      <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
+                    <span className="bg-[#111111]/85 backdrop-blur-md text-white text-[11px] font-bold px-2.5 py-1 rounded-full border border-[#B69F76]/40 flex items-center gap-1.5 shadow-sm">
+                      <span className="w-2 h-2 rounded-full bg-[#B69F76]"></span>
                       <span>{slidesMeta[currentSlide].badgeName}</span>
                     </span>
                     {isCustomImage && currentSlide === 0 && (
-                      <span className="bg-amber-500/90 backdrop-blur-md text-white text-[10px] font-bold px-2.5 py-1 rounded-full border border-amber-300/40 shadow-sm flex items-center gap-1">
-                        📷 직접 업로드 사진 적용됨
+                      <span className="bg-[#8C6D3B]/90 backdrop-blur-md text-white text-[10px] font-bold px-2.5 py-1 rounded-full border border-[#E5D8C1]/40 shadow-sm flex items-center gap-1">
+                        직접 업로드 사진 적용됨
                       </span>
                     )}
                   </div>
 
                   {/* 하단 우측: 슬라이드 번호 뱃지 */}
                   <div className="absolute bottom-4 right-4 z-20 flex items-center gap-2">
-                    <div className="bg-black/75 backdrop-blur-md text-white text-xs font-mono font-bold px-3 py-1 rounded-full border border-white/20 flex items-center gap-1.5 shadow-md select-none">
+                    <div className="bg-[#111111]/80 backdrop-blur-md text-white text-xs font-mono font-bold px-3 py-1 rounded-full border border-white/20 flex items-center gap-1.5 shadow-md select-none">
                       <span>0{currentSlide + 1} / 03</span>
-                      <span className="text-slate-400 text-[10px] font-sans font-normal">(수동 선택)</span>
+                      <span className="text-zinc-400 text-[10px] font-sans font-normal">(수동 선택)</span>
                     </div>
                   </div>
                 </div>
               ) : (
-                <div className="w-full h-full min-h-[300px] flex flex-col items-center justify-center p-8 text-center space-y-3 bg-linear-to-b from-slate-900 to-slate-950 rounded-xl border border-slate-800">
+                <div className="w-full h-full min-h-[300px] flex flex-col items-center justify-center p-8 text-center space-y-3 bg-[#141416] rounded-lg border border-zinc-800">
                   <div className="relative">
-                    <div className="w-16 h-16 rounded-2xl bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center text-indigo-400 animate-pulse">
+                    <div className="w-16 h-16 rounded-xl bg-zinc-900 border border-[#B69F76]/30 flex items-center justify-center text-[#B69F76]">
                       <ImageIcon className="w-8 h-8 opacity-70" />
                     </div>
-                    <span className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-indigo-600 text-white flex items-center justify-center shadow-xs">
+                    <span className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-[#8C6D3B] text-white flex items-center justify-center shadow-xs">
                       <RefreshCw className="w-3 h-3 animate-spin" />
                     </span>
                   </div>
                   <div>
                     <h5 className="text-sm font-bold text-white tracking-tight">배너 캔버스 합성 준비 중</h5>
-                    <p className="text-xs text-slate-400 mt-1 max-w-sm leading-relaxed">
+                    <p className="text-xs text-zinc-400 mt-1 max-w-sm leading-relaxed">
                       브랜드 화보 및 카피 폰트를 고해상도({activeTab === 'PC' ? '1920x600' : '750x900'}) 캔버스에 합성하고 있습니다.
                     </p>
                   </div>
                   <div className="flex items-center gap-2 pt-1">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-                    <span className="text-[11px] font-mono text-indigo-300">HTML5 Canvas Rendering</span>
+                    <span className="w-2 h-2 rounded-full bg-[#B69F76]"></span>
+                    <span className="text-[11px] font-mono text-[#D1BC98]">HTML5 Canvas Rendering</span>
                   </div>
                 </div>
               )}
 
               {isRendering && (
-                <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center text-white text-xs font-bold z-30">
-                  <RefreshCw className="w-4 h-4 animate-spin mr-2" />
+                <div className="absolute inset-0 bg-[#111111]/60 backdrop-blur-xs flex items-center justify-center text-white text-xs font-bold z-30">
+                  <RefreshCw className="w-4 h-4 animate-spin mr-2 text-[#B69F76]" />
                   실시간 캔버스 재합성 중...
                 </div>
               )}
@@ -752,28 +751,28 @@ export default function BannerStudio({ promotionId }: BannerStudioProps) {
                   key={slide.id}
                   type="button"
                   onClick={() => setCurrentSlide(idx)}
-                  className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer relative overflow-hidden ${
+                  className={`p-2.5 rounded-lg border text-left transition-all cursor-pointer relative overflow-hidden ${
                     currentSlide === idx
-                      ? 'bg-indigo-50 border-indigo-400 ring-2 ring-indigo-200'
-                      : 'bg-slate-50 border-slate-200 hover:bg-slate-100 hover:border-slate-300'
+                      ? 'bg-[#FAF9F5] border-[#8C6D3B] ring-1 ring-[#8C6D3B]/30'
+                      : 'bg-zinc-50 border-zinc-200 hover:bg-zinc-100 hover:border-zinc-300'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-0.5">
-                    <span className={`text-[11px] font-bold ${currentSlide === idx ? 'text-indigo-900' : 'text-slate-700'}`}>
+                    <span className={`text-[11px] font-bold ${currentSlide === idx ? 'text-[#111111]' : 'text-zinc-700'}`}>
                       {slide.badgeName}
                     </span>
                     {currentSlide === idx && (
-                      <span className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse"></span>
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#8C6D3B]"></span>
                     )}
                   </div>
-                  <p className="text-[10px] text-slate-500 truncate">{slide.subDesc}</p>
+                  <p className="text-[10px] text-zinc-500 truncate">{slide.subDesc}</p>
                 </button>
               ))}
             </div>
           </div>
 
           {/* 하단 배너 메타 정보 */}
-          <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+          <div className="mt-4 pt-3 border-t border-zinc-100 flex items-center justify-between text-xs text-zinc-500">
             <span>
               규격: <strong>{activeTab === 'PC' ? '1920 × 600 px (가로형 메인)' : '750 × 900 px (세로형 모바일)'}</strong>
             </span>

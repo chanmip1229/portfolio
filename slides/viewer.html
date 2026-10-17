@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Antigravity 2-Month Journey - Presentation Viewer</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      width: 100%;
+      height: 100%;
+      background: #090d13;
+      color: #f8fafc;
+      font-family: 'Pretendard', sans-serif;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Navigation Bar */
+    header {
+      height: 48px;
+      background: #0f141c;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      user-select: none;
+      z-index: 100;
+      flex-shrink: 0;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #e2e8f0;
+    }
+    .brand-badge {
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: rgba(56, 189, 248, 0.15);
+      color: #38bdf8;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .nav-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #e2e8f0;
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+    .btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+    .counter {
+      font-size: 13px;
+      font-weight: 600;
+      color: #94a3b8;
+      min-width: 65px;
+      text-align: center;
+    }
+
+    /* Slide Stage */
+    #stage-container {
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      background: radial-gradient(circle at center, #131923 0%, #080c12 100%);
+      overflow: hidden;
+    }
+
+    /* 720pt x 405pt = 960px x 540px */
+    #slide-viewport {
+      width: 960px;
+      height: 540px;
+      transform-origin: center center;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8), 0 0 1px 1px rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      overflow: hidden;
+      background: #0f141c;
+      position: absolute;
+    }
+
+    iframe {
+      width: 960px;
+      height: 540px;
+      border: none;
+      display: block;
+    }
+
+    /* Bottom Dots Indicator */
+    footer {
+      height: 40px;
+      background: #0f141c;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      flex-shrink: 0;
+      user-select: none;
+    }
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .dot:hover {
+      background: rgba(255, 255, 255, 0.5);
+    }
+    .dot.active {
+      background: #38bdf8;
+      width: 24px;
+      border-radius: 4px;
+    }
+
+    /* Hint Overlay */
+    .keyboard-hint {
+      position: absolute;
+      bottom: 50px;
+      right: 20px;
+      background: rgba(15, 20, 28, 0.8);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 11px;
+      color: #64748b;
+      pointer-events: none;
+    }
+    kbd {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 1px 5px;
+      border-radius: 3px;
+      color: #cbd5e1;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div style="width: 18px; height: 18px; background: linear-gradient(135deg, #38bdf8, #818cf8); border-radius: 4px; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:800; color:#0f141c;">AG</div>
+      <span>Antigravity 2-Month Journey</span>
+      <span class="brand-badge">slides-grab HTML</span>
+    </div>
+
+    <div class="nav-controls">
+      <button class="btn" id="prev-btn" title="Previous Slide (← / ↑ / PageUp)">
+        <span>◀</span> 이전
+      </button>
+      <span class="counter" id="counter">01 / 10</span>
+      <button class="btn" id="next-btn" title="Next Slide (→ / ↓ / Space / PageDown)">
+        다음 <span>▶</span>
+      </button>
+      <button class="btn" id="fs-btn" title="Toggle Fullscreen (F)">
+        <span>⛶</span> 전체화면
+      </button>
+    </div>
+  </header>
+
+  <div id="stage-container">
+    <div id="slide-viewport">
+      <iframe id="slide-frame" src="slide-01.html" sandbox="allow-scripts allow-same-origin"></iframe>
+    </div>
+    <div class="keyboard-hint">
+      탐색: <kbd>←</kbd> <kbd>→</kbd> <kbd>Space</kbd> | 전체화면: <kbd>F</kbd>
+    </div>
+  </div>
+
+  <footer id="dots-container"></footer>
+
+  <script>
+    const slides = [
+      'slide-01.html',
+      'slide-02.html',
+      'slide-03.html',
+      'slide-04.html',
+      'slide-05.html',
+      'slide-06.html',
+      'slide-07.html',
+      'slide-08.html',
+      'slide-09.html',
+      'slide-10.html'
+    ];
+
+    let currentIndex = 0;
+    const frame = document.getElementById('slide-frame');
+    const viewport = document.getElementById('slide-viewport');
+    const stage = document.getElementById('stage-container');
+    const counter = document.getElementById('counter');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const fsBtn = document.getElementById('fs-btn');
+    const dotsContainer = document.getElementById('dots-container');
+
+    // Create dots
+    slides.forEach((_, idx) => {
+      const dot = document.createElement('div');
+      dot.className = `dot ${idx === 0 ? 'active' : ''}`;
+      dot.title = `슬라이드 ${idx + 1}`;
+      dot.addEventListener('click', () => goToSlide(idx));
+      dotsContainer.appendChild(dot);
+    });
+
+    function updateDots() {
+      const dots = dotsContainer.children;
+      for (let i = 0; i < dots.length; i++) {
+        dots[i].className = `dot ${i === currentIndex ? 'active' : ''}`;
+      }
+    }
+
+    function fitSlide() {
+      const stageW = stage.clientWidth;
+      const stageH = stage.clientHeight;
+      const targetW = 960;
+      const targetH = 540;
+
+      // 40px margin padding
+      const scaleX = (stageW - 32) / targetW;
+      const scaleY = (stageH - 32) / targetH;
+      const scale = Math.min(scaleX, scaleY, 2.0); // Allow scale up to 2x for large displays
+
+      viewport.style.transform = `scale(${scale})`;
+    }
+
+    window.addEventListener('resize', fitSlide);
+    fitSlide();
+
+    function goToSlide(index) {
+      if (index < 0 || index >= slides.length) return;
+      currentIndex = index;
+      frame.src = slides[currentIndex];
+      counter.textContent = `${String(currentIndex + 1).padStart(2, '0')} / ${String(slides.length).padStart(2, '0')}`;
+      updateDots();
+      prevBtn.style.opacity = currentIndex === 0 ? '0.4' : '1';
+      nextBtn.style.opacity = currentIndex === slides.length - 1 ? '0.4' : '1';
+    }
+
+    prevBtn.addEventListener('click', () => goToSlide(currentIndex - 1));
+    nextBtn.addEventListener('click', () => goToSlide(currentIndex + 1));
+
+    // Keyboard Navigation
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ' || e.key === 'PageDown') {
+        e.preventDefault();
+        goToSlide(currentIndex + 1);
+      } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'PageUp') {
+        e.preventDefault();
+        goToSlide(currentIndex - 1);
+      } else if (e.key === 'Home') {
+        e.preventDefault();
+        goToSlide(0);
+      } else if (e.key === 'End') {
+        e.preventDefault();
+        goToSlide(slides.length - 1);
+      } else if (e.key.toLowerCase() === 'f') {
+        toggleFullScreen();
+      }
+    });
+
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    }
+
+    fsBtn.addEventListener('click', toggleFullScreen);
+    goToSlide(0);
+  </script>
+</body>
+</html>

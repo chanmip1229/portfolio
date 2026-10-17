@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>Antigravity 2-Month Journey - Phase 2</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      width: 720pt;
+      height: 405pt;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #0f141c;
+      color: #f1f5f9;
+      padding: 32pt 48pt;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .header-tag {
+      font-size: 9pt;
+      font-weight: 600;
+      color: #818cf8;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 4pt;
+    }
+    .split-container {
+      display: flex;
+      gap: 16pt;
+      margin: 14pt 0;
+      flex: 1;
+    }
+    .pillar-card {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8pt;
+      padding: 16pt;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .badge {
+      display: inline-block;
+      padding: 2pt 8pt;
+      border-radius: 4pt;
+      font-size: 8pt;
+      font-weight: 600;
+      margin-bottom: 8pt;
+    }
+    .badge-blue { background: rgba(56, 189, 248, 0.15); color: #38bdf8; }
+    .badge-purple { background: rgba(168, 85, 247, 0.15); color: #c084fc; }
+    .list-item {
+      display: flex;
+      gap: 8pt;
+      align-items: flex-start;
+      margin-bottom: 8pt;
+      font-size: 8.5pt;
+      color: #94a3b8;
+      line-height: 1.4;
+    }
+    .dot {
+      width: 4pt;
+      height: 4pt;
+      border-radius: 50%;
+      background: #818cf8;
+      margin-top: 5pt;
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <div>
+    <p class="header-tag">PHASE 02 · 2026.10.02 - 2026.10.05</p>
+    <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+      <h2 style="font-size: 22pt; font-weight: 700; color: #ffffff; letter-spacing: -0.02em;">
+        Next.js 프레임워크 전환 & 멀티미디어 개인화 앱
+      </h2>
+      <p style="font-size: 10pt; color: #818cf8; font-weight: 500;">Component Architecture & Heterogeneous Data</p>
+    </div>
+  </div>
+
+  <!-- Split View -->
+  <div class="split-container">
+    <!-- Pillar 1: Expense Policy Auditor -->
+    <div class="pillar-card">
+      <div>
+        <span class="badge badge-blue">Session #2ed4d02f · 10.02</span>
+        <h3 style="font-size: 14pt; font-weight: 700; color: #ffffff; margin-bottom: 6pt;">
+          Next.js 경비 정산 검사기<br>
+          <span style="font-size: 10pt; font-weight: 500; color: #94a3b8;">Expense Policy Auditor</span>
+        </h3>
+        <p style="font-size: 8.5pt; color: #cbd5e1; margin-bottom: 12pt; line-height: 1.4;">
+          기업 회계 및 지출 증빙 규정을 자동 점검하는 전문 웹 도구로, 단일 HTML을 넘어 Next.js 기반 풀스택 구조로 전환된 첫 프로젝트.
+        </p>
+        <div class="list-item">
+          <div class="dot"></div>
+          <p><strong>PRD 중심 설계:</strong> 요구사항 정의서(PRD.md)를 선제 작성하여 지출 규정 및 예외 케이스 정의</p>
+        </div>
+        <div class="list-item">
+          <div class="dot"></div>
+          <p><strong>반복적 기능 구현:</strong> PRD 3.1 명세부터 단계별 컴포넌트 빌드 및 로컬 개발 서버 디버깅 진행</p>
+        </div>
+      </div>
+      <div style="padding-top: 8pt; border-top: 1px solid rgba(255,255,255,0.06);">
+        <p style="font-size: 8pt; color: #38bdf8; font-weight: 600;">성과 : 컴포넌트 기반 비즈니스 로직 분리 성공</p>
+      </div>
+    </div>
+
+    <!-- Pillar 2: OPIc AL Learning App -->
+    <div class="pillar-card">
+      <div>
+        <span class="badge badge-purple">Session #dc14bbb5 · 10.05</span>
+        <h3 style="font-size: 14pt; font-weight: 700; color: #ffffff; margin-bottom: 6pt;">
+          OPIc AL 목표 맞춤형 학습 앱<br>
+          <span style="font-size: 10pt; font-weight: 500; color: #94a3b8;">Personalized Audio & Memo Integration</span>
+        </h3>
+        <p style="font-size: 8.5pt; color: #cbd5e1; margin-bottom: 12pt; line-height: 1.4;">
+          27개 대화 턴을 거치며 사용자 소장 로컬 리소스를 완벽히 유기적으로 결합한 맞춤형 영어 말하기 훈련 플랫폼.
+        </p>
+        <div class="list-item">
+          <div class="dot" style="background: #c084fc;"></div>
+          <p><strong>이기종 데이터 연계:</strong> 해커스 강의 PDF 교재 + 음성 쉐도잉 MP3 + iCloud 동기화 메모장 직접 연동</p>
+        </div>
+        <div class="list-item">
+          <div class="dot" style="background: #c084fc;"></div>
+          <p><strong>모바일/통근 환경 대응:</strong> 지하철 등 이동 중 iPhone 접속 및 오프라인-온라인 환경 학습 UX 설계</p>
+        </div>
+      </div>
+      <div style="padding-top: 8pt; border-top: 1px solid rgba(255,255,255,0.06);">
+        <p style="font-size: 8pt; color: #c084fc; font-weight: 600;">성과 : 실생활 밀착형 멀티미디어 파이프라인 완성</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 10pt;">
+    <p style="font-size: 9pt; color: #94a3b8;">
+      🚀 <strong>Tech Shift:</strong> 정적 파일 생성 수준에서 벗어나 현대적인 프론트엔드 프레임워크와 디바이스 간 연동 UX로 확장
+    </p>
+    <p style="font-size: 10pt; color: #64748b; font-weight: 500;">04 / 10</p>
+  </div>
+</body>
+</html>

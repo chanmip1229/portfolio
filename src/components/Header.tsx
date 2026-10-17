@@ -94,7 +94,7 @@ export default function Header({ onLoadDemo, onOpenDrafts, draftCount }: HeaderP
             onClick={() => setIsSlackModalOpen(true)}
             className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 text-[11px] sm:text-xs font-semibold rounded-md border transition-all cursor-pointer ${
               isSlackConnected
-                ? 'bg-emerald-50 text-emerald-900 border-emerald-300 hover:bg-emerald-100'
+                ? 'bg-[#FAF9F5] text-[#111111] border-[#D6C7B2] hover:bg-[#F3EFE6]'
                 : 'bg-white text-zinc-700 border-zinc-200 hover:bg-zinc-50 hover:border-zinc-300'
             }`}
             title="Slack Webhook 결함 알림 설정"
@@ -102,15 +102,15 @@ export default function Header({ onLoadDemo, onOpenDrafts, draftCount }: HeaderP
           >
             <span
               className={`w-1.5 h-1.5 rounded-full ${
-                isSlackConnected ? 'bg-emerald-500 animate-pulse' : 'bg-zinc-300'
+                isSlackConnected ? 'bg-[#2D4A3E]' : 'bg-zinc-300'
               }`}
             />
-            <span className="w-3.5 h-3.5 rounded bg-[#4A154B] text-white flex items-center justify-center text-[9px] font-black">
+            <span className="w-3.5 h-3.5 rounded bg-[#111111] text-[#B69F76] flex items-center justify-center text-[9px] font-black">
               #
             </span>
             <span className="hidden sm:inline">Slack 연동</span>
             {isSlackConnected && (
-              <span className="text-[9px] bg-emerald-100 text-emerald-800 font-bold px-1 rounded border border-emerald-200">
+              <span className="text-[9px] bg-[#F2F5F3] text-[#2D4A3E] font-bold px-1 rounded border border-[#C7D6CE]">
                 LIVE
               </span>
             )}
@@ -121,14 +121,14 @@ export default function Header({ onLoadDemo, onOpenDrafts, draftCount }: HeaderP
             onClick={handleLoadDemo}
             className={`hidden sm:inline-flex items-center gap-1.5 px-3 sm:px-3.5 py-1.5 sm:py-2 text-[11px] sm:text-xs font-bold rounded-md shadow-xs transition-all cursor-pointer ${
               isLoaded
-                ? 'bg-emerald-700 text-white ring-2 ring-emerald-300 shadow-md'
+                ? 'bg-[#2D4A3E] text-white ring-2 ring-[#C7D6CE] shadow-md'
                 : 'bg-[#111111] hover:bg-[#27272a] text-white border border-[#B69F76]/40 hover:border-[#B69F76]'
             }`}
           >
             {isLoaded ? (
               <>
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-200 animate-pulse" />
-                <span>시연 데이터 세팅 완료!</span>
+                <CheckCircle2 className="w-3.5 h-3.5 text-[#C7D6CE]" />
+                <span>시연 데이터 세팅 완료</span>
               </>
             ) : (
               <>
@@ -147,7 +147,7 @@ export default function Header({ onLoadDemo, onOpenDrafts, draftCount }: HeaderP
             <Mail className="w-3.5 h-3.5 text-zinc-600" />
             <span className="hidden sm:inline">임시보관함</span>
             {draftCount > 0 && (
-              <span className="w-4.5 h-4.5 rounded-full bg-[#E11D48] text-white text-[9px] font-bold flex items-center justify-center font-mono">
+              <span className="w-4.5 h-4.5 rounded-full bg-[#881337] text-white text-[9px] font-bold flex items-center justify-center font-mono">
                 {draftCount}
               </span>
             )}

@@ -2,6 +2,170 @@
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
 @import "tailwindcss";
 
+@theme {
+  /* Burgundy Red (Replaces bright rose / red) */
+  --color-rose-50: #FDF4F5;
+  --color-rose-100: #F9E5E8;
+  --color-rose-200: #ECC7CE;
+  --color-rose-300: #DA9CA8;
+  --color-rose-400: #C26678;
+  --color-rose-500: #9F1D35;
+  --color-rose-600: #881337;
+  --color-rose-700: #70102D;
+  --color-rose-800: #5A0D24;
+  --color-rose-900: #460A1C;
+  --color-rose-950: #2A0510;
+
+  --color-red-50: #FDF4F5;
+  --color-red-100: #F9E5E8;
+  --color-red-200: #ECC7CE;
+  --color-red-300: #DA9CA8;
+  --color-red-400: #C26678;
+  --color-red-500: #9F1D35;
+  --color-red-600: #881337;
+  --color-red-700: #70102D;
+  --color-red-800: #5A0D24;
+  --color-red-900: #460A1C;
+  --color-red-950: #2A0510;
+
+  /* Muted Sage / Forest (Replaces pastel emerald / teal / green) */
+  --color-emerald-50: #F2F5F3;
+  --color-emerald-100: #E3EBE6;
+  --color-emerald-200: #C7D6CE;
+  --color-emerald-300: #9EB8AA;
+  --color-emerald-400: #6E9481;
+  --color-emerald-500: #466E5B;
+  --color-emerald-600: #2D4A3E;
+  --color-emerald-700: #243C32;
+  --color-emerald-800: #1D3028;
+  --color-emerald-900: #16251F;
+  --color-emerald-950: #0D1612;
+
+  --color-teal-50: #F2F5F3;
+  --color-teal-100: #E3EBE6;
+  --color-teal-200: #C7D6CE;
+  --color-teal-300: #9EB8AA;
+  --color-teal-400: #6E9481;
+  --color-teal-500: #466E5B;
+  --color-teal-600: #2D4A3E;
+  --color-teal-700: #243C32;
+  --color-teal-800: #1D3028;
+  --color-teal-900: #16251F;
+  --color-teal-950: #0D1612;
+
+  --color-green-50: #F2F5F3;
+  --color-green-100: #E3EBE6;
+  --color-green-200: #C7D6CE;
+  --color-green-300: #9EB8AA;
+  --color-green-400: #6E9481;
+  --color-green-500: #466E5B;
+  --color-green-600: #2D4A3E;
+  --color-green-700: #243C32;
+  --color-green-800: #1D3028;
+  --color-green-900: #16251F;
+  --color-green-950: #0D1612;
+
+  /* Champagne Gold / Bronze (Replaces bright amber / yellow / orange) */
+  --color-amber-50: #FAF8F3;
+  --color-amber-100: #F3EDE1;
+  --color-amber-200: #E5D8C1;
+  --color-amber-300: #D1BC98;
+  --color-amber-400: #B69F76;
+  --color-amber-500: #9A7B4F;
+  --color-amber-600: #8C6D3B;
+  --color-amber-700: #70562E;
+  --color-amber-800: #594424;
+  --color-amber-900: #42321A;
+  --color-amber-950: #291E0F;
+
+  --color-yellow-50: #FAF8F3;
+  --color-yellow-100: #F3EDE1;
+  --color-yellow-200: #E5D8C1;
+  --color-yellow-300: #D1BC98;
+  --color-yellow-400: #B69F76;
+  --color-yellow-500: #9A7B4F;
+  --color-yellow-600: #8C6D3B;
+  --color-yellow-700: #70562E;
+  --color-yellow-800: #594424;
+  --color-yellow-900: #42321A;
+  --color-yellow-950: #291E0F;
+
+  --color-orange-50: #FAF8F3;
+  --color-orange-100: #F3EDE1;
+  --color-orange-200: #E5D8C1;
+  --color-orange-300: #D1BC98;
+  --color-orange-400: #B69F76;
+  --color-orange-500: #9A7B4F;
+  --color-orange-600: #8C6D3B;
+  --color-orange-700: #70562E;
+  --color-orange-800: #594424;
+  --color-orange-900: #42321A;
+  --color-orange-950: #291E0F;
+
+  /* Rich Charcoal & Gold-Ivory (Replaces electric indigo) */
+  --color-indigo-50: #FAF9F5;
+  --color-indigo-100: #F3EFE6;
+  --color-indigo-200: #E5DEC9;
+  --color-indigo-300: #D4C8AE;
+  --color-indigo-400: #B69F76;
+  --color-indigo-500: #8C6D3B;
+  --color-indigo-600: #18181B;
+  --color-indigo-700: #27272A;
+  --color-indigo-800: #18181B;
+  --color-indigo-900: #141416;
+  --color-indigo-950: #09090B;
+
+  /* Deep Taupe / Espresso Gold (Replaces purple / violet) */
+  --color-purple-50: #FAF8F4;
+  --color-purple-100: #F2ECE1;
+  --color-purple-200: #E3D7C3;
+  --color-purple-300: #CBB89A;
+  --color-purple-400: #A68D68;
+  --color-purple-500: #856C49;
+  --color-purple-600: #5C4930;
+  --color-purple-700: #4D3D28;
+  --color-purple-800: #3D301F;
+  --color-purple-900: #2E2417;
+  --color-purple-950: #1C160E;
+
+  --color-violet-50: #FAF8F4;
+  --color-violet-100: #F2ECE1;
+  --color-violet-200: #E3D7C3;
+  --color-violet-300: #CBB89A;
+  --color-violet-400: #A68D68;
+  --color-violet-500: #856C49;
+  --color-violet-600: #5C4930;
+  --color-violet-700: #4D3D28;
+  --color-violet-800: #3D301F;
+  --color-violet-900: #2E2417;
+  --color-violet-950: #1C160E;
+
+  /* Warm Pewter / Graphite (Replaces pastel blue / sky) */
+  --color-blue-50: #F6F6F7;
+  --color-blue-100: #ECECEE;
+  --color-blue-200: #DADADD;
+  --color-blue-300: #B8B8BE;
+  --color-blue-400: #8E8E96;
+  --color-blue-500: #63636B;
+  --color-blue-600: #3F3F46;
+  --color-blue-700: #27272A;
+  --color-blue-800: #18181B;
+  --color-blue-900: #141416;
+  --color-blue-950: #09090B;
+
+  --color-sky-50: #F6F6F7;
+  --color-sky-100: #ECECEE;
+  --color-sky-200: #DADADD;
+  --color-sky-300: #B8B8BE;
+  --color-sky-400: #8E8E96;
+  --color-sky-500: #63636B;
+  --color-sky-600: #3F3F46;
+  --color-sky-700: #27272A;
+  --color-sky-800: #18181B;
+  --color-sky-900: #141416;
+  --color-sky-950: #09090B;
+}
+
 :root {
   --idf-black: #111111;
   --idf-dark: #18181b;
@@ -14,9 +178,9 @@
   --idf-card: #ffffff;
   --idf-border: #e4e4e7;
   --idf-border-subtle: #f4f4f5;
-  --brand-shesmiss: #881337;
-  --brand-list: #14532d;
-  --brand-sistina: #0f172a;
+  --brand-shesmiss: #18181b;
+  --brand-list: #5c4930;
+  --brand-sistina: #27272a;
   --font-brand: 'Montserrat', sans-serif;
   --font-sans: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
 }
@@ -107,29 +271,29 @@ body {
   color: #111111;
 }
 
-/* IDF Mall Brand Badges */
+/* IDF Mall Brand Badges (Editorial Tag Style) */
 .badge-shesmiss {
-  background-color: #fff1f2;
-  color: #881337;
-  border: 1px solid #fecdd3;
+  background-color: #18181b;
+  color: #ffffff;
+  border: 1px solid #27272a;
   font-family: var(--font-brand);
   letter-spacing: 0.05em;
   font-weight: 700;
 }
 
 .badge-list {
-  background-color: #f0fdf4;
-  color: #14532d;
-  border: 1px solid #bbf7d0;
+  background-color: #5c4930;
+  color: #ffffff;
+  border: 1px solid #735c3d;
   font-family: var(--font-brand);
   letter-spacing: 0.05em;
   font-weight: 700;
 }
 
 .badge-sistina {
-  background-color: #f8fafc;
-  color: #0f172a;
-  border: 1px solid #e2e8f0;
+  background-color: #f5efe6;
+  color: #27272a;
+  border: 1px solid #d6c7b2;
   font-family: var(--font-brand);
   letter-spacing: 0.05em;
   font-weight: 700;
@@ -146,7 +310,7 @@ body {
 
 /* Fashion UP TO Discount Badge */
 .badge-discount {
-  background-color: #e11d48;
+  background-color: #881337;
   color: #ffffff;
   font-family: var(--font-brand);
   font-weight: 800;

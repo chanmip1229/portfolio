@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>Antigravity 2-Month Journey - Cover</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      width: 720pt;
+      height: 405pt;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #0f141c;
+      color: #f1f5f9;
+      padding: 36pt 48pt;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+    .grid-bg {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+      background-size: 30pt 30pt;
+      pointer-events: none;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6pt;
+      padding: 4pt 12pt;
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: 100pt;
+      font-size: 9pt;
+      font-weight: 600;
+      color: #38bdf8;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .badge-dot {
+      width: 5pt;
+      height: 5pt;
+      background: #38bdf8;
+      border-radius: 50%;
+    }
+  </style>
+</head>
+<body>
+  <div class="grid-bg"></div>
+
+  <!-- Header -->
+  <div style="display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 1;">
+    <div style="display: flex; align-items: center; gap: 12pt;">
+      <div style="width: 24pt; height: 24pt; background: linear-gradient(135deg, #38bdf8, #818cf8); border-radius: 6pt; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 11pt; color: #0f141c;">
+        AG
+      </div>
+      <p style="font-size: 11pt; font-weight: 600; color: #cbd5e1; letter-spacing: -0.01em;">Google Antigravity Worklog</p>
+    </div>
+    <div class="badge">
+      <div class="badge-dot"></div>
+      <p>Timeline Report (2026.09 - 2026.10)</p>
+    </div>
+  </div>
+
+  <!-- Hero Content -->
+  <div style="position: relative; z-index: 1; margin-top: 10pt;">
+    <p style="font-size: 13pt; font-weight: 600; color: #38bdf8; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 8pt;">
+      2-Month Retrospective & Product Timeline
+    </p>
+    <h1 style="font-size: 40pt; font-weight: 700; line-height: 1.15; color: #ffffff; letter-spacing: -0.03em; margin-bottom: 14pt;">
+      안티그래비티로 빌드한<br>
+      <span style="background: linear-gradient(90deg, #38bdf8, #818cf8, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">업무 자동화 & 프로덕트 여정</span>
+    </h1>
+    <p style="font-size: 13pt; color: #94a3b8; font-weight: 400; max-width: 480pt; line-height: 1.5;">
+      단일 HTML 사내 도구 개발부터 풀스택 Next.js, Supabase MCP 연동, 그리고 85턴 규모의 AI Commerce Ops Copilot까지 2달간의 세션 기록과 기술 진화 분석
+    </p>
+  </div>
+
+  <!-- Footer Stats -->
+  <div style="display: flex; justify-content: space-between; align-items: flex-end; border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 16pt; position: relative; z-index: 1;">
+    <div style="display: flex; gap: 40pt;">
+      <div>
+        <p style="font-size: 9pt; color: #64748b; font-weight: 500; margin-bottom: 2pt;">TOTAL SESSIONS</p>
+        <p style="font-size: 16pt; font-weight: 700; color: #f8fafc;">18개 세션</p>
+      </div>
+      <div>
+        <p style="font-size: 9pt; color: #64748b; font-weight: 500; margin-bottom: 2pt;">TOTAL PROMPTS</p>
+        <p style="font-size: 16pt; font-weight: 700; color: #38bdf8;">170+ 페어링 대화</p>
+      </div>
+      <div>
+        <p style="font-size: 9pt; color: #64748b; font-weight: 500; margin-bottom: 2pt;">PRODUCTION APPS</p>
+        <p style="font-size: 16pt; font-weight: 700; color: #818cf8;">8+ 프로덕트 구축</p>
+      </div>
+      <div>
+        <p style="font-size: 9pt; color: #64748b; font-weight: 500; margin-bottom: 2pt;">KEY STACK</p>
+        <p style="font-size: 16pt; font-weight: 700; color: #f8fafc;">Next.js · Supabase · MCP</p>
+      </div>
+    </div>
+    <div>
+      <p style="font-size: 10pt; color: #64748b; font-weight: 500;">01 / 10</p>
+    </div>
+  </div>
+</body>
+</html>

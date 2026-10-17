@@ -124,24 +124,24 @@ export default function CommunicationHistoryModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-xs animate-in fade-in duration-150">
       <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden">
         {/* 모달 헤더 */}
-        <div className="p-5 border-b border-slate-100 bg-slate-50/80 flex items-center justify-between">
+        <div className="p-5 border-b border-zinc-200 bg-[#FAF9F5] flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <span className="p-2 bg-indigo-100 text-indigo-700 rounded-xl">
+            <span className="p-2 bg-white text-[#8C6D3B] border border-[#E6DCCE] rounded-lg">
               <History className="w-5 h-5" />
             </span>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded bg-slate-800 text-white font-mono">
+                <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded bg-[#18181B] text-white font-mono">
                   {promotion.brand}
                 </span>
-                <h3 className="text-base font-black text-slate-900">
+                <h3 className="text-base font-black text-[#111111]">
                   전사 소통 & 메일 발송 히스토리
                 </h3>
-                <span className="text-[10px] bg-indigo-50 text-indigo-700 border border-indigo-200 px-2 py-0.5 rounded-full font-bold">
+                <span className="text-[10px] bg-white text-[#8C6D3B] border border-[#E6DCCE] px-2 py-0.5 rounded-full font-bold">
                   ID: {promotion.id}
                 </span>
               </div>
-              <p className="text-xs text-slate-500 mt-0.5 line-clamp-1">
+              <p className="text-xs text-zinc-500 mt-0.5 line-clamp-1">
                 {promotion.title} — 기획 접수부터 다부서 메일·슬랙 발송 내역 실시간 추적
               </p>
             </div>
@@ -149,25 +149,25 @@ export default function CommunicationHistoryModal({
 
           <button
             onClick={onClose}
-            className="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-200/60 transition-colors cursor-pointer"
+            className="p-1.5 text-zinc-400 hover:text-zinc-700 rounded-lg hover:bg-zinc-200/60 transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* 연동 메커니즘 투명성 안내 배너 */}
-        <div className="bg-indigo-900 text-white p-3.5 px-6 border-b border-indigo-950 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+        <div className="bg-[#141416] text-white p-3.5 px-6 border-b border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
           <div className="space-y-0.5">
-            <div className="flex items-center gap-2 font-bold text-amber-300">
-              <Sparkles className="w-4 h-4 text-amber-300 shrink-0" />
+            <div className="flex items-center gap-2 font-bold text-[#B69F76]">
+              <Sparkles className="w-4 h-4 text-[#B69F76] shrink-0" />
               <span>실시간 연동 아키텍처 안내</span>
             </div>
-            <p className="text-[11px] text-slate-200 leading-relaxed">
+            <p className="text-[11px] text-zinc-300 leading-relaxed">
               • <strong>Slack:</strong> Webhook 등록 시 사내 업무 채널로 <strong>실시간 알림이 100% 즉시 전송</strong>됩니다.<br />
-              • <strong>E-Mail:</strong> 포트폴리오 안전을 위해 브라우저 기반 <strong>사내 메일 샌드박스(Outbox)</strong>에 실시간 보관되며, 사내 SMTP API와 1:1 바인딩됩니다.
+              • <strong>E-Mail:</strong> 외부 오발송 방지를 위해 브라우저 기반 <strong>사내 메일 샌드박스(Outbox)</strong>에 실시간 보관되며, 사내 SMTP API와 1:1 바인딩됩니다.
             </p>
           </div>
-          <span className="text-[10px] bg-white/10 text-slate-200 px-2.5 py-1 rounded border border-white/20 font-mono shrink-0 self-start sm:self-auto">
+          <span className="text-[10px] bg-zinc-800 text-zinc-300 px-2.5 py-1 rounded border border-zinc-700 font-mono shrink-0 self-start sm:self-auto">
             Audit Log ID: {promotion.id}-AUDIT
           </span>
         </div>

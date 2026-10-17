@@ -32,18 +32,18 @@ import CommunicationHistoryModal from './CommunicationHistoryModal';
 import { sendSlackMessage } from '@/utils/slackNotifier';
 
 const STATUS_BADGE: Record<PromotionStatus, { label: string; color: string }> = {
-  PLANNING: { label: '기획안 접수 등록', color: 'bg-slate-100 text-slate-700 border-slate-200' },
-  ASSET_REQUESTED: { label: '소재 요청 완료 (회신 대기)', color: 'bg-blue-50 text-blue-700 border-blue-200' },
-  DATA_RECEIVED: { label: '기획 엑셀·화보 회신 완료', color: 'bg-indigo-50 text-indigo-700 border-indigo-200' },
-  NEEDS_CHECK: { label: '🚨 사전 QC 결함 재확인 필요', color: 'bg-rose-50 text-rose-700 border-rose-300 font-semibold animate-pulse' },
-  QC_PASSED: { label: '사전 QC 전수 통과 (PASS)', color: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
-  READY_TO_PUBLISH: { label: '자사몰 게시 준비 완료', color: 'bg-teal-50 text-teal-800 border-teal-300 font-bold' },
+  PLANNING: { label: '기획안 접수 등록', color: 'bg-zinc-100 text-zinc-700 border-zinc-200' },
+  ASSET_REQUESTED: { label: '소재 요청 완료 (회신 대기)', color: 'bg-[#FAF8F3] text-[#70562E] border-[#E5D8C1]' },
+  DATA_RECEIVED: { label: '기획 엑셀·화보 회신 완료', color: 'bg-[#F4F3EF] text-[#3F3A32] border-[#DED8CC]' },
+  NEEDS_CHECK: { label: '사전 QC 결함 재확인 필요', color: 'bg-[#FDF4F5] text-[#881337] border-[#ECC7CE] font-semibold' },
+  QC_PASSED: { label: '사전 QC 전수 통과 (PASS)', color: 'bg-[#F2F5F3] text-[#2D4A3E] border-[#C7D6CE]' },
+  READY_TO_PUBLISH: { label: '자사몰 게시 준비 완료', color: 'bg-[#F2F5F3] text-[#1D3028] border-[#9EB8AA] font-bold' },
 };
 
 const BRAND_COLORS: Record<string, string> = {
-  SHESMISS: 'bg-slate-900 text-white',
-  LIST: 'bg-blue-900 text-white',
-  SISTINA: 'bg-amber-900 text-white',
+  SHESMISS: 'bg-[#18181B] text-white border border-zinc-700',
+  LIST: 'bg-[#5C4930] text-white border border-[#735C3D]',
+  SISTINA: 'bg-[#F5EFE6] text-[#27272A] border border-[#D6C7B2]',
 };
 
 export default function PromotionCalendarView() {
@@ -98,9 +98,9 @@ export default function PromotionCalendarView() {
     });
 
     if (result.success) {
-      setToastMessage(`⚡ [${promo.brand}] 디자인 담당 채널로 리마인더 알림을 실시간 발송했습니다!`);
+      setToastMessage(`[${promo.brand}] 디자인 담당 채널로 리마인더 알림을 실시간 발송했습니다.`);
     } else {
-      setToastMessage(`⚠️ 슬랙 발송 완료 (시뮬레이션 모드 작동)`);
+      setToastMessage(`슬랙 발송 완료 (시뮬레이션 모드 작동)`);
     }
     setTimeout(() => setToastMessage(null), 4000);
   };
@@ -148,37 +148,37 @@ export default function PromotionCalendarView() {
     <div className="space-y-8">
       {/* 토스트 알림 */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-2xl border border-slate-700 flex items-center gap-2.5 animate-in slide-in-from-bottom-5">
-          <Sparkles className="w-4 h-4 text-amber-400" />
+        <div className="fixed bottom-6 right-6 z-50 bg-[#111111] text-white px-4 py-3 rounded-lg shadow-2xl border border-[#B69F76]/40 flex items-center gap-2.5 animate-in slide-in-from-bottom-5">
+          <Sparkles className="w-4 h-4 text-[#B69F76]" />
           <span className="text-xs font-bold">{toastMessage}</span>
         </div>
       )}
 
-      {/* 🚀 상단 고정: 실시간 집중 대응 — 현재 진행 중인 행사 워크보드 (스크롤 없이 즉시 파악) */}
-      <div className="rounded-2xl bg-linear-to-br from-slate-900 via-indigo-950 to-slate-900 p-6 text-white shadow-md border border-indigo-900/60">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 pb-4 border-b border-white/10">
+      {/* 상단 고정: 실시간 집중 대응 — 현재 진행 중인 행사 워크보드 */}
+      <div className="rounded-xl bg-[#141416] p-6 text-white shadow-md border border-[#27272A]">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 pb-4 border-b border-zinc-800">
           <div className="flex items-center gap-2.5">
-            <span className="p-2 bg-rose-500/20 text-rose-400 rounded-xl border border-rose-500/30">
-              <Flame className="w-5 h-5 animate-pulse" />
+            <span className="p-2 bg-[#881337]/25 text-[#E598A8] rounded-lg border border-[#881337]/50">
+              <Flame className="w-5 h-5" />
             </span>
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="text-base font-black tracking-tight text-white">
                   실시간 집중 대응 — 현재 진행 중인 행사 (Active Operations Board)
                 </h3>
-                <span className="text-[10px] bg-rose-500 text-white font-extrabold px-2 py-0.5 rounded-full">
+                <span className="text-[10px] bg-[#881337] text-white border border-[#A3243B] font-extrabold px-2.5 py-0.5 rounded-full">
                   당월 집중 3건
                 </span>
               </div>
-              <p className="text-xs text-slate-300 mt-0.5">
+              <p className="text-xs text-zinc-400 mt-0.5">
                 오류 재확인·소재 회신 대기 등 실시간 조치가 필요한 행사를 상단에 우선 배치하여 원클릭으로 상단 QC 검수실로 이동합니다.
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 text-xs text-slate-300 bg-white/10 px-3 py-1.5 rounded-xl border border-white/10">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            <span>📅 시연 기준일: <strong>2026.10.15</strong> (오픈 D-2 고정 시뮬레이션)</span>
+          <div className="flex items-center gap-2 text-xs text-zinc-300 bg-zinc-900 px-3 py-1.5 rounded-lg border border-zinc-800">
+            <span className="w-2 h-2 rounded-full bg-[#B69F76]"></span>
+            <span>시연 기준일: <strong className="text-white">2026.10.15</strong> (오픈 D-2 고정 시뮬레이션)</span>
           </div>
         </div>
 
@@ -193,36 +193,36 @@ export default function PromotionCalendarView() {
               <div
                 key={promo.id}
                 onClick={() => handleScrollToQc(promo.id)}
-                className={`rounded-xl p-4 transition-all cursor-pointer flex flex-col justify-between border ${
+                className={`rounded-lg p-4 transition-all cursor-pointer flex flex-col justify-between border ${
                   isSelected
-                    ? 'bg-white/15 border-indigo-400 ring-2 ring-indigo-400/50 shadow-lg'
-                    : 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20'
+                    ? 'bg-zinc-900/90 border-[#B69F76] ring-1 ring-[#B69F76]/40 shadow-lg'
+                    : 'bg-zinc-900/40 border-zinc-800 hover:bg-zinc-800/60 hover:border-zinc-700'
                 }`}
               >
                 <div>
-                  <div className="flex items-center justify-between gap-2 mb-2">
+                  <div className="flex items-center justify-between gap-2 mb-2.5">
                     <span
                       className={`px-2 py-0.5 text-[10px] font-extrabold rounded ${
-                        BRAND_COLORS[promo.brand] || 'bg-slate-800 text-white'
+                        BRAND_COLORS[promo.brand] || 'bg-zinc-800 text-white'
                       }`}
                     >
                       {promo.brand}
                     </span>
 
                     <span
-                      className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
+                      className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full border ${
                         isNeedsCheck
-                          ? 'bg-rose-500/20 text-rose-300 border-rose-500/40 animate-pulse'
+                          ? 'bg-[#881337]/30 text-[#F1C4CC] border-[#A3243B]/60'
                           : isDelay
-                          ? 'bg-amber-500/20 text-amber-300 border-amber-500/40'
-                          : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
+                          ? 'bg-[#8C6D3B]/25 text-[#E5D8C1] border-[#B69F76]/40'
+                          : 'bg-[#2D4A3E]/30 text-[#C7D6CE] border-[#466E5B]/50'
                       }`}
                     >
                       {isNeedsCheck
-                        ? `🚨 사전 QC 결함 (${promo.qcIssues.filter((i) => i.severity === 'BLOCKER').length}건)`
+                        ? `사전 QC 결함 (${promo.qcIssues.filter((i) => i.severity === 'BLOCKER').length}건)`
                         : isDelay
-                        ? '⏳ 디자인 담당 소재 회신 대기 (D-5)'
-                        : '📋 기획안 접수 등록'}
+                        ? '디자인 담당 소재 회신 대기 (D-5)'
+                        : '기획안 접수 등록'}
                     </span>
                   </div>
 
@@ -230,20 +230,20 @@ export default function PromotionCalendarView() {
                     {promo.title}
                   </h4>
 
-                  <div className="flex items-center gap-2 text-[11px] text-slate-300 mb-3">
+                  <div className="flex items-center gap-2 text-[11px] text-zinc-400 mb-3">
                     <span className="flex items-center gap-1">
-                      <Clock className="w-3 h-3 text-slate-400" />
-                      오픈: <strong>{promo.startDate}</strong>
+                      <Clock className="w-3 h-3 text-zinc-500" />
+                      오픈: <strong className="text-zinc-200">{promo.startDate}</strong>
                     </span>
                     <span>•</span>
-                    <span className="text-amber-300 font-semibold">
+                    <span className="text-[#D1BC98] font-semibold">
                       대기: [{promo.currentBottleneckDept === 'MD' ? '기획MD' : promo.currentBottleneckDept === 'DESIGN' ? '디자인' : promo.currentBottleneckDept === 'DEV' ? '전산' : '운영'} 담당]
                     </span>
                   </div>
                 </div>
 
-                {/* 상황별 즉각 조치 액션 버튼 */}
-                <div className="pt-3 border-t border-white/10 flex flex-wrap items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
+                {/* 상황별 즉각 조치 액션 버튼 (세련된 버건디 / 골드 / 다크그레이 조합) */}
+                <div className="pt-3 border-t border-zinc-800 flex flex-wrap items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
                   {isNeedsCheck && (
                     <>
                       <button
@@ -252,7 +252,7 @@ export default function PromotionCalendarView() {
                           setSelectedDraftId(promo.emailDraftIds[0] || 'draft-multi-dept-md');
                           setIsDraftModalOpen(true);
                         }}
-                        className="flex-1 py-1.5 px-2 bg-rose-600 hover:bg-rose-500 text-white text-[11px] font-bold rounded-lg transition-colors flex items-center justify-center gap-1 shadow-xs cursor-pointer"
+                        className="flex-1 py-1.5 px-2.5 bg-[#881337] hover:bg-[#70102D] border border-[#A3243B]/60 text-white text-[11px] font-bold rounded-md transition-colors flex items-center justify-center gap-1.5 shadow-xs cursor-pointer"
                         title="부서별 듀얼 메일 모달 열기"
                       >
                         <Send className="w-3 h-3" />
@@ -260,11 +260,11 @@ export default function PromotionCalendarView() {
                       </button>
                       <button
                         onClick={() => handleScrollToQc(promo.id)}
-                        className="py-1.5 px-3 bg-indigo-600 hover:bg-indigo-500 text-white text-[11px] font-bold rounded-lg transition-colors flex items-center gap-1 cursor-pointer shadow-xs"
+                        className="py-1.5 px-3 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-zinc-200 text-[11px] font-bold rounded-md transition-colors flex items-center gap-1 cursor-pointer"
                         title="상단 QC 워크스페이스로 스크롤하여 결함 검수 진행"
                       >
-                        <Search className="w-3 h-3" />
-                        <span>QC 검수 이동 ⬆️</span>
+                        <Search className="w-3 h-3 text-[#B69F76]" />
+                        <span>QC 검수 이동</span>
                       </button>
                     </>
                   )}
@@ -276,7 +276,7 @@ export default function PromotionCalendarView() {
                           setSelectedPromotionId(promo.id);
                           createReminderDraft(promo.id);
                         }}
-                        className="flex-1 py-1.5 px-2 bg-indigo-600 hover:bg-indigo-500 text-white text-[11px] font-bold rounded-lg transition-colors flex items-center justify-center gap-1 shadow-xs cursor-pointer"
+                        className="flex-1 py-1.5 px-2.5 bg-[#B69F76] hover:bg-[#A38B62] text-[#111111] text-[11px] font-extrabold rounded-md transition-colors flex items-center justify-center gap-1 shadow-xs cursor-pointer"
                         title="디자인 담당 D-5 지연 방지 리마인더 메일 작성"
                       >
                         <BellRing className="w-3 h-3" />
@@ -284,10 +284,10 @@ export default function PromotionCalendarView() {
                       </button>
                       <button
                         onClick={() => handleSendSlackNudge(promo)}
-                        className="py-1.5 px-2 bg-amber-600 hover:bg-amber-500 text-white text-[11px] font-bold rounded-lg transition-colors flex items-center gap-1 cursor-pointer"
+                        className="py-1.5 px-2.5 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-zinc-200 text-[11px] font-semibold rounded-md transition-colors flex items-center gap-1 cursor-pointer"
                         title="디자인 담당 채널로 실시간 슬랙 넛지 발송"
                       >
-                        <MessageSquare className="w-3 h-3" />
+                        <MessageSquare className="w-3 h-3 text-[#B69F76]" />
                         <span>슬랙 넛지</span>
                       </button>
                       <button
@@ -295,10 +295,10 @@ export default function PromotionCalendarView() {
                           setSelectedPromotionId(promo.id);
                           useOpsStore.getState().simulateReceiveLookbook(promo.id);
                         }}
-                        className="py-1.5 px-2 bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-bold rounded-lg transition-colors flex items-center gap-1 cursor-pointer"
+                        className="py-1.5 px-2.5 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-[#C7D6CE] text-[11px] font-semibold rounded-md transition-colors flex items-center gap-1 cursor-pointer"
                         title="화보 회신 수신 시뮬레이션 (마일스톤 정상 처리)"
                       >
-                        <Sparkles className="w-3 h-3" />
+                        <CheckCircle2 className="w-3 h-3 text-[#6E9481]" />
                         <span>화보도착</span>
                       </button>
                     </>
@@ -307,10 +307,10 @@ export default function PromotionCalendarView() {
                   {!isNeedsCheck && !isDelay && (
                     <button
                       onClick={() => handleScrollToQc(promo.id)}
-                      className="w-full py-1.5 px-2 bg-indigo-600 hover:bg-indigo-500 text-white text-[11px] font-bold rounded-lg transition-colors flex items-center justify-center gap-1 cursor-pointer shadow-xs"
+                      className="w-full py-1.5 px-2.5 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-zinc-200 text-[11px] font-bold rounded-md transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
                     >
-                      <span>🔍 상단 QC 워크스페이스에서 검수 진행 ⬆️</span>
-                      <ArrowRight className="w-3 h-3" />
+                      <span>상단 QC 워크스페이스에서 검수 진행</span>
+                      <ArrowRight className="w-3 h-3 text-[#B69F76]" />
                     </button>
                   )}
                 </div>
@@ -320,23 +320,23 @@ export default function PromotionCalendarView() {
         </div>
       </div>
 
-      {/* 📋 프로모션 전체 타임라인 & 상세 마일스톤 리스트 */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-xs p-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-slate-100">
+      {/* 프로모션 전체 타임라인 & 상세 마일스톤 리스트 */}
+      <div className="bg-white rounded-xl border border-zinc-200 shadow-xs p-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-zinc-100">
           <div className="flex items-center gap-2">
-            <span className="p-1.5 bg-indigo-50 text-indigo-600 rounded-lg">
+            <span className="p-1.5 bg-[#FAF9F5] text-[#8C6D3B] border border-[#E6DCCE] rounded-lg">
               <CalendarIcon className="w-5 h-5" />
             </span>
             <div>
-              <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+              <h2 className="text-base font-bold text-[#111111] flex items-center gap-2">
                 프로모션 타임라인 & 상세 마일스톤
                 {selectedMonth !== 'ALL' && (
-                  <span className="text-xs bg-indigo-100 text-indigo-800 font-extrabold px-2 py-0.5 rounded-full">
+                  <span className="text-xs bg-[#FAF9F5] text-[#8C6D3B] border border-[#E6DCCE] font-extrabold px-2 py-0.5 rounded-full">
                     {selectedMonth}월 프로모션
                   </span>
                 )}
                 {selectedLifecycle !== 'ALL' && (
-                  <span className="text-xs bg-slate-100 text-slate-700 font-bold px-2 py-0.5 rounded-full">
+                  <span className="text-xs bg-zinc-100 text-zinc-700 font-bold px-2 py-0.5 rounded-full">
                     {selectedLifecycle === 'ACTIVE'
                       ? '진행 중'
                       : selectedLifecycle === 'UPCOMING'
@@ -345,19 +345,19 @@ export default function PromotionCalendarView() {
                   </span>
                 )}
               </h2>
-              <p className="text-xs text-slate-400 mt-0.5">
+              <p className="text-xs text-zinc-500 mt-0.5">
                 D-7 소재요청부터 D-Day 오픈까지 분 단위 타임스탬프와 마일스톤 완료 여부를 실시간 추적합니다.
               </p>
             </div>
           </div>
 
-          <div className="text-xs text-slate-500 font-medium shrink-0">
-            필터링된 프로모션: <strong className="text-indigo-600 font-bold">{filteredPromotions.length}</strong> / 전체 {promotions.length}건
+          <div className="text-xs text-zinc-500 font-medium shrink-0">
+            필터링된 프로모션: <strong className="text-[#8C6D3B] font-bold">{filteredPromotions.length}</strong> / 전체 {promotions.length}건
           </div>
         </div>
 
         {filteredPromotions.length === 0 ? (
-          <div className="p-12 text-center text-slate-400 text-xs border border-dashed rounded-xl">
+          <div className="p-12 text-center text-zinc-400 text-xs border border-dashed rounded-xl">
             선택한 조건(진행단계 · 월별 · 브랜드 · 부서)에 해당하는 프로모션이 없습니다.
           </div>
         ) : (
@@ -376,52 +376,52 @@ export default function PromotionCalendarView() {
                   onClick={() => handleScrollToQc(promo.id)}
                   className={`rounded-xl border p-5 transition-all cursor-pointer ${
                     isSelected
-                      ? 'border-indigo-600 ring-2 ring-indigo-100 bg-indigo-50/20 shadow-sm'
+                      ? 'border-[#8C6D3B] ring-1 ring-[#8C6D3B]/30 bg-[#FAF9F5]/60 shadow-sm'
                       : isEnded
-                      ? 'bg-slate-50/70 border-slate-200 opacity-75 hover:opacity-100'
+                      ? 'bg-zinc-50/70 border-zinc-200 opacity-75 hover:opacity-100'
                       : isActive
-                      ? 'bg-white border-indigo-200 hover:border-indigo-300 shadow-2xs'
-                      : 'bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50/50'
+                      ? 'bg-white border-[#E6DCCE] hover:border-[#B69F76] shadow-2xs'
+                      : 'bg-white border-zinc-200 hover:border-zinc-300 hover:bg-zinc-50/50'
                   }`}
                 >
                   {/* 상단 헤더 정보: 브랜드 · 제목 · 진행단계 배지 · 업무상태 배지 */}
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span
-                        className={`px-2 py-0.5 text-xs font-bold rounded-md ${
-                          BRAND_COLORS[promo.brand] || 'bg-slate-800 text-white'
+                        className={`px-2 py-0.5 text-xs font-bold rounded ${
+                          BRAND_COLORS[promo.brand] || 'bg-zinc-800 text-white'
                         }`}
                       >
                         {promo.brand}
                       </span>
 
-                      {/* 1. 종료/진행중/진행예정 라이프사이클 배지 (명확한 구분) */}
+                      {/* 1. 종료/진행중/진행예정 라이프사이클 배지 */}
                       {isActive && (
-                        <span className="px-2 py-0.5 text-xs font-bold rounded-full bg-rose-100 text-rose-800 border border-rose-300 flex items-center gap-1">
-                          <Flame className="w-3 h-3 text-rose-600" />
+                        <span className="px-2 py-0.5 text-xs font-bold rounded-full bg-[#FDF4F5] text-[#881337] border border-[#ECC7CE] flex items-center gap-1">
+                          <Flame className="w-3 h-3 text-[#881337]" />
                           <span>진행 중 (당월 집중)</span>
                         </span>
                       )}
                       {lifecycle === 'UPCOMING' && (
-                        <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-sky-50 text-sky-700 border border-sky-200 flex items-center gap-1">
-                          <Hourglass className="w-3 h-3 text-sky-500" />
+                        <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-[#FAF8F3] text-[#70562E] border border-[#E5D8C1] flex items-center gap-1">
+                          <Hourglass className="w-3 h-3 text-[#8C6D3B]" />
                           <span>진행 예정</span>
                         </span>
                       )}
                       {isEnded && (
-                        <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-slate-200 text-slate-600 border border-slate-300 flex items-center gap-1">
-                          <CheckCircle className="w-3 h-3 text-slate-500" />
+                        <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-zinc-100 text-zinc-600 border border-zinc-200 flex items-center gap-1">
+                          <CheckCircle className="w-3 h-3 text-zinc-500" />
                           <span>행사 종료 (운영 완료)</span>
                         </span>
                       )}
 
-                      <h3 className={`text-base font-bold ${isEnded ? 'text-slate-600' : 'text-slate-900'}`}>
+                      <h3 className={`text-base font-bold ${isEnded ? 'text-zinc-600' : 'text-[#111111]'}`}>
                         {promo.title}
                       </h3>
 
-                      {/* 2. 업무 세부 상태 배지 (종료 행사에서는 '게시 준비 완료'를 숨기고 '아카이빙 완료'만 표기) */}
+                      {/* 2. 업무 세부 상태 배지 */}
                       {isEnded ? (
-                        <span className="px-2 py-0.5 text-xs rounded-full border bg-slate-100 text-slate-600 border-slate-300 font-medium">
+                        <span className="px-2 py-0.5 text-xs rounded-full border bg-zinc-100 text-zinc-600 border-zinc-200 font-medium">
                           아카이빙 (결산 완료)
                         </span>
                       ) : (
@@ -438,9 +438,9 @@ export default function PromotionCalendarView() {
                             setSelectedDraftId(promo.emailDraftIds[0] || null);
                             setIsDraftModalOpen(true);
                           }}
-                          className="inline-flex items-center gap-1 text-[11px] font-semibold text-rose-700 bg-rose-100 hover:bg-rose-200 px-2.5 py-0.5 rounded-full border border-rose-300 transition-colors cursor-pointer"
+                          className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#881337] bg-[#FDF4F5] hover:bg-[#F9E5E8] px-2.5 py-0.5 rounded-full border border-[#ECC7CE] transition-colors cursor-pointer"
                         >
-                          <AlertTriangle className="w-3 h-3 text-rose-600" />
+                          <AlertTriangle className="w-3 h-3 text-[#881337]" />
                           <span>재확인 메일 초안 보기</span>
                         </button>
                       )}
@@ -448,63 +448,63 @@ export default function PromotionCalendarView() {
                       {/* 회신 지연 경고 & 리마인더 발송 & 회신 도착 시뮬레이션 버튼 */}
                       {isDelayPending && (
                         <div className="flex items-center gap-1.5 flex-wrap" onClick={(e) => e.stopPropagation()}>
-                          <span className="text-[11px] font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200 flex items-center gap-1">
-                            <Clock className="w-3 h-3" />
+                          <span className="text-[11px] font-semibold text-[#70562E] bg-[#FAF8F3] px-2 py-0.5 rounded-full border border-[#E5D8C1] flex items-center gap-1">
+                            <Clock className="w-3 h-3 text-[#8C6D3B]" />
                             디자인 담당 회신 대기 (D-5)
                           </span>
                           <button
                             onClick={() => createReminderDraft(promo.id)}
-                            className="inline-flex items-center gap-1 text-[11px] font-bold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 px-2.5 py-0.5 rounded-full border border-indigo-200 transition-colors cursor-pointer"
+                            className="inline-flex items-center gap-1 text-[11px] font-bold text-white bg-[#18181B] hover:bg-[#27272A] px-2.5 py-0.5 rounded-full border border-zinc-800 transition-colors cursor-pointer"
                           >
-                            <BellRing className="w-3 h-3" />
-                            <span>✉️ 리마인더 메일</span>
+                            <BellRing className="w-3 h-3 text-[#B69F76]" />
+                            <span>리마인더 메일</span>
                           </button>
                           <button
                             onClick={() => handleSendSlackNudge(promo)}
-                            className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-800 bg-amber-50 hover:bg-amber-100 px-2.5 py-0.5 rounded-full border border-amber-200 transition-colors cursor-pointer"
+                            className="inline-flex items-center gap-1 text-[11px] font-bold text-[#70562E] bg-[#FAF8F3] hover:bg-[#F3EDE1] px-2.5 py-0.5 rounded-full border border-[#E5D8C1] transition-colors cursor-pointer"
                           >
-                            <MessageSquare className="w-3 h-3" />
-                            <span>⚡ 슬랙 넛지</span>
+                            <MessageSquare className="w-3 h-3 text-[#8C6D3B]" />
+                            <span>슬랙 넛지</span>
                           </button>
                           <button
                             onClick={() => useOpsStore.getState().simulateReceiveLookbook(promo.id)}
-                            className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-800 bg-emerald-100 hover:bg-emerald-200 px-2.5 py-0.5 rounded-full border border-emerald-300 transition-colors cursor-pointer"
+                            className="inline-flex items-center gap-1 text-[11px] font-bold text-[#2D4A3E] bg-[#F2F5F3] hover:bg-[#E3EBE6] px-2.5 py-0.5 rounded-full border border-[#C7D6CE] transition-colors cursor-pointer"
                           >
-                            <Sparkles className="w-3 h-3 text-emerald-600" />
-                            <span>⚡ 화보 회신 도착</span>
+                            <CheckCircle2 className="w-3 h-3 text-[#2D4A3E]" />
+                            <span>화보 회신 도착</span>
                           </button>
                         </div>
                       )}
                     </div>
 
-                    <div className="flex items-center gap-2 text-xs text-slate-500 shrink-0" onClick={(e) => e.stopPropagation()}>
+                    <div className="flex items-center gap-2 text-xs text-zinc-500 shrink-0" onClick={(e) => e.stopPropagation()}>
                       <button
                         onClick={() => handleScrollToQc(promo.id)}
-                        className="px-2.5 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold rounded-lg border border-indigo-200 transition-colors flex items-center gap-1 cursor-pointer"
+                        className="px-2.5 py-1 bg-[#FAF9F5] hover:bg-[#F3EFE6] text-[#111111] font-bold rounded-md border border-[#E6DCCE] transition-colors flex items-center gap-1 cursor-pointer"
                       >
-                        <Search className="w-3 h-3" />
-                        <span>QC 검수 ⬆️</span>
+                        <Search className="w-3 h-3 text-[#8C6D3B]" />
+                        <span>QC 검수</span>
                       </button>
                       <ChevronRight
                         className={`w-4 h-4 transition-transform ${
-                          isSelected ? 'text-indigo-600 rotate-90 md:rotate-0' : 'text-slate-400'
+                          isSelected ? 'text-[#8C6D3B] rotate-90 md:rotate-0' : 'text-zinc-400'
                         }`}
                       />
                     </div>
                   </div>
 
-                  {/* 분 단위 상태 타임스탬프 히스토리 바 (클릭 시 전사 소통 & 메일 히스토리 모달 오픈) */}
+                  {/* 분 단위 상태 타임스탬프 히스토리 바 */}
                   <div
                     onClick={(e) => {
                       e.stopPropagation();
                       setHistoryModalPromo(promo);
                     }}
-                    className="bg-slate-50 hover:bg-indigo-50/50 rounded-lg p-3 border border-slate-200/80 mb-3 flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-500 cursor-pointer transition-colors group"
+                    className="bg-[#FAF9F5] hover:bg-[#F3EFE6] rounded-lg p-3 border border-[#E6DCCE]/80 mb-3 flex flex-wrap items-center justify-between gap-2 text-[11px] text-zinc-600 cursor-pointer transition-colors group"
                     title="클릭 시 기획 접수부터 메일·슬랙 발송까지 전체 소통 로그를 팝업으로 엽니다"
                   >
                     <div className="flex flex-wrap items-center gap-2.5">
-                      <div className="flex items-center gap-1 font-bold text-slate-800">
-                        <History className="w-3.5 h-3.5 text-indigo-600" />
+                      <div className="flex items-center gap-1 font-bold text-[#111111]">
+                        <History className="w-3.5 h-3.5 text-[#8C6D3B]" />
                         <span>진행 타임스탬프:</span>
                       </div>
                       <span>• 기획안 접수: <strong>{promo.timestamps.plannedAt}</strong></span>
@@ -515,19 +515,19 @@ export default function PromotionCalendarView() {
                         <span>• 기획 엑셀·화보 회신: <strong>{promo.timestamps.dataReceivedAt}</strong></span>
                       )}
                       {promo.timestamps.issueDetectedAt && (
-                        <span className="text-rose-600 font-bold">• 사전 QC 결함 발견: <strong>{promo.timestamps.issueDetectedAt}</strong></span>
+                        <span className="text-[#881337] font-bold">• 사전 QC 결함 발견: <strong>{promo.timestamps.issueDetectedAt}</strong></span>
                       )}
                       {promo.timestamps.qcPassedAt && (
-                        <span className="text-emerald-600 font-bold">• 사전 QC 통과: <strong>{promo.timestamps.qcPassedAt}</strong></span>
+                        <span className="text-[#2D4A3E] font-bold">• 사전 QC 통과: <strong>{promo.timestamps.qcPassedAt}</strong></span>
                       )}
                       {promo.timestamps.publishedAt && (
-                        <span className="text-teal-700 font-bold">• 자사몰 오픈 완료: <strong>{promo.timestamps.publishedAt}</strong></span>
+                        <span className="text-[#1D3028] font-bold">• 자사몰 오픈 완료: <strong>{promo.timestamps.publishedAt}</strong></span>
                       )}
                     </div>
 
-                    <span className="inline-flex items-center gap-1 text-[11px] font-bold text-indigo-700 bg-white group-hover:bg-indigo-600 group-hover:text-white px-2.5 py-1 rounded-lg border border-indigo-200 transition-all shadow-2xs">
-                      <History className="w-3 h-3" />
-                      <span>📜 전사 소통 & 메일 히스토리</span>
+                    <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#111111] bg-white group-hover:bg-[#111111] group-hover:text-white px-2.5 py-1 rounded-md border border-[#E6DCCE] transition-all shadow-2xs">
+                      <History className="w-3 h-3 text-[#8C6D3B] group-hover:text-[#B69F76]" />
+                      <span>전사 소통 & 메일 히스토리</span>
                     </span>
                   </div>
 
@@ -540,30 +540,30 @@ export default function PromotionCalendarView() {
                           key={m.code}
                           className={`p-2.5 rounded-lg border text-xs flex flex-col justify-between ${
                             isDone
-                              ? 'bg-emerald-50/60 border-emerald-200 text-emerald-900'
-                              : 'bg-slate-50 border-slate-200 text-slate-600'
+                              ? 'bg-[#F2F5F3]/80 border-[#C7D6CE] text-[#1D3028]'
+                              : 'bg-zinc-50 border-zinc-200 text-zinc-600'
                           }`}
                         >
                           <div className="flex items-center justify-between gap-1 mb-1">
                             <span
                               className={`font-mono text-[10px] font-bold px-1.5 py-0.2 rounded ${
-                                isDone ? 'bg-emerald-200 text-emerald-900' : 'bg-slate-200 text-slate-700'
+                                isDone ? 'bg-[#C7D6CE]/60 text-[#1D3028]' : 'bg-zinc-200 text-zinc-700'
                               }`}
                             >
                               {m.code.replace('_MINUS_', '-').replace('_DAY', '-Day')}
                             </span>
                             {isDone ? (
-                              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                              <CheckCircle2 className="w-3.5 h-3.5 text-[#2D4A3E]" />
                             ) : (
-                              <span className="text-[10px] text-slate-400 font-medium">대기</span>
+                              <span className="text-[10px] text-zinc-400 font-medium">대기</span>
                             )}
                           </div>
                           <p className="text-[11px] font-medium leading-snug line-clamp-2 my-1">
                             {m.label}
                           </p>
-                          <div className="text-[10px] text-slate-400 flex items-center justify-between mt-1">
+                          <div className="text-[10px] text-zinc-400 flex items-center justify-between mt-1">
                             <span>{m.targetDate}</span>
-                            <span className="font-semibold text-slate-500">[{m.department}]</span>
+                            <span className="font-semibold text-zinc-500">[{m.department}]</span>
                           </div>
                         </div>
                       );

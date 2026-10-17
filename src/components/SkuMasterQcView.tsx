@@ -432,10 +432,10 @@ export default function SkuMasterQcView({ onOpenDualDraftModal }: SkuMasterQcVie
             <span
               className={`px-2 py-0.5 rounded text-[11px] font-black ${
                 selectedPromo.brand === 'SHESMISS'
-                  ? 'bg-[#881337]/10 text-[#881337]'
+                  ? 'bg-[#18181B] text-white'
                   : selectedPromo.brand === 'LIST'
-                  ? 'bg-[#14532D]/10 text-[#14532D]'
-                  : 'bg-[#0F172A]/10 text-[#0F172A]'
+                  ? 'bg-[#5C4930] text-white'
+                  : 'bg-[#F5EFE6] text-[#27272A] border border-[#D6C7B2]'
               }`}
             >
               {selectedPromo.brand}

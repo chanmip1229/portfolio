@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>Antigravity 2-Month Journey - Executive Summary</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      width: 720pt;
+      height: 405pt;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #0f141c;
+      color: #f1f5f9;
+      padding: 32pt 48pt;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .header-tag {
+      font-size: 9pt;
+      font-weight: 600;
+      color: #38bdf8;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 4pt;
+    }
+    .stage-card {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 8pt;
+      padding: 14pt 12pt;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+    .stage-card.active {
+      background: rgba(56, 189, 248, 0.04);
+      border-color: rgba(56, 189, 248, 0.3);
+    }
+    .stage-num {
+      font-size: 9pt;
+      font-weight: 700;
+      color: #38bdf8;
+      margin-bottom: 4pt;
+    }
+    .stage-title {
+      font-size: 11pt;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 6pt;
+      line-height: 1.3;
+    }
+    .stage-desc {
+      font-size: 8.5pt;
+      color: #94a3b8;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <div>
+    <p class="header-tag">Executive Overview</p>
+    <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+      <h2 style="font-size: 22pt; font-weight: 700; color: #ffffff; letter-spacing: -0.02em;">
+        2달간의 프로덕트 진화 & 핵심 성장 단계
+      </h2>
+      <p style="font-size: 10pt; color: #64748b;">초경량 유틸리티에서 엔터프라이즈 코파일럿으로</p>
+    </div>
+  </div>
+
+  <!-- 4-Stage Roadmap -->
+  <div style="display: flex; gap: 10pt; margin: 16pt 0;">
+    <!-- Stage 1 -->
+    <div class="stage-card">
+      <div>
+        <p class="stage-num">PHASE 01 (09.01 - 10.01)</p>
+        <p class="stage-title">초경량 No-Build 사내 도구</p>
+        <p class="stage-desc">
+          설치·빌드 과정 없이 단일 HTML 파일로 즉시 배포 가능한 실무 도구 4종 구축<br>
+          <span style="color: #cbd5e1; font-weight: 500;">· 내선번호부, 연차계산기, 비품관리, 의무교육판</span>
+        </p>
+      </div>
+      <div style="margin-top: 8pt; padding-top: 6pt; border-top: 1px solid rgba(255,255,255,0.06);">
+        <p style="font-size: 8pt; color: #38bdf8; font-weight: 600;">KEY : 즉각적 업무 효율화</p>
+      </div>
+    </div>
+
+    <!-- Stage 2 -->
+    <div class="stage-card">
+      <div>
+        <p class="stage-num">PHASE 02 (10.02 - 10.05)</p>
+        <p class="stage-title">Next.js & 개인화 러닝 앱</p>
+        <p class="stage-desc">
+          컴포넌트 기반 웹 프레임워크 도입 및 복합 데이터 처리(PDF, 오디오, iCloud 메모) 연동<br>
+          <span style="color: #cbd5e1; font-weight: 500;">· 경비 정산 검사기, OPIc AL 학습 앱</span>
+        </p>
+      </div>
+      <div style="margin-top: 8pt; padding-top: 6pt; border-top: 1px solid rgba(255,255,255,0.06);">
+        <p style="font-size: 8pt; color: #818cf8; font-weight: 600;">KEY : 풀스택 아키텍처 전환</p>
+      </div>
+    </div>
+
+    <!-- Stage 3 -->
+    <div class="stage-card">
+      <div>
+        <p class="stage-num">PHASE 03 (10.06 - 10.08)</p>
+        <p class="stage-title">Supabase MCP & 도구 통합</p>
+        <p class="stage-desc">
+          에이전트가 MCP로 Cloud DB를 직접 제어하고, 기존 3개 프로덕트를 모노레포 허브로 통합<br>
+          <span style="color: #cbd5e1; font-weight: 500;">· branch-sales, 리뷰분석기, 통합 허브</span>
+        </p>
+      </div>
+      <div style="margin-top: 8pt; padding-top: 6pt; border-top: 1px solid rgba(255,255,255,0.06);">
+        <p style="font-size: 8pt; color: #38bdf8; font-weight: 600;">KEY : 클라우드 BaaS + MCP</p>
+      </div>
+    </div>
+
+    <!-- Stage 4 -->
+    <div class="stage-card active">
+      <div>
+        <p class="stage-num" style="color: #c084fc;">PHASE 04 (10.12 - 10.16)</p>
+        <p class="stage-title">AI Commerce Ops & Agentic</p>
+        <p class="stage-desc">
+          85턴 심층 페어링으로 패션 이커머스 운영 자동화 코파일럿 완성 및 Aside 브라우저 연동<br>
+          <span style="color: #cbd5e1; font-weight: 500;">· Ops Copilot, leave-app, Aside 스킬</span>
+        </p>
+      </div>
+      <div style="margin-top: 8pt; padding-top: 6pt; border-top: 1px solid rgba(255,255,255,0.06);">
+        <p style="font-size: 8pt; color: #c084fc; font-weight: 600;">KEY : 자율 에이전트 워크플로우</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Key Metrics Row -->
+  <div style="display: flex; gap: 12pt; background: rgba(255, 255, 255, 0.02); border-radius: 6pt; padding: 10pt 16pt; align-items: center; justify-content: space-between;">
+    <div style="display: flex; align-items: center; gap: 8pt;">
+      <div style="width: 6pt; height: 6pt; background: #38bdf8; border-radius: 50%;"></div>
+      <p style="font-size: 9pt; color: #94a3b8;">
+        <strong style="color: #ffffff;">누적 데이터 처리:</strong> 지점 매출 CSV 적재, 리뷰 감성 분석, 연간 프로모션 캘린더 파싱
+      </p>
+    </div>
+    <div style="display: flex; align-items: center; gap: 8pt;">
+      <div style="width: 6pt; height: 6pt; background: #818cf8; border-radius: 50%;"></div>
+      <p style="font-size: 9pt; color: #94a3b8;">
+        <strong style="color: #ffffff;">인프라 연동:</strong> Vercel 배포, Supabase Cloud DB, Aside Browser Integration
+      </p>
+    </div>
+    <p style="font-size: 10pt; color: #64748b; font-weight: 500;">02 / 10</p>
+  </div>
+</body>
+</html>

@@ -1063,27 +1063,27 @@ export default function AnnualScheduleView({ onNavigateToQc }: AnnualScheduleVie
                               width: coords.width,
                               minWidth: '56px',
                               backgroundColor: timing.isEnded
-                                ? '#f1f5f9'
+                                ? '#f4f4f5'
                                 : isCompleted
-                                ? '#ecfdf5'
+                                ? '#F2F5F3'
                                 : blockerCount > 0
-                                ? '#fff1f2'
+                                ? '#FDF4F5'
                                 : timing.statusType === 'RUNNING'
-                                ? '#fff7ed'
+                                ? '#FAF8F3'
                                 : timing.isD30Active
-                                ? '#ffe4e6'
-                                : '#f8fafc',
+                                ? '#F9E5E8'
+                                : '#FAF9F5',
                               borderColor: timing.isEnded
-                                ? '#cbd5e1'
+                                ? '#d4d4d8'
                                 : isCompleted
-                                ? '#a7f3d0'
+                                ? '#C7D6CE'
                                 : blockerCount > 0
-                                ? '#fecdd3'
+                                ? '#ECC7CE'
                                 : timing.statusType === 'RUNNING'
-                                ? '#fdba74'
+                                ? '#D1BC98'
                                 : timing.isD30Active
-                                ? '#f43f5e'
-                                : '#e2e8f0',
+                                ? '#881337'
+                                : '#e4e4e7',
                             }}
                             title={`${promo.title} (${promo.startDate} ~ ${promo.endDate}) - 클릭하여 QC 열기`}
                           >

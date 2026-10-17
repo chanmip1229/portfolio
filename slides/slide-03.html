@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>Antigravity 2-Month Journey - Phase 1</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      width: 720pt;
+      height: 405pt;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #0f141c;
+      color: #f1f5f9;
+      padding: 32pt 48pt;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .header-tag {
+      font-size: 9pt;
+      font-weight: 600;
+      color: #38bdf8;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 4pt;
+    }
+    .grid-2x2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12pt;
+      margin: 12pt 0;
+    }
+    .card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8pt;
+      padding: 12pt 14pt;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .card-badge {
+      display: inline-block;
+      padding: 2pt 8pt;
+      background: rgba(56, 189, 248, 0.1);
+      border-radius: 4pt;
+      font-size: 8pt;
+      font-weight: 600;
+      color: #38bdf8;
+      margin-bottom: 6pt;
+    }
+    .card-title {
+      font-size: 11pt;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 4pt;
+    }
+    .card-desc {
+      font-size: 8.5pt;
+      color: #94a3b8;
+      line-height: 1.45;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <div>
+    <p class="header-tag">PHASE 01 · 2026.09.01 - 2026.10.01</p>
+    <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+      <h2 style="font-size: 22pt; font-weight: 700; color: #ffffff; letter-spacing: -0.02em;">
+        초경량 No-Build 사내 업무 도구 개발
+      </h2>
+      <p style="font-size: 10pt; color: #38bdf8; font-weight: 500;">Zero-Dependency · Single HTML Delivery</p>
+    </div>
+  </div>
+
+  <!-- 2x2 Feature Grid -->
+  <div class="grid-2x2">
+    <!-- App 1 -->
+    <div class="card">
+      <div>
+        <span class="card-badge">Session #87f6d0f8</span>
+        <h3 class="card-title">사내 내선번호 실시간 안내판</h3>
+        <p class="card-desc">
+          설치 없는 단일 파일 웹앱으로 실시간 이름 검색, 부서별 고유 컬러 태그, 팀별 필터링을 구현. 임직원 주소록의 검색 피로도를 즉각 해소함.
+        </p>
+      </div>
+      <div style="margin-top: 6pt; padding-top: 6pt; border-top: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: space-between;">
+        <span style="font-size: 7.5pt; color: #64748b;">요구사항: 검색 + 팀 필터링</span>
+        <span style="font-size: 7.5pt; color: #cbd5e1; font-weight: 600;">HTML 1개 배포</span>
+      </div>
+    </div>
+
+    <!-- App 2 -->
+    <div class="card">
+      <div>
+        <span class="card-badge">Session #036bfb35</span>
+        <h3 class="card-title">한결인테리어 맞춤형 연차 계산기</h3>
+        <p class="card-desc">
+          입사일 및 기사용 일수 기반 자동 연차 산정 엔진. 기본 법정 15일이 아닌 <strong>사내 특수 내규(1년차 17일)</strong>와 차기 연차 발생 D-day를 자동 산출.
+        </p>
+      </div>
+      <div style="margin-top: 6pt; padding-top: 6pt; border-top: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: space-between;">
+        <span style="font-size: 7.5pt; color: #64748b;">요구사항: 사내 특수 내규 산식 반영</span>
+        <span style="font-size: 7.5pt; color: #cbd5e1; font-weight: 600;">D-day 카운터</span>
+      </div>
+    </div>
+
+    <!-- App 3 -->
+    <div class="card">
+      <div>
+        <span class="card-badge">Session #2c12df17 · #f4232f10</span>
+        <h3 class="card-title">비품 재고 관리 & 오출고 방지판</h3>
+        <p class="card-desc">
+          PRD를 작성하여 현장-대장 간 수량 불일치 문제 해결. 직관적인 실시간 수량 차감 UI 및 현장 오작동을 복구하기 위한 <strong>실수 방지용 '+1 복구' 기능</strong> 탑재.
+        </p>
+      </div>
+      <div style="margin-top: 6pt; padding-top: 6pt; border-top: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: space-between;">
+        <span style="font-size: 7.5pt; color: #64748b;">요구사항: PRD 기반 점진적 기능 구현</span>
+        <span style="font-size: 7.5pt; color: #cbd5e1; font-weight: 600;">실수 복구 UI</span>
+      </div>
+    </div>
+
+    <!-- App 4 -->
+    <div class="card">
+      <div>
+        <span class="card-badge">Session #409e2db8</span>
+        <h3 class="card-title">법정 의무교육 이수 현황판</h3>
+        <p class="card-desc">
+          인사 관리에서 혼동하기 쉬운 <strong>'회계연도 기준(1.1~12.31)'과 '롤링 12개월'</strong>의 인정 기준을 정확히 분리·판정하는 로직을 웹 화면으로 시각화.
+        </p>
+      </div>
+      <div style="margin-top: 6pt; padding-top: 6pt; border-top: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: space-between;">
+        <span style="font-size: 7.5pt; color: #64748b;">요구사항: 복잡한 인사 법정 규정 산식</span>
+        <span style="font-size: 7.5pt; color: #cbd5e1; font-weight: 600;">유효기간 검증</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Key Takeaway Banner -->
+  <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 10pt;">
+    <p style="font-size: 9pt; color: #94a3b8;">
+      💡 <strong>Lesson Learned:</strong> 복잡한 환경 설정 없이도 단일 HTML과 대화형 피드백을 통해 1시간 이내에 실무 도구를 완성하는 민첩성을 확보함.
+    </p>
+    <p style="font-size: 10pt; color: #64748b; font-weight: 500;">03 / 10</p>
+  </div>
+</body>
+</html>

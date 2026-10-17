@@ -721,8 +721,8 @@ export default function MobileLivePreview({ promotionId }: MobileLivePreviewProp
                             alt={prod.productName}
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                           />
-                          {/* 할인율 뱃지 (IDF Mall Vivid Red) */}
-                          <span className="absolute top-1.5 left-1.5 bg-[#E11D48] text-white text-[10px] font-black px-1.5 py-0.2 rounded-sm shadow-xs font-brand">
+                          {/* 할인율 뱃지 (IDF Mall Deep Burgundy) */}
+                          <span className="absolute top-1.5 left-1.5 bg-[#881337] text-white text-[10px] font-black px-1.5 py-0.2 rounded-sm shadow-xs font-brand">
                             {prod.displayDiscountRate}%
                           </span>
 

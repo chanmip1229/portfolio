@@ -224,7 +224,7 @@ export default function Home() {
                     </span>
                   </div>
                   <p className="text-[11px] text-zinc-600 leading-relaxed">
-                    사전 검수 소요시간 <strong className="text-zinc-900">91% 단축</strong> (기존 120분 ➔ 10분), 오픈 당일 치명적 결함 <strong className="text-zinc-900">0건 달성</strong>, 부서 간 확인 소통 리드타임 50% 단축
+                    사전 검수 소요시간 <strong className="text-zinc-900">91% 단축</strong> (기존 190분 ➔ 17분), 오픈 당일 치명적 결함 <strong className="text-zinc-900">0건 달성</strong>, 부서 간 확인 소통 리드타임 50% 단축
                     <span className="block mt-1 text-[10px] text-emerald-600 font-medium">※ 시연 시나리오 데이터 측정 기준</span>
                   </p>
                 </div>
@@ -764,10 +764,10 @@ export default function Home() {
         {activeTab === 'LIVE_PREVIEW' && (
           <div className="space-y-6">
             {/* STEP 3 선택된 기획전 동기화 안내 바 */}
-            <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+            <div className="bg-white rounded-xl border border-zinc-200 p-4 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="font-extrabold text-indigo-900 flex items-center gap-1.5">
-                  <Sparkles className="w-4 h-4 text-indigo-600" />
+                <span className="font-extrabold text-[#111111] flex items-center gap-1.5">
+                  <Sparkles className="w-4 h-4 text-[#8C6D3B]" />
                   <span>STEP 03 프리뷰 연동 기획전:</span>
                 </span>
                 {selectedPromo ? (
@@ -775,27 +775,27 @@ export default function Home() {
                     <span
                       className={`px-2 py-0.5 rounded text-[11px] font-black ${
                         selectedPromo.brand === 'SHESMISS'
-                          ? 'bg-purple-100 text-purple-800'
+                          ? 'bg-[#18181B] text-white'
                           : selectedPromo.brand === 'LIST'
-                          ? 'bg-blue-100 text-blue-800'
-                          : 'bg-emerald-100 text-emerald-800'
+                          ? 'bg-[#5C4930] text-white'
+                          : 'bg-[#F5EFE6] text-[#27272A] border border-[#D6C7B2]'
                       }`}
                     >
                       {selectedPromo.brand}
                     </span>
-                    <span className="font-black text-slate-900 text-sm">
+                    <span className="font-black text-[#111111] text-sm">
                       {selectedPromo.title}
                     </span>
-                    <span className="bg-slate-100 font-mono text-[11px] text-slate-600 px-2 py-0.5 rounded-md border border-slate-200 font-bold">
+                    <span className="bg-zinc-100 font-mono text-[11px] text-zinc-700 px-2 py-0.5 rounded-md border border-zinc-200 font-bold">
                       {selectedPromo.products.length}종 상품 편성
                     </span>
-                    <span className="text-emerald-700 bg-emerald-50 border border-emerald-200 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
-                      <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                    <span className="text-[#2D4A3E] bg-[#F2F5F3] border border-[#C7D6CE] text-[10px] font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1">
+                      <CheckCircle2 className="w-3 h-3 text-[#2D4A3E]" />
                       <span>STEP 01·02와 100% 데이터 동기화됨</span>
                     </span>
                   </>
                 ) : (
-                  <span className="text-slate-500">선택된 기획전이 없습니다.</span>
+                  <span className="text-zinc-500">선택된 기획전이 없습니다.</span>
                 )}
               </div>
 
@@ -805,10 +805,10 @@ export default function Home() {
                   setActiveTab('QC_CENTER');
                   setQcSubTab('CAMPAIGN_QC');
                 }}
-                className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold transition-colors cursor-pointer flex items-center gap-1 shrink-0"
+                className="px-3 py-1.5 bg-[#FAF9F5] hover:bg-[#F3EFE6] text-[#111111] border border-[#E6DCCE] rounded-lg font-bold transition-colors cursor-pointer flex items-center gap-1 shrink-0"
               >
                 <span>STEP 02 QC 센터 결과 확인하기</span>
-                <ArrowRight className="w-3 h-3" />
+                <ArrowRight className="w-3 h-3 text-[#8C6D3B]" />
               </button>
             </div>
 
@@ -859,7 +859,7 @@ export default function Home() {
           <div className="relative">
             <ShieldCheck className={`w-4.5 h-4.5 ${activeTab === 'QC_CENTER' ? 'text-[#111111]' : ''}`} />
             {selectedPromo && selectedPromo.qcIssues.some((i) => i.severity === 'BLOCKER') && (
-              <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-[#E11D48]"></span>
+              <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-[#881337]"></span>
             )}
           </div>
           <span className="text-[10px]">QC 검증</span>

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>Antigravity 2-Month Journey - Master Timeline</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      width: 720pt;
+      height: 405pt;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #0f141c;
+      color: #f1f5f9;
+      padding: 30pt 44pt;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .header-tag {
+      font-size: 9pt;
+      font-weight: 600;
+      color: #38bdf8;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 4pt;
+    }
+    .timeline-container {
+      position: relative;
+      margin: 20pt 0 10pt;
+    }
+    .timeline-bar {
+      position: absolute;
+      top: 14pt;
+      left: 20pt;
+      right: 20pt;
+      height: 2pt;
+      background: linear-gradient(90deg, #38bdf8, #818cf8, #c084fc, #38bdf8);
+      z-index: 0;
+    }
+    .node-row {
+      display: flex;
+      justify-content: space-between;
+      position: relative;
+      z-index: 1;
+    }
+    .timeline-node {
+      width: 108pt;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    .node-dot {
+      width: 18pt;
+      height: 18pt;
+      border-radius: 50%;
+      background: #0f141c;
+      border: 3pt solid #38bdf8;
+      margin-bottom: 10pt;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .node-dot.purple { border-color: #c084fc; }
+    .node-dot.indigo { border-color: #818cf8; }
+    .node-dot.emerald { border-color: #34d399; }
+    .node-date {
+      font-size: 8pt;
+      font-weight: 700;
+      color: #38bdf8;
+      margin-bottom: 3pt;
+    }
+    .node-title {
+      font-size: 9.5pt;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 4pt;
+      line-height: 1.25;
+    }
+    .node-desc {
+      font-size: 7.5pt;
+      color: #94a3b8;
+      line-height: 1.35;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <div>
+    <p class="header-tag">CHRONOLOGICAL MAP</p>
+    <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+      <h2 style="font-size: 22pt; font-weight: 700; color: #ffffff; letter-spacing: -0.02em;">
+        2달간의 안티그래비티 작업 타임라인 총괄
+      </h2>
+      <p style="font-size: 10pt; color: #64748b;">2026년 9월 1일 ~ 10월 16일 세션 데이터 전수 조사</p>
+    </div>
+  </div>
+
+  <!-- Timeline Flow -->
+  <div class="timeline-container">
+    <div class="timeline-bar"></div>
+    <div class="node-row">
+      <!-- Node 1 -->
+      <div class="timeline-node">
+        <div class="node-dot"></div>
+        <p class="node-date">09.01 - 09.30</p>
+        <h4 class="node-title">No-Build 유틸리티</h4>
+        <p class="node-desc">
+          · 사내 내선번호 안내판<br>
+          · 한결인테리어 연차 계산기<br>
+          · Vercel 초기 배포
+        </p>
+      </div>
+
+      <!-- Node 2 -->
+      <div class="timeline-node">
+        <div class="node-dot indigo"></div>
+        <p class="node-date" style="color: #818cf8;">10.01 - 10.02</p>
+        <h4 class="node-title">PRD & Next.js 전환</h4>
+        <p class="node-desc">
+          · 비품 재고 관리판 (+1 복구)<br>
+          · 법정 의무교육 이수판<br>
+          · 경비 정산 검사기 시작
+        </p>
+      </div>
+
+      <!-- Node 3 -->
+      <div class="timeline-node">
+        <div class="node-dot emerald"></div>
+        <p class="node-date" style="color: #34d399;">10.05 - 10.08</p>
+        <h4 class="node-title">멀티미디어 & Cloud DB</h4>
+        <p class="node-desc">
+          · OPIc AL 학습 앱 (PDF/MP3)<br>
+          · Supabase MCP 서울 리전<br>
+          · 지점매출/리뷰분석 3종 통합
+        </p>
+      </div>
+
+      <!-- Node 4 -->
+      <div class="timeline-node">
+        <div class="node-dot purple"></div>
+        <p class="node-date" style="color: #c084fc;">10.12</p>
+        <h4 class="node-title">Ops Copilot (85T)</h4>
+        <p class="node-desc">
+          · 패션 이커머스 운영 자동화<br>
+          · 캘린더 파싱 & 요청 발송<br>
+          · 오류 검증 메일 임시보관함
+        </p>
+      </div>
+
+      <!-- Node 5 -->
+      <div class="timeline-node">
+        <div class="node-dot"></div>
+        <p class="node-date">10.13 - 10.16</p>
+        <h4 class="node-title">인사결재 & 스킬 확장</h4>
+        <p class="node-desc">
+          · 사내 연차 신청함(leave-app)<br>
+          · Aside 브라우저 세션 연계<br>
+          · slides-grab 프레젠테이션
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Key Milestone Matrix -->
+  <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 6pt; padding: 10pt 16pt; display: flex; justify-content: space-between; align-items: center;">
+    <div>
+      <p style="font-size: 8pt; color: #38bdf8; font-weight: 700;">ACCUMULATED VALUE</p>
+      <p style="font-size: 8.5pt; color: #cbd5e1; margin-top: 2pt;">
+        단순 스크립트 작성에 그치지 않고, <strong>기획(PRD) ➔ 설계 ➔ DB 프로비저닝 ➔ 배포 ➔ 에이전트 확장</strong>까지의 전 주기를 완성
+      </p>
+    </div>
+    <div style="text-align: right; border-left: 1px solid rgba(255,255,255,0.08); padding-left: 16pt;">
+      <p style="font-size: 8pt; color: #94a3b8;">TOTAL TIME SPAN</p>
+      <p style="font-size: 11pt; font-weight: 700; color: #ffffff;">46 Days Active</p>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 8pt;">
+    <p style="font-size: 8.5pt; color: #94a3b8;">
+      📊 각 마일스톤은 현업 사용자의 실제 페인포인트(업무 착오, 반복 작업, 학습 필요성)로부터 출발하여 실시간으로 해결됨
+    </p>
+    <p style="font-size: 10pt; color: #64748b; font-weight: 500;">08 / 10</p>
+  </div>
+</body>
+</html>

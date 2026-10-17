@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>Antigravity 2-Month Journey - Phase 5</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      width: 720pt;
+      height: 405pt;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #0f141c;
+      color: #f1f5f9;
+      padding: 32pt 48pt;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .header-tag {
+      font-size: 9pt;
+      font-weight: 600;
+      color: #38bdf8;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 4pt;
+    }
+    .split-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16pt;
+      margin: 14pt 0;
+      flex: 1;
+    }
+    .card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8pt;
+      padding: 16pt;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .badge {
+      display: inline-block;
+      padding: 2pt 8pt;
+      border-radius: 4pt;
+      font-size: 8pt;
+      font-weight: 600;
+      margin-bottom: 8pt;
+    }
+    .badge-teal { background: rgba(20, 184, 166, 0.15); color: #2dd4bf; }
+    .badge-amber { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <div>
+    <p class="header-tag">PHASE 05 · 2026.10.13 - 2026.10.16</p>
+    <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+      <h2 style="font-size: 22pt; font-weight: 700; color: #ffffff; letter-spacing: -0.02em;">
+        사내 인사 승인 시스템 & 에이전트 스킬 환경 확장
+      </h2>
+      <p style="font-size: 10pt; color: #38bdf8; font-weight: 500;">Workflow Authorization & Extensible Agent Skills</p>
+    </div>
+  </div>
+
+  <!-- 2 Column Layout -->
+  <div class="split-grid">
+    <!-- Card 1: Leave App -->
+    <div class="card">
+      <div>
+        <span class="badge badge-teal">Session #f7fca788 · 10.13</span>
+        <h3 style="font-size: 13pt; font-weight: 700; color: #ffffff; margin-bottom: 6pt;">
+          사내 연차 신청·승인 시스템<br>
+          <span style="font-size: 9.5pt; font-weight: 500; color: #94a3b8;">Next.js + Supabase leave-app</span>
+        </h3>
+        <p style="font-size: 8.5pt; color: #cbd5e1; line-height: 1.45; margin-bottom: 10pt;">
+          단순 조회를 넘어 직원의 연차 신청부터 팀장의 실시간 승인·반려까지 포괄하는 상태 머신 기반의 사내 인사 포털 구축.
+        </p>
+        <div style="display: flex; flex-direction: column; gap: 6pt;">
+          <p style="font-size: 8pt; color: #94a3b8;">
+            · <strong>Supabase MCP:</strong> 서울 리전에 `leave-app` DB 전용 인스턴스 자동 프로비저닝
+          </p>
+          <p style="font-size: 8pt; color: #94a3b8;">
+            · <strong>역할 기반 워크플로우:</strong> 일반 사원(신청/잔여연차 확인) vs 관리자(승인/반려/사유 작성) UI 분리
+          </p>
+          <p style="font-size: 8pt; color: #94a3b8;">
+            · <strong>CI/CD 배포:</strong> GitHub 연동 및 Vercel 상용 레벨 호스팅 완결
+          </p>
+        </div>
+      </div>
+      <div style="padding-top: 8pt; border-top: 1px solid rgba(255,255,255,0.06);">
+        <p style="font-size: 8pt; color: #2dd4bf; font-weight: 600;">진화: 단순 연차 계산기 → 양방향 결재 승인 시스템</p>
+      </div>
+    </div>
+
+    <!-- Card 2: Aside Browser Skill -->
+    <div class="card">
+      <div>
+        <span class="badge badge-amber">Session #befb79ca · 10.16</span>
+        <h3 style="font-size: 13pt; font-weight: 700; color: #ffffff; margin-bottom: 6pt;">
+          Aside 브라우저 연동 & 전역 스킬 확장<br>
+          <span style="font-size: 9.5pt; font-weight: 500; color: #94a3b8;">Antigravity Skill & Browser Session Integration</span>
+        </h3>
+        <p style="font-size: 8.5pt; color: #cbd5e1; line-height: 1.45; margin-bottom: 10pt;">
+          사용자의 실시간 브라우징 컨텍스트와 안티그래비티 에이전트를 유기적으로 연결하기 위한 전역 확장 체계 구축.
+        </p>
+        <div style="display: flex; flex-direction: column; gap: 6pt;">
+          <p style="font-size: 8pt; color: #94a3b8;">
+            · <strong>Aside 세션 이어받기:</strong> 웹 브라우저 활동 세션을 에이전트 환경으로 가져와 연속적 작업 수행
+          </p>
+          <p style="font-size: 8pt; color: #94a3b8;">
+            · <strong>전역 스킬 설치:</strong> `SKILL.md`를 안티그래비티 글로벌 환경에 등록하여 영구적인 기능 획득
+          </p>
+          <p style="font-size: 8pt; color: #94a3b8;">
+            · <strong>에이전트 자율성 심화:</strong> 사용자 승인 하에 자동 인증 처리 및 프레젠테이션 자동화(slides-grab) 연결
+          </p>
+        </div>
+      </div>
+      <div style="padding-top: 8pt; border-top: 1px solid rgba(255,255,255,0.06);">
+        <p style="font-size: 8pt; color: #fbbf24; font-weight: 600;">진화: 코드 작성을 넘어 에이전트의 역량 스킬 자체를 확장</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 10pt;">
+    <p style="font-size: 9pt; color: #94a3b8;">
+      🌐 <strong>Ecosystem:</strong> 데이터베이스, 인증, 프론트엔드 배포에 이어 브라우저 세션과 커스텀 스킬까지 통합 운용
+    </p>
+    <p style="font-size: 10pt; color: #64748b; font-weight: 500;">07 / 10</p>
+  </div>
+</body>
+</html>

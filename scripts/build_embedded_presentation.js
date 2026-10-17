@@ -145,9 +145,9 @@ const htmlContent = `<!DOCTYPE html>
     }
     .cover-tag {
       display: inline-block;
-      background: #FAF9F5;
-      border: 1px solid #E2D7C3;
-      color: #8C6D3B;
+      background: #8C6D3B;
+      border: 1px solid #7A5E32;
+      color: #FAF9F5;
       font-family: 'Montserrat', sans-serif;
       font-size: 11.5px;
       font-weight: 800;
@@ -405,7 +405,7 @@ const htmlContent = `<!DOCTYPE html>
           <span style="color: #8C6D3B; font-weight: 800;">🔍</span> 이전 업무 경험에서 출발한 문제의식
         </div>
         <ul class="bullet-list">
-          <li style="margin-bottom: 5px; font-size: 12.3px; line-height: 1.48;"><span class="highlight">디올(Dior) 코스메틱 EDM·이벤트</span>: 백화점 행사와 프로모션을 준비하며 PR팀에 공식 노출 사진을 요청하고, MD팀에 상품 정보와 이미지를 받아 다시 확인하는 일이 시즌마다 반복됐습니다.</li>
+          <li style="margin-bottom: 5px; font-size: 12.3px; line-height: 1.48;"><span class="highlight">크리스챤 디올 꾸뛰르(Christian Dior Couture) 프로모션·이벤트</span>: 백화점 행사와 시즌 프로모션을 준비하며 PR팀에 공식 노출 이미지를 요청하고, MD·이커머스팀에 상품 정보와 이미지를 받아 다시 확인하는 일이 시즌마다 반복됐습니다.</li>
           <li style="margin-bottom: 5px; font-size: 12.3px; line-height: 1.48;"><span class="highlight">닐슨(Nielsen) 데이터 딜리버리</span>: 필수 정보가 빠진 요청 때문에 되묻는 메일이 자주 오가며 업무가 지연되는 경우가 많았습니다.</li>
           <li style="font-size: 12.3px; line-height: 1.48;"><span class="highlight">인동FN 가상 적용</span>: 이커머스 현업 경험은 없지만, 인동FN 자사몰 관련 업무를 한다고 생각했을 때 이와 유사한 확인 과정을 겪을 수 있다고 가정했습니다.</li>
         </ul>
@@ -666,7 +666,7 @@ const htmlContent = `<!DOCTYPE html>
         </div>
         <ul class="bullet-list">
           <li style="margin-bottom: 12px; font-size: 13.5px; line-height: 1.7;"><span class="highlight">오류 상품 필터</span>: 문제가 있는 상품(BLOCKER / WARNING)만 모아 긴급 조치 대상을 우선적으로 파악합니다.</li>
-          <li style="margin-bottom: 12px; font-size: 13.5px; line-height: 1.7;"><span class="highlight">인라인 즉시 수정 & 실시간 재계산</span>: 어드민 화면으로 돌아갈 필요 없이, 점검 테이블에서 잘못된 값을 바로 고치면(예: 판매가 19,800원 ➔ 198,000원) 즉시 재계산되어 정상(초록색)으로 전환됩니다.</li>
+          <li style="margin-bottom: 12px; font-size: 13.5px; line-height: 1.7;"><span class="highlight">인라인 즉시 수정 & 실시간 재계산</span>: 어드민 화면으로 돌아갈 필요 없이, 점검 테이블에서 잘못된 값을 바로 고치면(예: 판매가 19,800원 ➔ 198,000원) 즉시 재계산되어 정상(PASS) 상태로 전환됩니다.</li>
           <li style="margin-bottom: 12px; font-size: 13.5px; line-height: 1.7;"><span class="highlight">엑셀(.xlsx) 내려받기</span>: 점검 결과 및 정정된 품번 리스트를 엑셀 파일로 바로 내려받아 유관 부서 및 외부 협력사와 간편하게 공유할 수 있습니다.</li>
           <li style="font-size: 13.5px; line-height: 1.7;"><span class="highlight">품번별 원클릭 확인 요청</span>: 각 행 우측의 [확인 요청] 버튼을 누르면 해당 부서(MD, 디자인) 메일 초안 팝업이 바로 연결되어 메일 작성 시간을 대폭 줄입니다.</li>
         </ul>
@@ -799,7 +799,7 @@ const htmlContent = `<!DOCTYPE html>
             <li style="margin-bottom: 3px; font-size: 11.5px; line-height: 1.4;"><span class="highlight">운영 흐름 설계</span>: 일정 관리와 오픈 전 3단계 점검 흐름 수립</li>
             <li style="margin-bottom: 3px; font-size: 11.5px; line-height: 1.4;"><span class="highlight">점검 기준 정하기</span>: 가격 계산식, 트렌드 이상치 경고, 쿠폰 중복/역마진 방지, 링크/이미지 규격</li>
             <li style="margin-bottom: 3px; font-size: 11.5px; line-height: 1.4;"><span class="highlight">확인 요청 체계</span>: MD, 디자인 등 역할별 분할 및 취합 메일 기획</li>
-            <li style="font-size: 11.5px; line-height: 1.4;"><span class="highlight">구현 방식</span>: Google Antigravity 바이브코딩 (직접 코딩 미수행)</li>
+            <li style="font-size: 11.5px; line-height: 1.4;"><span class="highlight">구현 방식</span>: Google Antigravity 바이브코딩 활용 (기획·설계 주도 및 AI 프롬프트 구현)</li>
           </ul>
         </div>
         <div class="card" style="margin-bottom: 0; padding: 10px 14px;">

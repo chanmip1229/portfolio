@@ -28,23 +28,23 @@ const BRAND_THEMES: Record<
   SHESMISS: {
     logoText: 'SHESMISS',
     primaryColor: '#ffffff',
-    badgeBg: '#1e293b', // slate-800
+    badgeBg: '#18181B',
     fontFamily: 'serif, "Playfair Display", -apple-system',
-    overlayGradient: 'rgba(15, 23, 42, 0.55)',
+    overlayGradient: 'rgba(17, 17, 17, 0.55)',
   },
   LIST: {
     logoText: 'LIST',
     primaryColor: '#ffffff',
-    badgeBg: '#1e3a8a', // blue-900
+    badgeBg: '#5C4930',
     fontFamily: '"Montserrat", "Pretendard", sans-serif',
-    overlayGradient: 'rgba(15, 23, 42, 0.45)',
+    overlayGradient: 'rgba(17, 17, 17, 0.45)',
   },
   SISTINA: {
     logoText: 'SISTINA',
     primaryColor: '#ffffff',
-    badgeBg: '#78350f', // amber-900
+    badgeBg: '#27272A',
     fontFamily: '"Pretendard", sans-serif',
-    overlayGradient: 'rgba(30, 27, 75, 0.5)',
+    overlayGradient: 'rgba(24, 24, 27, 0.5)',
   },
 };
 
@@ -159,14 +159,17 @@ export async function renderBannerToDataUrl(options: BannerRenderOptions): Promi
     }
     const badgeY = subY + (isMobile ? 50 : 45);
 
-    // 뱃지 배경 (원형 모서리)
-    ctx.fillStyle = '#f59e0b'; // amber-500
+    // 뱃지 배경 (에디토리얼 럭셔리 블랙 & 골드 보더)
+    ctx.fillStyle = 'rgba(17, 17, 17, 0.85)';
+    ctx.strokeStyle = '#B69F76';
+    ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.roundRect(badgeX, badgeY, badgeW, badgeH, 24);
+    ctx.roundRect(badgeX, badgeY, badgeW, badgeH, 4);
     ctx.fill();
+    ctx.stroke();
 
     // 뱃지 텍스트
-    ctx.fillStyle = '#0f172a'; // slate-900
+    ctx.fillStyle = '#E5D8C1';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(badgeText, badgeTextX, badgeY + badgeH / 2);
@@ -268,14 +271,14 @@ function drawImageCover(
 function drawFallbackGradient(ctx: CanvasRenderingContext2D, options: BannerRenderOptions) {
   const gradient = ctx.createLinearGradient(0, 0, options.width, options.height);
   if (options.brand === 'SHESMISS') {
-    gradient.addColorStop(0, '#1e293b');
-    gradient.addColorStop(1, '#0f172a');
+    gradient.addColorStop(0, '#27272A');
+    gradient.addColorStop(1, '#111111');
   } else if (options.brand === 'LIST') {
-    gradient.addColorStop(0, '#1e3a8a');
-    gradient.addColorStop(1, '#172554');
+    gradient.addColorStop(0, '#5C4930');
+    gradient.addColorStop(1, '#2E2417');
   } else {
-    gradient.addColorStop(0, '#78350f');
-    gradient.addColorStop(1, '#451a03');
+    gradient.addColorStop(0, '#3F3A32');
+    gradient.addColorStop(1, '#18181B');
   }
   ctx.fillStyle = gradient;
   ctx.fillRect(0, 0, options.width, options.height);

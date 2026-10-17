@@ -303,11 +303,11 @@ export default function MatrixFilterBar() {
 
               let activeStyle = 'bg-[#111111] text-white border-[#111111] shadow-2xs';
               if (b.value === 'SHESMISS') {
-                activeStyle = 'bg-[#881337] text-white border-[#881337] shadow-2xs';
+                activeStyle = 'bg-[#18181B] text-white border-[#18181B] shadow-2xs';
               } else if (b.value === 'LIST') {
-                activeStyle = 'bg-[#14532D] text-white border-[#14532D] shadow-2xs';
+                activeStyle = 'bg-[#5C4930] text-white border-[#5C4930] shadow-2xs';
               } else if (b.value === 'SISTINA') {
-                activeStyle = 'bg-[#0F172A] text-white border-[#0F172A] shadow-2xs';
+                activeStyle = 'bg-[#3F3A32] text-white border-[#3F3A32] shadow-2xs';
               }
 
               return (
