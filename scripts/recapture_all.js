@@ -80,12 +80,17 @@ async function captureAll() {
 
   // 6. Subtab 2: Single item SKU QC
   console.log('Clicking SKU QC subtab...');
-  await page.evaluate(() => {
-    const tabs = Array.from(document.querySelectorAll('button, [role="tab"]'));
-    const target = tabs.find(t => t.innerText && (t.innerText.includes('단품') || t.innerText.includes('SKU')));
-    if (target) target.click();
+  const clickedSubTab = await page.evaluate(() => {
+    const tabs = Array.from(document.querySelectorAll('button'));
+    const target = tabs.find(t => t.innerText && t.innerText.includes('단품(SKU) 마스터 전수 QC'));
+    if (target) {
+      target.click();
+      return true;
+    }
+    return false;
   });
-  await new Promise(r => setTimeout(r, 1200));
+  console.log('Clicked SKU QC subtab:', clickedSubTab);
+  await new Promise(r => setTimeout(r, 1500));
   console.log('Capturing 06_step2_sku_table.png...');
   await page.screenshot({ path: path.join(OUTPUT_DIR, '06_step2_sku_table.png') });
 

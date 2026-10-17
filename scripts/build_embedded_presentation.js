@@ -122,7 +122,6 @@ const htmlContent = `<!DOCTYPE html>
       display: flex;
       flex-direction: column;
       justify-content: flex-start;
-      overflow: hidden;
     }
     .footer {
       border-top: 1px solid #f3f4f6;
@@ -547,7 +546,7 @@ const htmlContent = `<!DOCTYPE html>
         </div>
       </div>
 
-      <div class="card" style="margin-top: 10px; margin-bottom: 0; padding: 16px 20px;">
+      <div class="card" style="margin-top: 14px; margin-bottom: 0; padding: 16px 20px;">
         <div class="card-title" style="font-size: 14.5px;">📌 연간 프로모션 일정 관리 핵심 기능</div>
         <ul class="bullet-list">
           <li><span class="highlight">엑셀 일괄 등록</span>: 복잡한 어드민 수기 입력 대신, 기획 엑셀 파일을 올리면 간트차트와 월별 카드에 한 번에 등록됩니다.</li>
@@ -575,27 +574,29 @@ const htmlContent = `<!DOCTYPE html>
         행사 전체의 핵심 지표를 요약하고, 가격·쿠폰·상품·이미지 오류를 역할별로 분류합니다.
       </p>
 
-      <div class="img-box medium">
-        <img src="${img4}" alt="QC 센터 전체 개요">
+      <div class="img-box" style="height: 94mm; display: flex; flex-direction: column; justify-content: space-between; margin-bottom: 0;">
+        <img src="${img4}" alt="QC 센터 전체 개요" style="height: 80mm; width: 100%; object-fit: contain; margin: auto 0;">
         <div class="img-caption">▲ QC 센터 4대 KPI 요약 카드 및 부서별(MD/디자인/퍼블리셔) 사전 점검 리포트 탭</div>
       </div>
 
-      <div class="card" style="margin-top: 10px; margin-bottom: 0; padding: 16px 20px;">
-        <div class="card-title" style="font-size: 14.5px;">🔍 사전 점검 항목 3가지 & 역할별 분기 기준</div>
+      <!-- 위쪽으로 쏠린 느낌 없도록 한줄~두줄 정도(22px) 간격과 넉넉한 내부 패딩 적용 -->
+      <div class="card" style="margin-top: 22px; margin-bottom: 0; padding: 22px 24px;">
+        <div class="card-title" style="font-size: 15px; margin-bottom: 14px;">🔍 사전 점검 항목 3가지 & 역할별 분기 기준</div>
         <ul class="bullet-list">
-          <li>
-            <span class="highlight">가격과 할인율 정합성 (MD)</span>: <code style="background:#e5e7eb; padding:1px 4px; border-radius:3px;">(정가 − 판매가) ÷ 정가</code>가 표기 할인율과 일치하는지 전수 검산합니다. 단순 계산은 맞아도 카테고리나 시즌 트렌드 대비 비정상적으로 튀는 숫자(예: 80%)는 오기입 가능성(0 누락 등)으로 경고(WARNING)를 띄워 확인을 유도합니다.
+          <li style="margin-bottom: 14px; font-size: 13.5px; line-height: 1.7;">
+            <span class="highlight">가격과 할인율 정합성 (MD)</span>: <code style="background:#e5e7eb; padding:2px 5px; border-radius:3px;">(정가 − 판매가) ÷ 정가</code>가 표기 할인율과 일치하는지 전수 검산합니다. 단순 계산은 맞아도 카테고리나 시즌 트렌드 대비 비정상적으로 튀는 숫자(예: 80%)는 오기입 가능성(0 누락 등)으로 경고(WARNING)를 띄워 확인을 유도합니다.
           </li>
-          <li>
+          <li style="margin-bottom: 14px; font-size: 13.5px; line-height: 1.7;">
             <span class="highlight">쿠폰 적용 및 중복 정책 검수 (마케팅/MD)</span>: 상품에 적용 가능한 쿠폰이 제대로 등록되었는지 확인합니다. 특히 다운로드 쿠폰, 장바구니 쿠폰 등 각 쿠폰의 성격에 맞게 등록되었는지 점검하고, 중복 적용 허용 범위와 쿠폰 제외 상품의 역마진 방지 정책을 검수합니다.
           </li>
-          <li>
+          <li style="font-size: 13.5px; line-height: 1.7;">
             <span class="highlight">상품과 이미지 규격 (디자인/퍼블리셔)</span>: 상품 번호 유효성, 승인 여부, 상세 링크(404 데드링크), 대표 썸네일 이미지 해상도 및 엑스박스 여부를 전수 점검합니다.
           </li>
         </ul>
       </div>
 
-      <div class="notice-box" style="margin-top: 12px;">
+      <!-- 위쪽으로 쏠린 느낌 없도록 한줄~두줄 정도(20px) 간격 확보 -->
+      <div class="notice-box" style="margin-top: 20px; padding: 13px 18px; font-size: 12.5px;">
         ※ 확인하는 부서와 역할은 실제 인동FN의 조직도가 아니라, 이 프로젝트에서 설정한 가상의 협업 역할(MD, 디자인, 퍼블리셔 등)입니다.
       </div>
     </div>
@@ -617,22 +618,24 @@ const htmlContent = `<!DOCTYPE html>
         상품 번호(SKU)별로 가격, 할인율, 링크, 이미지를 하나씩 점검합니다.
       </p>
 
-      <div class="img-box medium">
-        <img src="${img6}" alt="단품 SKU 마스터 전수 검증 테이블">
+      <div class="img-box" style="height: 94mm; display: flex; flex-direction: column; justify-content: space-between; margin-bottom: 0;">
+        <img src="${img6}" alt="단품 SKU 마스터 전수 검증 테이블" style="height: 80mm; width: 100%; object-fit: contain; margin: auto 0;">
         <div class="img-caption">▲ SKU 마스터 테이블: 3단 수식 검증, 트렌드 이상치 경고, 인라인 즉시 수정 및 엑셀 다운로드</div>
       </div>
 
-      <div class="card" style="margin-top: 10px; margin-bottom: 0; padding: 16px 20px;">
-        <div class="card-title" style="font-size: 14.5px;">📌 단품 전수 점검 핵심 기능 & 운영 효율화</div>
+      <!-- 위쪽으로 쏠린 느낌 없도록 한줄~두줄 정도(22px) 간격과 넉넉한 내부 패딩 적용 -->
+      <div class="card" style="margin-top: 22px; margin-bottom: 0; padding: 22px 24px;">
+        <div class="card-title" style="font-size: 15px; margin-bottom: 14px;">📌 단품 전수 점검 핵심 기능 & 운영 효율화</div>
         <ul class="bullet-list">
-          <li><span class="highlight">오류 상품 필터</span>: 문제가 있는 상품(BLOCKER / WARNING)만 모아 긴급 조치 대상을 우선적으로 파악합니다.</li>
-          <li><span class="highlight">인라인 즉시 수정 & 실시간 재계산</span>: 어드민 화면으로 돌아갈 필요 없이, 점검 테이블에서 잘못된 값을 바로 고치면(예: 판매가 19,800원 ➔ 198,000원) 즉시 재계산되어 정상(초록색)으로 전환됩니다.</li>
-          <li><span class="highlight">엑셀(.xlsx) 내려받기</span>: 점검 결과 및 정정된 품번 리스트를 엑셀 파일로 바로 내려받아 유관 부서 및 외부 협력사와 간편하게 공유할 수 있습니다.</li>
-          <li><span class="highlight">품번별 원클릭 확인 요청</span>: 각 행 우측의 [확인 요청] 버튼을 누르면 해당 부서(MD, 디자인) 메일 초안 팝업이 바로 연결되어 메일 작성 시간을 대폭 줄입니다.</li>
+          <li style="margin-bottom: 12px; font-size: 13.5px; line-height: 1.7;"><span class="highlight">오류 상품 필터</span>: 문제가 있는 상품(BLOCKER / WARNING)만 모아 긴급 조치 대상을 우선적으로 파악합니다.</li>
+          <li style="margin-bottom: 12px; font-size: 13.5px; line-height: 1.7;"><span class="highlight">인라인 즉시 수정 & 실시간 재계산</span>: 어드민 화면으로 돌아갈 필요 없이, 점검 테이블에서 잘못된 값을 바로 고치면(예: 판매가 19,800원 ➔ 198,000원) 즉시 재계산되어 정상(초록색)으로 전환됩니다.</li>
+          <li style="margin-bottom: 12px; font-size: 13.5px; line-height: 1.7;"><span class="highlight">엑셀(.xlsx) 내려받기</span>: 점검 결과 및 정정된 품번 리스트를 엑셀 파일로 바로 내려받아 유관 부서 및 외부 협력사와 간편하게 공유할 수 있습니다.</li>
+          <li style="font-size: 13.5px; line-height: 1.7;"><span class="highlight">품번별 원클릭 확인 요청</span>: 각 행 우측의 [확인 요청] 버튼을 누르면 해당 부서(MD, 디자인) 메일 초안 팝업이 바로 연결되어 메일 작성 시간을 대폭 줄입니다.</li>
         </ul>
       </div>
 
-      <div class="notice-box" style="margin-top: 12px;">
+      <!-- 위쪽으로 쏠린 느낌 없도록 한줄~두줄 정도(20px) 간격 확보 -->
+      <div class="notice-box" style="margin-top: 20px; padding: 13px 18px; font-size: 12.5px;">
         💡 잘못된 수치를 어드민에 다시 들어가지 않고 점검 화면 표에서 바로 고칠 수 있어, 사소한 수치 정정으로 인한 왕복 소통 시간을 최소화했습니다.
       </div>
     </div>
@@ -654,38 +657,38 @@ const htmlContent = `<!DOCTYPE html>
         오류 유형별 AI 메일 초안, 1통 취합 발송, 타임라인 히스토리와 Slack 리마인더로 소통 누락을 방지합니다.
       </p>
 
-      <div class="grid-2" style="margin-bottom: 8px;">
-        <div class="img-box compact">
-          <img src="${img5}" alt="AI 2분할 듀얼 메일 모달">
+      <div class="grid-2" style="margin-bottom: 6px;">
+        <div class="img-box compact" style="margin: 2px 0;">
+          <img src="${img5}" alt="AI 2분할 듀얼 메일 모달" style="max-height: 48mm; width: 100%; object-fit: contain;">
           <div class="img-caption">▲ AI 2분할 듀얼 메일 (가격: MD / 이미지: 디자인)</div>
         </div>
-        <div class="img-box compact">
-          <img src="${img9}" alt="부서별 1통 취합 메일">
+        <div class="img-box compact" style="margin: 2px 0;">
+          <img src="${img9}" alt="부서별 1통 취합 메일" style="max-height: 48mm; width: 100%; object-fit: contain;">
           <div class="img-caption">▲ 부서별 오류를 표 하나로 묶은 1통 취합 메일</div>
         </div>
       </div>
 
-      <div class="grid-2" style="margin-bottom: 8px;">
-        <div class="img-box compact">
-          <img src="${img11}" alt="소통 & 타임라인 히스토리 모달">
+      <div class="grid-2" style="margin-bottom: 6px;">
+        <div class="img-box compact" style="margin: 2px 0;">
+          <img src="${img11}" alt="소통 & 타임라인 히스토리 모달" style="max-height: 48mm; width: 100%; object-fit: contain;">
           <div class="img-caption">▲ 소통 & 타임라인 히스토리 (발송 메일 및 조치 내역 기록)</div>
         </div>
-        <div class="img-box compact">
-          <img src="${img10}" alt="Slack #qc 실시간 웹훅">
+        <div class="img-box compact" style="margin: 2px 0;">
+          <img src="${img10}" alt="Slack #qc 실시간 웹훅" style="max-height: 48mm; width: 100%; object-fit: contain;">
           <div class="img-caption">▲ Slack #qc 채널 웹훅 점검 요약 & 리마인더 브리핑</div>
         </div>
       </div>
 
-      <div class="card" style="margin-top: 6px; margin-bottom: 0; padding: 14px 18px;">
+      <div class="card" style="margin-top: 6px; margin-bottom: 0; padding: 12px 16px;">
         <ul class="bullet-list">
-          <li><span class="highlight">AI 2분할 듀얼 메일</span>: 오류 유형에 따라 MD(가격), 디자인(이미지) 등 담당 역할별로 요청 내용을 나눕니다. 한 상품에 여러 문제가 있으면 양쪽 초안을 나란히 보여 줍니다. 메일은 자동 발송되지 않고 실무자가 확인한 뒤에 보냅니다.</li>
-          <li><span class="highlight">부서별 1통 취합 메일과 리포트</span>: 수많은 개별 메일로 인한 업무 피로도를 방지하기 위해, 부서별 모든 오류 품번을 표 하나로 묶어 정리한 취합 메일과 리포트를 생성합니다.</li>
-          <li><span class="highlight">소통 타임라인 & 히스토리 관리</span>: 발송된 메일, 업무 요청 내용, 담당자 처리 상태(조치 완료/보류)를 시간순 타임라인으로 기록하여 여러 번 되묻지 않고 진행 현황을 파악합니다.</li>
-          <li><span class="highlight">Slack 웹훅 연동 & 리마인더 기능</span>: #qc 채널에 점검 요약(BLOCKER/WARNING 건수, 마감 시한)을 전송합니다. <span class="highlight">특히 바쁜 업무 중 쏟아지는 이메일 사이에서 담당자가 중요한 요청을 놓치지 않도록 리마인더 역할을 수행</span>하여 즉각적인 확인을 돕습니다.</li>
+          <li style="margin-bottom: 6px; font-size: 12.2px; line-height: 1.5;"><span class="highlight">AI 2분할 듀얼 메일</span>: 오류 유형에 따라 MD(가격), 디자인(이미지) 등 담당 역할별로 요청 내용을 나눕니다. 한 상품에 여러 문제가 있으면 양쪽 초안을 나란히 보여 줍니다. 메일은 자동 발송되지 않고 실무자가 확인한 뒤에 보냅니다.</li>
+          <li style="margin-bottom: 6px; font-size: 12.2px; line-height: 1.5;"><span class="highlight">부서별 1통 취합 메일과 리포트</span>: 수많은 개별 메일로 인한 업무 피로도를 방지하기 위해, 부서별 모든 오류 품번을 표 하나로 묶어 정리한 취합 메일과 리포트를 생성합니다.</li>
+          <li style="margin-bottom: 6px; font-size: 12.2px; line-height: 1.5;"><span class="highlight">소통 타임라인 & 히스토리 관리</span>: 발송된 메일, 업무 요청 내용, 담당자 처리 상태(조치 완료/보류)를 시간순 타임라인으로 기록하여 여러 번 되묻지 않고 진행 현황을 파악합니다.</li>
+          <li style="font-size: 12.2px; line-height: 1.5;"><span class="highlight">Slack 웹훅 연동 & 리마인더 기능</span>: #qc 채널에 점검 요약(BLOCKER/WARNING 건수, 마감 시한)을 전송합니다. <span class="highlight">특히 바쁜 업무 중 쏟아지는 이메일 사이에서 담당자가 중요한 요청을 놓치지 않도록 리마인더 역할을 수행</span>하여 즉각적인 확인을 돕습니다.</li>
         </ul>
       </div>
 
-      <div class="notice-box" style="margin-top: 10px;">
+      <div class="notice-box" style="margin-top: 8px; padding: 8px 12px; font-size: 11.5px;">
         ※ 행사와 상품 정보, 확인 역할, 메일 및 히스토리 내용은 모두 시연용 가상 데이터입니다.
       </div>
     </div>
@@ -708,23 +711,23 @@ const htmlContent = `<!DOCTYPE html>
       </p>
 
       <div class="grid-2">
-        <div class="img-box" style="height: 105mm; display: flex; flex-direction: column; justify-content: space-between;">
-          <img src="${img7}" alt="모바일 뷰어 프리뷰" style="height: 90mm; width: 100%; object-fit: contain; margin: auto 0;">
+        <div class="img-box" style="height: 102mm; display: flex; flex-direction: column; justify-content: space-between;">
+          <img src="${img7}" alt="모바일 뷰어 프리뷰" style="height: 88mm; width: 100%; object-fit: contain; margin: auto 0;">
           <div class="img-caption">▲ 모바일(375px) 실시간 고객 전시 화면 뷰어</div>
         </div>
-        <div class="img-box" style="height: 105mm; display: flex; flex-direction: column; justify-content: space-between;">
-          <img src="${img8}" alt="데스크톱 PC 뷰어 프리뷰" style="height: 90mm; width: 100%; object-fit: contain; margin: auto 0;">
+        <div class="img-box" style="height: 102mm; display: flex; flex-direction: column; justify-content: space-between;">
+          <img src="${img8}" alt="데스크톱 PC 뷰어 프리뷰" style="height: 88mm; width: 100%; object-fit: contain; margin: auto 0;">
           <div class="img-caption">▲ PC 와이드 화면 뷰어 및 1920×600 배너 스튜디오</div>
         </div>
       </div>
 
-      <div class="card" style="margin-top: 10px; margin-bottom: 0; padding: 16px 20px;">
-        <div class="card-title" style="font-size: 14.5px;">📌 고객 화면 및 배너 최종 크로스 체크 포인트</div>
+      <div class="card" style="margin-top: 14px; margin-bottom: 0; padding: 18px 22px;">
+        <div class="card-title" style="font-size: 14.5px; margin-bottom: 12px;">📌 고객 화면 및 배너 최종 크로스 체크 포인트</div>
         <ul class="bullet-list">
-          <li><span class="highlight">디바이스별 화면 반응형 검증</span>: 아이폰, 갤럭시, PC 화면으로 전환하며 모바일 배너와 상품 진열 그리드가 깨지거나 잘리지 않는지 확인합니다.</li>
-          <li><span class="highlight">배너 스튜디오 (카피 합성 및 규격 다운로드)</span>: 메인 제목, 서브 문구, 할인율 뱃지를 배너 이미지에 직접 합성해 보고 PC(1920×600), 모바일(750×900) 규격으로 즉시 내려받을 수 있습니다.</li>
-          <li><span class="highlight">배너 문구 & 할인율 일치 확인 (자동 비교 + 육안 확인)</span>: 배너 표기 할인율(예: UP TO 50%)이 실제 상품들의 최고 할인율과 맞는지 시스템이 1차 자동 비교 검증하고, 화면에서 육안으로 확인하며 틀린 곳은 바로 문구를 수정하고 승인 처리합니다.</li>
-          <li><span class="highlight">고객 화면 내 결함 경고 표시</span>: 가격 불일치, 할인율 이상치, 미승인 상품, 404 링크는 고객 화면 미리보기에도 시각적 경고 뱃지로 표시되어 오픈 직전 마지막으로 걸러냅니다.</li>
+          <li style="margin-bottom: 10px; font-size: 13px; line-height: 1.65;"><span class="highlight">디바이스별 화면 반응형 검증</span>: 아이폰, 갤럭시, PC 화면으로 전환하며 모바일 배너와 상품 진열 그리드가 깨지거나 잘리지 않는지 확인합니다.</li>
+          <li style="margin-bottom: 10px; font-size: 13px; line-height: 1.65;"><span class="highlight">배너 스튜디오 (카피 합성 및 규격 다운로드)</span>: 메인 제목, 서브 문구, 할인율 뱃지를 배너 이미지에 직접 합성해 보고 PC(1920×600), 모바일(750×900) 규격으로 즉시 내려받을 수 있습니다.</li>
+          <li style="margin-bottom: 10px; font-size: 13px; line-height: 1.65;"><span class="highlight">배너 문구 & 할인율 일치 확인 (자동 비교 + 육안 확인)</span>: 배너 표기 할인율(예: UP TO 50%)이 실제 상품들의 최고 할인율과 맞는지 시스템이 1차 자동 비교 검증하고, 화면에서 육안으로 확인하며 틀린 곳은 바로 문구를 수정하고 승인 처리합니다.</li>
+          <li style="font-size: 13px; line-height: 1.65;"><span class="highlight">고객 화면 내 결함 경고 표시</span>: 가격 불일치, 할인율 이상치, 미승인 상품, 404 링크는 고객 화면 미리보기에도 시각적 경고 뱃지로 표시되어 오픈 직전 마지막으로 걸러냅니다.</li>
         </ul>
       </div>
     </div>
@@ -735,98 +738,100 @@ const htmlContent = `<!DOCTYPE html>
   </div>
 
   <!-- PAGE 9: 마무리 & 포부 -->
-  <div class="portfolio-page">
-    <div class="page-header">
+  <div class="portfolio-page" style="padding: 14mm 22mm 12mm 22mm;">
+    <div class="page-header" style="margin-bottom: 12px; padding-bottom: 8px;">
       <span class="category">Reflection & Aspirations</span>
       <span class="page-num">PAGE 09 / 09</span>
     </div>
     <div class="content-area">
-      <h2 class="page-title">프로젝트를 마치며</h2>
-      <p class="page-subtitle">
+      <h2 class="page-title" style="font-size: 21px; margin-bottom: 4px;">프로젝트를 마치며</h2>
+      <p class="page-subtitle" style="font-size: 12.5px; margin-bottom: 10px; line-height: 1.45;">
         반복되는 확인 업무를 줄이고 업무 퀄리티를 높이기 위해 고민하고 구현한 과정의 기록입니다.
       </p>
 
-      <div class="grid-2">
-        <div class="card" style="margin-bottom: 0; padding: 13px 16px;">
-          <div class="card-title" style="color: #4338ca; font-size: 14px;">👤 제가 한 일</div>
+      <div class="grid-2" style="gap: 10px; margin: 0 0 8px 0;">
+        <div class="card" style="margin-bottom: 0; padding: 10px 14px;">
+          <div class="card-title" style="color: #4338ca; font-size: 13.5px; margin-bottom: 4px;">👤 제가 한 일</div>
           <ul class="bullet-list">
-            <li><span class="highlight">문제 정의</span>: 디올·닐슨 경험에서 출발한 업무 병목 분석</li>
-            <li><span class="highlight">운영 흐름 설계</span>: 일정 관리와 오픈 전 3단계 점검 흐름 수립</li>
-            <li><span class="highlight">점검 기준 정하기</span>: 가격 계산식, 트렌드 이상치 경고, 쿠폰 중복/역마진 방지, 링크/이미지 규격</li>
-            <li><span class="highlight">확인 요청 체계</span>: MD, 디자인 등 역할별 분할 및 취합 메일 기획</li>
-            <li><span class="highlight">구현 방식</span>: Google Antigravity 바이브코딩 (직접 코딩 미수행)</li>
+            <li style="margin-bottom: 3px; font-size: 11.5px; line-height: 1.4;"><span class="highlight">문제 정의</span>: 디올·닐슨 경험에서 출발한 업무 병목 분석</li>
+            <li style="margin-bottom: 3px; font-size: 11.5px; line-height: 1.4;"><span class="highlight">운영 흐름 설계</span>: 일정 관리와 오픈 전 3단계 점검 흐름 수립</li>
+            <li style="margin-bottom: 3px; font-size: 11.5px; line-height: 1.4;"><span class="highlight">점검 기준 정하기</span>: 가격 계산식, 트렌드 이상치 경고, 쿠폰 중복/역마진 방지, 링크/이미지 규격</li>
+            <li style="margin-bottom: 3px; font-size: 11.5px; line-height: 1.4;"><span class="highlight">확인 요청 체계</span>: MD, 디자인 등 역할별 분할 및 취합 메일 기획</li>
+            <li style="font-size: 11.5px; line-height: 1.4;"><span class="highlight">구현 방식</span>: Google Antigravity 바이브코딩 (직접 코딩 미수행)</li>
           </ul>
         </div>
-        <div class="card" style="margin-bottom: 0; padding: 13px 16px;">
-          <div class="card-title" style="color: #d97706; font-size: 14px;">⚠️ 프로젝트의 한계</div>
+        <div class="card" style="margin-bottom: 0; padding: 10px 14px;">
+          <div class="card-title" style="color: #d97706; font-size: 13.5px; margin-bottom: 4px;">⚠️ 프로젝트의 한계</div>
           <ul class="bullet-list">
-            <li>실제 인동FN 시스템과 연동되어 있지 않으며, 데이터와 점검 기준, 업무 프로세스, 확인 요청 부서는 가정한 것입니다.</li>
-            <li>사전 점검은 정해진 규칙(Rule-based)으로 동작하며, AI는 메일 초안 작성에만 사용하였습니다.</li>
-            <li>시연 날짜 또한 10월 15일로 고정하여 구성하였습니다.</li>
+            <li style="margin-bottom: 4px; font-size: 11.5px; line-height: 1.45;">실제 인동FN 시스템과 연동되어 있지 않으며, 데이터와 점검 기준, 업무 프로세스, 확인 요청 부서는 가정한 것입니다.</li>
+            <li style="margin-bottom: 4px; font-size: 11.5px; line-height: 1.45;">사전 점검은 정해진 규칙(Rule-based)으로 동작하며, AI는 메일 초안 작성에만 사용하였습니다.</li>
+            <li style="font-size: 11.5px; line-height: 1.45;">시연 날짜 또한 10월 15일로 고정하여 구성하였습니다.</li>
           </ul>
         </div>
       </div>
 
-      <div class="card" style="margin-top: 10px; margin-bottom: 0; padding: 12px 16px;">
+      <!-- 소요 시간 절감 표: 전체소요시간합계 -> 합계 한줄 표기, 괄호 부분은 줄바꿈 처리 -->
+      <div class="card" style="margin-top: 0; margin-bottom: 8px; padding: 10px 14px;">
         <div class="card-title" style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px;">
-          <span style="font-size: 14px;">⏱️ 소요 시간 절감 효과 추론 (행사 1건 기준)</span>
-          <span style="font-size: 11px; font-weight: normal; color: #6b7280;">※ 실제 측정값이 아닌, 인동FN 행사 규모(약 50 SKU) 가상 시나리오 기반 추론치</span>
+          <span style="font-size: 13.5px;">⏱️ 소요 시간 절감 효과 추론 (행사 1건 기준)</span>
+          <span style="font-size: 10.5px; font-weight: normal; color: #6b7280;">※ 실제 측정값이 아닌, 인동FN 행사 규모(약 50 SKU) 가상 시나리오 기반 추론치</span>
         </div>
-        <table class="data-table" style="margin: 4px 0;">
+        <table class="data-table" style="margin: 4px 0; font-size: 11.5px;">
           <thead>
             <tr>
-              <th>업무 단계</th>
-              <th>기존 수작업 방식</th>
-              <th>운영 보드 활용 시</th>
-              <th>절감 효과</th>
+              <th style="padding: 5px 8px; width: 28%;">업무 단계</th>
+              <th style="padding: 5px 8px; width: 26%;">기존 수작업 방식</th>
+              <th style="padding: 5px 8px; width: 26%;">운영 보드 활용 시</th>
+              <th style="padding: 5px 8px; width: 20%;">절감 효과</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td>프로모션 및 상품 등록</td>
-              <td>어드민에 복사·붙여넣기 (약 60분)</td>
-              <td>엑셀 업로드로 일괄 자동 등록 (약 2분)</td>
-              <td><span style="color: #dc2626; font-weight: 700;">약 58분 단축 (96%↓)</span></td>
+              <td style="padding: 5px 8px;">프로모션 및 상품 등록</td>
+              <td style="padding: 5px 8px;">어드민 복사·붙여넣기<br><span style="font-size: 10.5px; color: #6b7280;">(약 60분)</span></td>
+              <td style="padding: 5px 8px;">엑셀 일괄 자동 등록<br><span style="font-size: 10.5px; color: #6b7280;">(약 2분)</span></td>
+              <td style="padding: 5px 8px;"><span style="color: #dc2626; font-weight: 700;">약 58분 단축<br><span style="font-size: 10.5px;">(96%↓)</span></span></td>
             </tr>
             <tr>
-              <td>가격·쿠폰·단품 전수 점검</td>
-              <td>수식 수작업 대조 & 링크 클릭 (약 90분)</td>
-              <td>자동 규칙 검증 & 인라인 수정 (약 10분)</td>
-              <td><span style="color: #dc2626; font-weight: 700;">약 80분 단축 (88%↓)</span></td>
+              <td style="padding: 5px 8px;">가격·쿠폰·단품 전수 점검</td>
+              <td style="padding: 5px 8px;">수식 대조 & 링크 클릭<br><span style="font-size: 10.5px; color: #6b7280;">(약 90분)</span></td>
+              <td style="padding: 5px 8px;">자동 검증 & 인라인 수정<br><span style="font-size: 10.5px; color: #6b7280;">(약 10분)</span></td>
+              <td style="padding: 5px 8px;"><span style="color: #dc2626; font-weight: 700;">약 80분 단축<br><span style="font-size: 10.5px;">(88%↓)</span></span></td>
             </tr>
             <tr>
-              <td>부서별 확인 요청 & 공유</td>
-              <td>오류 취합 및 메일 건별 작성 (약 40분)</td>
-              <td>AI 분할 메일 & 취합 리포트 (약 5분)</td>
-              <td><span style="color: #dc2626; font-weight: 700;">약 35분 단축 (87%↓)</span></td>
+              <td style="padding: 5px 8px;">부서별 확인 요청 & 공유</td>
+              <td style="padding: 5px 8px;">오류 취합 & 개별 작성<br><span style="font-size: 10.5px; color: #6b7280;">(약 40분)</span></td>
+              <td style="padding: 5px 8px;">AI 분할 & 취합 리포트<br><span style="font-size: 10.5px; color: #6b7280;">(약 5분)</span></td>
+              <td style="padding: 5px 8px;"><span style="color: #dc2626; font-weight: 700;">약 35분 단축<br><span style="font-size: 10.5px;">(87%↓)</span></span></td>
             </tr>
             <tr class="total-row">
-              <td><strong>전체 소요 시간 합계</strong></td>
-              <td><strong>약 3시간 10분 (190분)</strong></td>
-              <td><strong>약 17분 (17분)</strong></td>
-              <td><strong>약 91% 절감 (173분 단축)</strong></td>
+              <td style="padding: 6px 8px; font-weight: 800;">합계</td>
+              <td style="padding: 6px 8px;"><strong>약 3시간 10분<br><span style="font-size: 10.5px; font-weight: normal; color: #4338ca;">(190분)</span></strong></td>
+              <td style="padding: 6px 8px;"><strong>약 17분<br><span style="font-size: 10.5px; font-weight: normal; color: #4338ca;">(17분)</span></strong></td>
+              <td style="padding: 6px 8px;"><strong><span style="color: #dc2626; font-weight: 800;">약 91% 절감<br><span style="font-size: 10.5px;">(173분 단축)</span></span></strong></td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      <div class="card" style="border-left: 4px solid #4f46e5; margin-top: 10px; margin-bottom: 6px; padding: 12px 16px;">
-        <div class="card-title" style="color: #4338ca; font-size: 14px; margin-bottom: 5px;">💬 만들면서 생각한 것 & 입사 후 포부</div>
-        <p style="font-size: 11.8px; color: #374151; line-height: 1.55; margin-bottom: 6px;">
+      <!-- 만들면서 생각한 것 & 입사 후 포부: 잘림 없이 100% 온전하게 노출 -->
+      <div class="card" style="border-left: 4px solid #4f46e5; margin-top: 0; margin-bottom: 8px; padding: 11px 15px;">
+        <div class="card-title" style="color: #4338ca; font-size: 13.5px; margin-bottom: 5px;">💬 만들면서 생각한 것 & 입사 후 포부</div>
+        <p style="font-size: 11.5px; color: #374151; line-height: 1.5; margin-bottom: 6px;">
           "찾고 정리하는 일은 도구가 하고, 판단과 결정은 사람이 한다." 같은 확인을 반복하느라 드는 시간과 실수가 가장 힘들었던 경험에서 출발했습니다. 트렌드 대비 튀는 숫자는 오류로 단정 짓지 않고 경고로 보여주며, 메일도 사람이 확인한 뒤 발송하도록 설계했습니다. 또한 소통 히스토리 기록과 Slack 리마인더로 바쁜 업무 속에서도 메일과 요청을 놓치지 않도록 안전망을 만들었습니다.
         </p>
-        <p style="font-size: 11.8px; color: #1e3a8a; background: #f0fdf4; border: 1px solid #bbf7d0; padding: 6px 10px; border-radius: 4px; line-height: 1.5;">
+        <p style="font-size: 11.5px; color: #1e3a8a; background: #f0fdf4; border: 1px solid #bbf7d0; padding: 6px 10px; border-radius: 4px; line-height: 1.5;">
           <strong>🎯 입사 후 기대:</strong> 단순 반복 확인 시간을 줄여 프로모션 기획 분석과 고객 경험 개선 등 본질적인 업무에 더 집중할 수 있습니다. 인동FN에 입사하게 된다면 이처럼 반복 업무의 비효율을 적극 발굴하고, 팀원들의 실질적인 업무 부담을 덜어주는 맞춤형 운영 도구와 표준 프로세스를 구축하여 비즈니스 성장에 기여하겠습니다.
         </p>
       </div>
 
-      <div class="card" style="background: #f8fafc; margin-bottom: 0; padding: 7px 14px;">
-        <div style="font-size: 11.5px; color: #4b5563; line-height: 1.5;">
+      <div class="card" style="background: #f8fafc; margin-bottom: 0; padding: 6px 12px;">
+        <div style="font-size: 11px; color: #4b5563; line-height: 1.45;">
           <strong>기술 스택:</strong> Next.js 16 (App Router), TypeScript, Tailwind CSS, Zustand, SheetJS, Slack Webhook · <strong>라이브 데모:</strong> <a href="https://idf-theta.vercel.app/" target="_blank" class="btn-link">https://idf-theta.vercel.app/</a>
         </div>
       </div>
     </div>
-    <div class="footer">
+    <div class="footer" style="margin-top: 8px; padding-top: 8px;">
       <span>IDF E-Biz 운영 보드 포트폴리오</span>
       <span>PAGE 09 / 09</span>
     </div>
@@ -873,10 +878,16 @@ console.log('portfolio_presentation.html updated with embedded Base64 images.');
     console.log('SUCCESS: All 9 pages fit perfectly with 0px overflow!');
   }
 
-  // Take Page 2 screenshot for visual confirmation
-  const p2 = await page.evaluateHandle(() => document.querySelectorAll('.portfolio-page')[1]);
-  await p2.screenshot({ path: path.join(__dirname, '../public/page2_preview.png') });
-  console.log('Saved updated page 2 screenshot to public/page2_preview.png');
+  // Take screenshots of each page to verify visually
+  const pagesList = await page.$$('.portfolio-page');
+  for (let i = 0; i < pagesList.length; i++) {
+    await pagesList[i].screenshot({ path: path.join(__dirname, `../public/page_previews/page_${i + 1}.png`) });
+  }
+  console.log('Saved all 9 page previews to public/page_previews/');
+
+  // Also save specific previews for quick inspection
+  await pagesList[4].screenshot({ path: path.join(__dirname, '../public/page5_preview.png') });
+  await pagesList[8].screenshot({ path: path.join(__dirname, '../public/page9_preview.png') });
 
   const pdfPath = path.join(__dirname, '../IDF_포트폴리오_박찬미.pdf');
   await page.pdf({
